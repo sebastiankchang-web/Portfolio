@@ -1,0 +1,13 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Sebastian Kai-Wei Chang — Portfolio",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site, no build required'",
+    "lint": "echo 'No linter configured'"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^1.0.12"
+  }
+}
