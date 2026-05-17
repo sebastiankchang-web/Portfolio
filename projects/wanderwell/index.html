@@ -1,0 +1,2752 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>WanderWell — travel that gives back</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --background: hsl(40, 15%, 98%);
+        --foreground: hsl(220, 18%, 12%);
+        --muted-foreground: hsl(220, 9%, 46%);
+        --card: hsl(0, 0%, 100%);
+        --border: hsl(220, 14%, 92%);
+        --secondary: hsl(40, 16%, 94%);
+        --app-ink: hsl(220, 20%, 10%);
+        --app-ink-soft: hsl(220, 16%, 22%);
+        --app-sage: hsl(150, 30%, 26%);
+        --app-sage-soft: hsl(150, 24%, 92%);
+        --app-gold: hsl(38, 75%, 50%);
+        --app-gold-soft: hsl(40, 80%, 94%);
+        --app-line: hsl(220, 14%, 91%);
+        --shell-max: 460px;
+      }
+      html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        letter-spacing: -0.005em;
+        background:
+          radial-gradient(900px 500px at 50% -200px, hsl(150 24% 94%) 0%, transparent 60%),
+          var(--background);
+        color: var(--foreground);
+        margin: 0;
+        min-height: 100vh;
+        padding-bottom: 96px;
+      }
+      .font-display {
+        font-family: "Fraunces", "Inter", serif;
+        font-feature-settings: "lnum", "tnum";
+        letter-spacing: -0.02em;
+      }
+      .tabular-nums { font-variant-numeric: tabular-nums; }
+      .shadow-elev-1 {
+        box-shadow: 0 1px 0 hsl(220 14% 92% / .6), 0 1px 2px hsl(220 20% 10% / .04), 0 4px 12px hsl(220 20% 10% / .04);
+      }
+      .shadow-ink {
+        box-shadow: 0 8px 24px hsl(220 24% 8% / .18), 0 2px 6px hsl(220 24% 8% / .12);
+      }
+      .ring-hairline { box-shadow: inset 0 0 0 1px hsl(0 0% 100% / .08); }
+      .lucide { stroke-width: 1.75; }
+
+      .app-shell { max-width: var(--shell-max); margin: 0 auto; position: relative; min-height: 100vh; }
+      .screen { min-height: 100vh; }
+      .screen.hidden { display: none; }
+
+      .nav-bottom {
+        position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+        width: 100%; max-width: var(--shell-max);
+        background: hsl(0 0% 100% / .9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--app-line);
+        padding: 8px 8px max(14px, env(safe-area-inset-bottom)); z-index: 50;
+      }
+      .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 6px 8px; color: hsl(220 9% 60%); transition: color .15s; background: transparent; border: none; cursor: pointer; }
+      .nav-btn.active { color: var(--app-ink); }
+      .nav-pill {
+        display: flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px; border-radius: 9999px;
+        background: transparent; transition: background .2s;
+      }
+      .nav-btn.active .nav-pill { background: var(--app-sage-soft); }
+      .nav-btn span:last-child { font-size: 10.5px; margin-top: 2px; font-weight: 500; }
+      .nav-btn.active span:last-child { font-weight: 600; }
+
+      /* Raised center "+" button in the bottom nav */
+      .nav-center { padding: 0 8px; }
+      .nav-center .center-plus {
+        width: 52px; height: 52px;
+        border-radius: 9999px;
+        background: var(--app-sage);
+        color: white;
+        display: flex; align-items: center; justify-content: center;
+        transform: translateY(-14px);
+        box-shadow:
+          0 8px 18px hsl(150 30% 26% / .35),
+          0 2px 4px hsl(150 30% 26% / .25),
+          0 0 0 4px var(--background);
+        transition: transform .15s, background .15s;
+      }
+      .nav-center:hover .center-plus { transform: translateY(-16px); background: hsl(150 32% 22%); }
+      .nav-center:active .center-plus { transform: translateY(-12px); }
+      .nav-center .label-plus { font-size: 10.5px; margin-top: -8px; font-weight: 500; color: hsl(220 9% 60%); }
+
+      .avatar {
+        position: relative; overflow: hidden; flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: white; font-weight: 600; user-select: none; border-radius: 9999px;
+      }
+      .avatar .initials { position: relative; z-index: 0; line-height: 1; }
+      .avatar img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; background: transparent; }
+
+      .input {
+        width: 100%; height: 48px; padding: 0 16px;
+        border-radius: 16px;
+        background: hsl(40 16% 94% / .7);
+        border: 1px solid transparent;
+        font-size: 14px; color: var(--foreground); font-family: inherit;
+        transition: border-color .15s, background .15s;
+      }
+      .input:focus { outline: none; border-color: var(--app-sage); background: white; }
+      .input::placeholder { color: hsl(220 9% 55%); }
+
+      .toast {
+        position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
+        bottom: 110px; z-index: 70;
+        background: var(--app-ink); color: white;
+        padding: 12px 18px; border-radius: 9999px;
+        font-size: 13px; font-weight: 500;
+        box-shadow: 0 10px 25px hsl(220 24% 8% / .25);
+        opacity: 0; pointer-events: none;
+        transition: opacity .25s, transform .25s cubic-bezier(.2,.8,.2,1);
+        max-width: 90%;
+      }
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      .fab {
+        position: fixed; right: max(16px, calc(50vw - var(--shell-max)/2 + 16px));
+        bottom: 96px; z-index: 40;
+        width: 56px; height: 56px;
+        border-radius: 9999px;
+        background: var(--app-ink); color: white;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 8px 24px hsl(220 24% 8% / .25), 0 2px 6px hsl(220 24% 8% / .15);
+        border: none; cursor: pointer; transition: transform .15s;
+      }
+      .fab:hover { transform: scale(1.05); }
+      .fab:active { transform: scale(0.95); }
+
+      .option-card { transition: transform .15s, box-shadow .15s, border-color .15s; cursor: pointer; }
+      .option-card:hover { transform: translateY(-1px); border-color: var(--app-sage); }
+      .option-card:active { transform: translateY(0); }
+
+      /* Carbon progress bar (from ecotravel idea) */
+      .carbon-progress {
+        height: 8px; background: hsl(40 16% 92%); border-radius: 9999px; overflow: hidden;
+      }
+      .carbon-progress > div {
+        height: 100%; background: linear-gradient(90deg, var(--app-sage), hsl(150 30% 36%));
+        transition: width .8s cubic-bezier(.2,.8,.2,1);
+      }
+
+      /* — Hi-fi page hero used on all non-home screens.
+           Layered radial gradients give depth without external imagery; a thin
+           inset hairline catches the light at the top edge for a premium feel. */
+      .page-hero {
+        position: relative;
+        color: white;
+        padding: 32px 20px 28px;
+        border-radius: 0 0 32px 32px;
+        overflow: hidden;
+        background:
+          radial-gradient(120% 80% at 100% 0%, hsl(150 32% 22%) 0%, transparent 55%),
+          radial-gradient(120% 100% at 0% 100%, hsl(220 24% 14%) 0%, transparent 60%),
+          var(--app-ink);
+        box-shadow:
+          0 12px 28px hsl(220 24% 8% / .22),
+          inset 0 1px 0 hsl(0 0% 100% / .07);
+      }
+      .page-hero::after {
+        /* Subtle vignette dot pattern */
+        content: "";
+        position: absolute; inset: 0;
+        background-image: radial-gradient(hsl(0 0% 100% / .04) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+        mix-blend-mode: overlay;
+      }
+      .page-hero > * { position: relative; z-index: 1; }
+      .hero-eyebrow {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: hsl(150 40% 78%);
+        font-weight: 600;
+      }
+      .hero-title {
+        font-family: "Fraunces", "Inter", serif;
+        font-feature-settings: "lnum", "tnum";
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1.08;
+        margin-top: 4px;
+      }
+      .hero-subtitle { font-size: 13px; color: hsl(0 0% 100% / .65); margin-top: 6px; max-width: 280px; line-height: 1.5; }
+
+      /* Section subtitle eyebrow used inside body content */
+      .eyebrow {
+        font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--muted-foreground); font-weight: 600;
+      }
+
+      /* Sophisticated section divider with a centered leaf accent */
+      .section-divider {
+        display: flex; align-items: center; gap: 12px;
+        color: var(--muted-foreground);
+      }
+      .section-divider::before, .section-divider::after {
+        content: ""; flex: 1; height: 1px; background: var(--app-line);
+      }
+
+      /* Soft card lift on hover for clickable cards */
+      .lift { transition: transform .15s ease, box-shadow .15s ease; }
+      .lift:hover { transform: translateY(-1px); box-shadow: 0 4px 16px hsl(220 24% 8% / .08), 0 1px 2px hsl(220 24% 8% / .04); }
+
+      /* Strava-style toggle switch */
+      .toggle-switch {
+        display: inline-block; position: relative;
+        width: 36px; height: 22px; border-radius: 9999px;
+        background: hsl(220 14% 86%);
+        transition: background .2s ease;
+        flex-shrink: 0;
+      }
+      .toggle-switch .dot {
+        position: absolute; top: 2px; left: 2px;
+        width: 18px; height: 18px; border-radius: 9999px;
+        background: white;
+        box-shadow: 0 1px 3px hsl(220 24% 8% / .25);
+        transition: transform .2s ease;
+      }
+      .toggle-switch.on { background: var(--app-sage); }
+      .toggle-switch.on .dot { transform: translateX(14px); }
+
+      /* Strava-style photo slot */
+      .photo-slot {
+        position: relative; aspect-ratio: 1;
+        border-radius: 12px; overflow: hidden;
+        background: var(--secondary);
+        border: 1px dashed var(--app-line);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition: border-color .15s, background .15s;
+      }
+      .photo-slot:hover { border-color: var(--app-sage); background: var(--app-sage-soft); color: var(--app-sage); }
+      .photo-slot.filled { border-style: solid; }
+      .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+      .photo-slot .rm {
+        position: absolute; top: 4px; right: 4px;
+        width: 22px; height: 22px; border-radius: 9999px;
+        background: hsl(220 24% 8% / .6); color: white;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 12px; line-height: 0;
+      }
+    </style>
+  <style id="embed-no-scrollbar">html,body{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0;height:0;display:none}</style></head>
+  <body>
+    <div class="app-shell">
+      <main id="screens"></main>
+    </div>
+
+    <nav class="nav-bottom">
+      <div class="flex items-stretch">
+        <button class="nav-btn" data-go="home">
+          <span class="nav-pill"><i data-lucide="home" class="w-[18px] h-[18px]"></i></span>
+          <span>Home</span>
+        </button>
+        <button class="nav-btn" data-go="book">
+          <span class="nav-pill"><i data-lucide="ticket" class="w-[18px] h-[18px]"></i></span>
+          <span>Book</span>
+        </button>
+        <button class="nav-btn nav-center" data-go="share" aria-label="Add new post">
+          <span class="center-plus"><i data-lucide="plus" class="w-6 h-6"></i></span>
+          <span class="label-plus">Post</span>
+        </button>
+        <button class="nav-btn" data-go="trips">
+          <span class="nav-pill"><i data-lucide="route" class="w-[18px] h-[18px]"></i></span>
+          <span>Trips</span>
+        </button>
+        <button class="nav-btn" data-go="profile">
+          <span class="nav-pill"><i data-lucide="user" class="w-[18px] h-[18px]"></i></span>
+          <span>Profile</span>
+        </button>
+      </div>
+    </nav>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      /* =================== DATA =================== */
+
+      const TRANSPORT_MODES = {
+        walking:         { name: "Walking",          icon: "🚶", carbonPerKm: 0    },
+        cycling:         { name: "Cycling",          icon: "🚴", carbonPerKm: 0    },
+        publicTransport: { name: "Public Transport", icon: "🚌", carbonPerKm: 0.05 },
+        electricVehicle: { name: "Electric Vehicle", icon: "🔋", carbonPerKm: 0.02 },
+        carpool:         { name: "Carpool",          icon: "🚗", carbonPerKm: 0.10 },
+        airplane:        { name: "Airplane",         icon: "✈️", carbonPerKm: 0.25 },
+      };
+      const CAR_BASELINE = 0.21;
+      const calcCarbonSaved = (mode, km) => {
+        const m = TRANSPORT_MODES[mode] || BOOKING_MODES.find((x) => x.key === mode);
+        const per = m ? (m.carbonPerKm ?? m.co2Per ?? 0) : 0;
+        return Math.max(0, km * CAR_BASELINE - km * per);
+      };
+      const carbonMessage = (kg) => {
+        if (kg >= 5)   return "Amazing — that's a real dent in your footprint.";
+        if (kg >= 2)   return "Great work. Small choices, real difference.";
+        if (kg >= 0.5) return "Nice — every km adds up.";
+        return "Every sustainable choice matters.";
+      };
+
+      const BOOKING_MODES = [
+        { key: "walk",      name: "Walk",              icon: "🚶", co2Per: 0,     pointsPerKm: 60, ecoScore: 100, pricePerKm: 0,
+          features: ["Zero emissions", "No ticket needed", "Get a little extra movement"] },
+        { key: "bike",      name: "Bicycle",           icon: "🚴", co2Per: 0,     pointsPerKm: 55, ecoScore: 99, pricePerKm: 0,
+          features: ["Zero emissions", "Free if you own a bike", "Often faster than a car in cities"] },
+        { key: "ebike",     name: "E-Bike",            icon: "🚲", co2Per: 0.014, pointsPerKm: 45, ecoScore: 95, pricePerKm: 0.20,
+          features: ["Battery powered, minimal CO₂", "Skip traffic and parking", "Available via Lime, Voi, Lyft and more"] },
+        { key: "metro",     name: "Metro / Subway",    icon: "🚇", co2Per: 0.028, pointsPerKm: 35, ecoScore: 92, pricePerKm: 0.30,
+          features: ["Electric, grid-powered", "Frequent service in city centres", "Often cheaper than driving"] },
+        { key: "tram",      name: "Tram / Light Rail", icon: "🚊", co2Per: 0.029, pointsPerKm: 35, ecoScore: 92, pricePerKm: 0.25,
+          features: ["Electric, grid-powered", "Step-free access at most stops", "Reduced carbon footprint compared to cars"] },
+        { key: "bus",       name: "Bus / Coach",       icon: "🚌", co2Per: 0.027, pointsPerKm: 38, ecoScore: 88, pricePerKm: 0.12,
+          features: ["Multiple departure times daily", "Comfortable seating with extra legroom", "Reduced carbon footprint compared to cars"] },
+        { key: "hsRail",    name: "High-Speed Rail",   icon: "🚄", co2Per: 0.006, pointsPerKm: 55, ecoScore: 97, pricePerKm: 0.25,
+          features: ["Direct connection available", "Wi-Fi and power outlets on board", "Carbon offset included with eco ticket"] },
+        { key: "train",     name: "Regional Train",    icon: "🚆", co2Per: 0.035, pointsPerKm: 40, ecoScore: 88, pricePerKm: 0.18,
+          features: ["Up to 90% less CO₂ than flying", "City-centre to city-centre, no transfers", "Easy walk-on with luggage"] },
+        { key: "ferry",     name: "Ferry",             icon: "⛴️",  co2Per: 0.019, pointsPerKm: 30, ecoScore: 86, pricePerKm: 0.30,
+          features: ["Foot-passenger fares", "Sea views, cabin space", "Scenic, sociable journey"] },
+        { key: "ev",        name: "Electric Car",      icon: "🔋", co2Per: 0.047, pointsPerKm: 22, ecoScore: 80, pricePerKm: 0.15,
+          features: ["Zero tailpipe emissions", "Fast-charge network expanding", "Quiet, smooth ride"] },
+        { key: "carpool",   name: "Rideshare / Carpool", icon: "🚗", co2Per: 0.043, pointsPerKm: 18, ecoScore: 78, pricePerKm: 0.10,
+          features: ["Connect with other travelers", "Split the cost of fuel", "Lower emissions than driving alone"] },
+        { key: "flightSaf", name: "Flight — SAF",      icon: "✈️", co2Per: 0.075, pointsPerKm: 8,  ecoScore: 65, pricePerKm: 0.28,
+          features: ["Sustainable Aviation Fuel — up to 70% less CO₂", "Same schedule as a regular flight", "Some airlines opt in at booking"] },
+        { key: "flight",    name: "Flight",            icon: "✈️", co2Per: 0.155, pointsPerKm: 0,  ecoScore: 45, pricePerKm: 0.18,
+          features: ["Fastest option for long-haul", "Widest schedule", "Highest carbon footprint of the options"] },
+      ];
+
+      function ecoBadge(score) {
+        if (score >= 90) return { label: "Excellent", color: "var(--app-sage)",  bg: "var(--app-sage-soft)" };
+        if (score >= 80) return { label: "Great",     color: "hsl(82 50% 32%)",  bg: "hsl(82 50% 95%)" };
+        if (score >= 65) return { label: "Good",      color: "hsl(40 70% 32%)",  bg: "hsl(40 80% 94%)" };
+        return            { label: "Carbon-heavy",   color: "hsl(15 65% 38%)",  bg: "hsl(15 70% 95%)" };
+      }
+      function lessThanFlying(co2Per) { return Math.max(0, Math.round((1 - co2Per / 0.155) * 100)); }
+      function formatPrice(eur) {
+        if (eur === 0) return "Free";
+        if (eur < 10) return `€${eur.toFixed(2)}`;
+        return `€${Math.round(eur)}`;
+      }
+      const byKey = (k) => BOOKING_MODES.find((m) => m.key === k);
+
+      const avatarUrl = (id) => `https://i.pravatar.cc/200?img=${id}`;
+      const USERS = {
+        sarah: { id: 1, username: "sarah_eco",      displayName: "Sarah Green",    bio: "Cycling enthusiast and climate advocate.",                              photo: avatarUrl(47), followers: 128, following: 96 },
+        alex:  { id: 2, username: "alex_rider",     displayName: "Alex Rivera",    bio: "Public transport champion, saving the planet one ride at a time.",       photo: avatarUrl(11) },
+        jamie: { id: 3, username: "jamie_walker",   displayName: "Jamie Walker",   bio: "Walking everywhere, one step at a time.",                                photo: avatarUrl(32) },
+        green: { id: 4, username: "green_commuter", displayName: "Green Commuter", bio: "EV owner transitioning to sustainable transport.",                       photo: avatarUrl(23) },
+        maya:  { id: 5, username: "maya_pedals",    displayName: "Maya Chen",      bio: "200 km cycled this month.",                                              photo: avatarUrl(44) },
+        liam:  { id: 6, username: "liam_transit",   displayName: "Liam O'Connor",  bio: "Train commuter and weekend hiker.",                                      photo: avatarUrl(13) },
+      };
+
+      /* Achievements now carry progress + target (ecotravel-inspired) */
+      const ACHIEVEMENTS = [
+        { id: 1, icon: "🚴", title: "Cycle Champion", description: "Take 50 bike trips",         target: 50,  progressFn: (s) => s.trips.filter(t => t.mode === "cycling").length,
+          gradient: "linear-gradient(135deg, #3b4a3f, #1f2a23)" },
+        { id: 2, icon: "🌟", title: "Eco Warrior",    description: "Save 100 kg CO₂",            target: 100, progressFn: (s) => Math.round(totalCarbonSaved()),
+          gradient: "linear-gradient(135deg, #2f3a3a, #1a2424)" },
+        { id: 3, icon: "🍃", title: "Green Commuter", description: "Build a 7-day eco streak",   target: 7,   progressFn: (s) => currentStreak(),
+          gradient: "linear-gradient(135deg, #4a4337, #2a241c)" },
+        { id: 4, icon: "💚", title: "Carbon Crusher", description: "Save 50 kg CO₂",             target: 50,  progressFn: (s) => Math.round(totalCarbonSaved()),
+          gradient: "linear-gradient(135deg, #3a3f4a, #1f242e)" },
+        { id: 5, icon: "🚆", title: "Rail Romantic",  description: "Book 3 trips by train",      target: 3,   progressFn: (s) => s.bookings.filter(b => b.mode === "hsRail" || b.mode === "train").length,
+          gradient: "linear-gradient(135deg, #2a3d4a, #11202e)" },
+        { id: 6, icon: "🌍", title: "World Explorer", description: "Log 20 sustainable trips",   target: 20,  progressFn: (s) => s.trips.length,
+          gradient: "linear-gradient(135deg, #4a3a40, #2a1f23)" },
+      ];
+
+      /* Long-term challenges (ecotravel-inspired) — opt-in goals */
+      const CHALLENGES = [
+        { id: "neutral",  icon: "globe",        title: "Carbon-Neutral Traveler",  desc: "Offset 500 kg of CO₂ through sustainable choices.", target: 500, points: 15000 },
+        { id: "explorer", icon: "map",          title: "Eco-Explorer",             desc: "Book 5 trips by HSR or train this year.",            target: 5,   points: 8000 },
+        { id: "influencer", icon: "megaphone",  title: "Sustainability Influencer", desc: "Inspire 10 friends to follow you.",                  target: 10,  points: 6000 },
+      ];
+
+      /* Trending sustainable destinations — Queenstown and Freiburg replaced
+         with cities that have more reliable Unsplash imagery. Each card has a
+         gradient fallback if the image fails to load. */
+      const DESTINATIONS = [
+        { id: "kyoto",     name: "Kyoto",        country: "Japan",       tagline: "Bamboo forests & temple trails",
+          image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80&auto=format&fit=crop",
+          gradient: "linear-gradient(135deg,#3b4a3f,#1f2a23)", score: 94 },
+        { id: "cinque",    name: "Cinque Terre", country: "Italy",       tagline: "Carless coastal villages",
+          image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&q=80&auto=format&fit=crop",
+          gradient: "linear-gradient(135deg,#4a3a40,#2a1f23)", score: 92 },
+        { id: "copenhagen",name: "Copenhagen",   country: "Denmark",     tagline: "World's most cycle-friendly city",
+          image: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=600&q=80&auto=format&fit=crop",
+          gradient: "linear-gradient(135deg,#2f3a3a,#1a2424)", score: 95 },
+        { id: "stockholm", name: "Stockholm",    country: "Sweden",      tagline: "Nordic city built across islands",
+          image: "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=600&q=80&auto=format&fit=crop",
+          gradient: "linear-gradient(135deg,#23383b,#10191c)", score: 92 },
+        { id: "vancouver", name: "Vancouver",    country: "Canada",      tagline: "Sea, mountains, all walkable",
+          image: "https://images.unsplash.com/photo-1559511260-66a654ae982a?w=600&q=80&auto=format&fit=crop",
+          gradient: "linear-gradient(135deg,#1d3a55,#0a1a26)", score: 89 },
+      ];
+
+      /* Sustainable travel tips (ecotravel-inspired) */
+      const TRAVEL_TIPS = [
+        { icon: "train",           title: "Choose ground transport", body: "Trains, buses and coaches can cut emissions by 80–90% versus short-haul flights — and city-centre to city-centre saves another taxi ride." },
+        { icon: "shopping-bag",    title: "Skip single-use plastic", body: "Pack a refillable bottle, a tote bag and solid toiletries. Most airports and stations now have free refill stations." },
+        { icon: "heart-handshake", title: "Spend with locals",       body: "Family-run guesthouses, neighbourhood restaurants and independent guides keep more of your money in the destination." },
+      ];
+
+      /* Eco-certified hotels (from ecotravel mockData.ts) — keyed by city for
+         destination-aware suggestions on the Book screen. */
+      const ECO_HOTELS = [
+        { id: 1, name: "Green Canopy Eco Resort",   city: "kyoto",      location: "Bamboo Forest, Kyoto",          pricePerNight: 120, ecoScore: 92, features: ["Solar powered", "Farm-to-table kitchen"],
+          image: "https://images.unsplash.com/photo-1610641818989-c2051b5e2cfd?w=600&q=80&auto=format&fit=crop" },
+        { id: 2, name: "Tiergarten Forest Inn",     city: "berlin",     location: "Mitte, Berlin",                 pricePerNight: 165, ecoScore: 88, features: ["Zero waste", "Locally-sourced materials"],
+          image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80&auto=format&fit=crop" },
+        { id: 3, name: "Coastal Breeze Eco Hotel",  city: "cinque",     location: "Vernazza, Cinque Terre",        pricePerNight: 145, ecoScore: 95, features: ["100% renewable energy", "Plastic-free toiletries"],
+          image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80&auto=format&fit=crop" },
+        { id: 4, name: "Nordic Light Hostel",       city: "stockholm",  location: "Södermalm, Stockholm",          pricePerNight: 75,  ecoScore: 90, features: ["Geothermal heating", "Community-run"],
+          image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80&auto=format&fit=crop" },
+        { id: 5, name: "Harbour Green Suites",      city: "copenhagen", location: "Christianshavn, Copenhagen",    pricePerNight: 160, ecoScore: 94, features: ["Free bike rental", "Carbon-neutral certified"],
+          image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&q=80&auto=format&fit=crop" },
+        { id: 6, name: "Cedar Forest Inn",          city: "vancouver",  location: "Stanley Park, Vancouver",       pricePerNight: 135, ecoScore: 86, features: ["FSC-certified building", "Rainwater harvesting"],
+          image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80&auto=format&fit=crop" },
+      ];
+      function hotelsForCity(cityId) { return ECO_HOTELS.filter((h) => h.city === cityId); }
+
+      /* Upcoming eco-events near the user (from ecotravel Connect page) */
+      const ECO_EVENTS = [
+        { id: 1, title: "Beach cleanup & picnic",                date: daysFromNow(5),  location: "Brighton seafront, UK",  attendees: 24,
+          image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&auto=format&fit=crop" },
+        { id: 2, title: "Urban gardening workshop",              date: daysFromNow(12), location: "Hackney Community Hall",  attendees: 18,
+          image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600&q=80&auto=format&fit=crop" },
+        { id: 3, title: "Cycle-tour: forgotten waterways",       date: daysFromNow(19), location: "Regent's Canal, London", attendees: 32,
+          image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&q=80&auto=format&fit=crop" },
+      ];
+
+      const SEED_TRIPS = [
+        { id: 10, mode: "cycling",         from: "Home",            to: "Office",         km: 5.2, date: hoursAgo(2) },
+        { id: 11, mode: "walking",         from: "Office",          to: "Coffee Shop",    km: 0.8, date: hoursAgo(5) },
+        { id: 12, mode: "publicTransport", from: "Coffee Shop",     to: "Gym",            km: 3.1, date: hoursAgo(8) },
+        { id: 13, mode: "cycling",         from: "Riverside Park",  to: "Downtown",       km: 8.5, date: hoursAgo(26) },
+        { id: 14, mode: "publicTransport", from: "Apartment",       to: "Museum",         km: 6.4, date: hoursAgo(50) },
+        { id: 15, mode: "cycling",         from: "Library",         to: "Farmers Market", km: 4.2, date: hoursAgo(78) },
+        { id: 16, mode: "walking",         from: "Home",            to: "Bakery",         km: 1.2, date: hoursAgo(104) },
+      ];
+
+      const SEED_POSTS = [
+        { id: 100, userId: 2,
+          title: "Riverside Park → Downtown by bike",
+          body: "Beautiful morning ride along the river — better than any espresso. 🚴",
+          tripId: 13, bookingId: null,
+          likeCount: 24, liked: false, when: hoursAgo(2),
+          image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&q=80&auto=format&fit=crop" },
+        { id: 101, userId: 3,
+          title: "Office → Coffee Shop on foot",
+          body: "Walked the long way to work and stumbled on a community garden. Worth it.",
+          tripId: 11, bookingId: null,
+          likeCount: 18, liked: false, when: hoursAgo(7),
+          image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=900&q=80&auto=format&fit=crop" },
+        { id: 102, userId: 5,
+          title: "Coffee Shop → Gym",
+          body: "200 km cycled this month. The hills are getting easier 💪",
+          tripId: 12, bookingId: null,
+          likeCount: 41, liked: true, when: hoursAgo(11),
+          image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=900&q=80&auto=format&fit=crop" },
+        { id: 103, userId: 6,
+          title: "Booked: London → Paris on Eurostar",
+          body: "Taking the train instead of flying — 2.5 hours, zero queues, and the route rolls past sunflower fields the whole way through France.",
+          tripId: null, bookingId: 200,
+          likeCount: 56, liked: false, when: hoursAgo(20),
+          image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=900&q=80&auto=format&fit=crop" },
+        { id: 104, userId: 4,
+          title: "Apartment → Museum",
+          body: "Stayed at a fully solar-powered eco-lodge this week. Falling asleep to actual rainforest sounds instead of air-con was unreal.",
+          tripId: 14, bookingId: null,
+          likeCount: 38, liked: true, when: hoursAgo(30),
+          image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&q=80&auto=format&fit=crop" },
+      ];
+
+      function hoursAgo(h) { const d = new Date(); d.setHours(d.getHours() - h); return d.toISOString(); }
+      function daysFromNow(d) { const x = new Date(); x.setDate(x.getDate() + d); return x.toISOString(); }
+
+      /* — Cities for booking — */
+      const CITIES = [
+        { id: "london",     name: "London",        country: "United Kingdom", lat: 51.5074,  lng: -0.1278 },
+        { id: "manchester", name: "Manchester",    country: "United Kingdom", lat: 53.4808,  lng: -2.2426 },
+        { id: "edinburgh",  name: "Edinburgh",     country: "United Kingdom", lat: 55.9533,  lng: -3.1883 },
+        { id: "dublin",     name: "Dublin",        country: "Ireland",        lat: 53.3498,  lng: -6.2603 },
+        { id: "paris",      name: "Paris",         country: "France",         lat: 48.8566,  lng: 2.3522  },
+        { id: "lyon",       name: "Lyon",          country: "France",         lat: 45.7640,  lng: 4.8357  },
+        { id: "marseille",  name: "Marseille",     country: "France",         lat: 43.2965,  lng: 5.3698  },
+        { id: "brussels",   name: "Brussels",      country: "Belgium",        lat: 50.8503,  lng: 4.3517  },
+        { id: "amsterdam",  name: "Amsterdam",     country: "Netherlands",    lat: 52.3676,  lng: 4.9041  },
+        { id: "cologne",    name: "Cologne",       country: "Germany",        lat: 50.9375,  lng: 6.9603  },
+        { id: "frankfurt",  name: "Frankfurt",     country: "Germany",        lat: 50.1109,  lng: 8.6821  },
+        { id: "berlin",     name: "Berlin",        country: "Germany",        lat: 52.5200,  lng: 13.4050 },
+        { id: "munich",     name: "Munich",        country: "Germany",        lat: 48.1351,  lng: 11.5820 },
+        { id: "hamburg",    name: "Hamburg",       country: "Germany",        lat: 53.5511,  lng: 9.9937  },
+        { id: "zurich",     name: "Zurich",        country: "Switzerland",    lat: 47.3769,  lng: 8.5417  },
+        { id: "vienna",     name: "Vienna",        country: "Austria",        lat: 48.2082,  lng: 16.3738 },
+        { id: "madrid",     name: "Madrid",        country: "Spain",          lat: 40.4168,  lng: -3.7038 },
+        { id: "barcelona",  name: "Barcelona",     country: "Spain",          lat: 41.3851,  lng: 2.1734  },
+        { id: "seville",    name: "Seville",       country: "Spain",          lat: 37.3891,  lng: -5.9845 },
+        { id: "lisbon",     name: "Lisbon",        country: "Portugal",       lat: 38.7223,  lng: -9.1393 },
+        { id: "milan",      name: "Milan",         country: "Italy",          lat: 45.4642,  lng: 9.1900  },
+        { id: "rome",       name: "Rome",          country: "Italy",          lat: 41.9028,  lng: 12.4964 },
+        { id: "venice",     name: "Venice",        country: "Italy",          lat: 45.4408,  lng: 12.3155 },
+        { id: "copenhagen", name: "Copenhagen",    country: "Denmark",        lat: 55.6761,  lng: 12.5683 },
+        { id: "stockholm",  name: "Stockholm",     country: "Sweden",         lat: 59.3293,  lng: 18.0686 },
+        { id: "oslo",       name: "Oslo",          country: "Norway",         lat: 59.9139,  lng: 10.7522 },
+        { id: "nyc",        name: "New York",      country: "USA",            lat: 40.7128,  lng: -74.0060 },
+        { id: "boston",     name: "Boston",        country: "USA",            lat: 42.3601,  lng: -71.0589 },
+        { id: "washington", name: "Washington DC", country: "USA",            lat: 38.9072,  lng: -77.0369 },
+        { id: "chicago",    name: "Chicago",       country: "USA",            lat: 41.8781,  lng: -87.6298 },
+        { id: "sf",         name: "San Francisco", country: "USA",            lat: 37.7749,  lng: -122.4194 },
+        { id: "la",         name: "Los Angeles",   country: "USA",            lat: 34.0522,  lng: -118.2437 },
+        { id: "toronto",    name: "Toronto",       country: "Canada",         lat: 43.6532,  lng: -79.3832 },
+        { id: "tokyo",      name: "Tokyo",         country: "Japan",          lat: 35.6762,  lng: 139.6503 },
+        { id: "osaka",      name: "Osaka",         country: "Japan",          lat: 34.6937,  lng: 135.5023 },
+        { id: "kyoto",      name: "Kyoto",         country: "Japan",          lat: 35.0116,  lng: 135.7681 },
+        { id: "seoul",      name: "Seoul",         country: "South Korea",    lat: 37.5665,  lng: 126.9780 },
+        { id: "beijing",    name: "Beijing",       country: "China",          lat: 39.9042,  lng: 116.4074 },
+        { id: "shanghai",   name: "Shanghai",      country: "China",          lat: 31.2304,  lng: 121.4737 },
+        { id: "hongkong",   name: "Hong Kong",     country: "Hong Kong",      lat: 22.3193,  lng: 114.1694 },
+        { id: "singapore",  name: "Singapore",     country: "Singapore",      lat: 1.3521,   lng: 103.8198 },
+        { id: "bangkok",    name: "Bangkok",       country: "Thailand",       lat: 13.7563,  lng: 100.5018 },
+        { id: "sydney",     name: "Sydney",        country: "Australia",      lat: -33.8688, lng: 151.2093 },
+        { id: "melbourne",  name: "Melbourne",     country: "Australia",      lat: -37.8136, lng: 144.9631 },
+        { id: "auckland",   name: "Auckland",      country: "New Zealand",    lat: -36.8485, lng: 174.7633 },
+      ];
+      const cityLabel = (c) => `${c.name}, ${c.country}`;
+      const cityById = (id) => CITIES.find((c) => c.id === id);
+      const cityByLabel = (label) => CITIES.find((c) => cityLabel(c).toLowerCase() === (label || "").toLowerCase());
+
+      const RAIL_CORRIDORS = {
+        "london|paris":      { service: "Eurostar",            kind: "hsRail", railFactor: 1.06, durationH: 2.4 },
+        "london|brussels":   { service: "Eurostar",            kind: "hsRail", railFactor: 1.10, durationH: 2.0 },
+        "london|amsterdam":  { service: "Eurostar",            kind: "hsRail", railFactor: 1.10, durationH: 3.9 },
+        "paris|brussels":    { service: "Thalys",              kind: "hsRail", railFactor: 1.10, durationH: 1.4 },
+        "paris|amsterdam":   { service: "Thalys / Eurostar",   kind: "hsRail", railFactor: 1.10, durationH: 3.3 },
+        "paris|cologne":     { service: "Thalys",              kind: "hsRail", railFactor: 1.10, durationH: 3.3 },
+        "brussels|cologne":  { service: "ICE / Thalys",        kind: "hsRail", railFactor: 1.10, durationH: 1.8 },
+        "paris|lyon":        { service: "TGV",                 kind: "hsRail", railFactor: 1.08, durationH: 2.0 },
+        "paris|marseille":   { service: "TGV",                 kind: "hsRail", railFactor: 1.08, durationH: 3.2 },
+        "paris|frankfurt":   { service: "TGV / ICE",           kind: "hsRail", railFactor: 1.10, durationH: 3.8 },
+        "berlin|munich":     { service: "ICE Sprinter",        kind: "hsRail", railFactor: 1.15, durationH: 4.0 },
+        "berlin|hamburg":    { service: "ICE",                 kind: "hsRail", railFactor: 1.10, durationH: 1.8 },
+        "frankfurt|berlin":  { service: "ICE",                 kind: "hsRail", railFactor: 1.15, durationH: 4.0 },
+        "frankfurt|munich":  { service: "ICE",                 kind: "hsRail", railFactor: 1.10, durationH: 3.2 },
+        "munich|vienna":     { service: "Railjet",             kind: "hsRail", railFactor: 1.10, durationH: 4.0 },
+        "zurich|munich":     { service: "EuroCity",            kind: "train",  railFactor: 1.10, durationH: 3.5 },
+        "vienna|berlin":     { service: "ÖBB Nightjet",        kind: "train",  railFactor: 1.15, durationH: 9.5 },
+        "madrid|barcelona":  { service: "AVE",                 kind: "hsRail", railFactor: 1.05, durationH: 2.5 },
+        "madrid|seville":    { service: "AVE",                 kind: "hsRail", railFactor: 1.05, durationH: 2.5 },
+        "rome|milan":        { service: "Frecciarossa",        kind: "hsRail", railFactor: 1.05, durationH: 3.0 },
+        "milan|venice":      { service: "Frecciarossa",        kind: "hsRail", railFactor: 1.06, durationH: 2.3 },
+        "london|edinburgh":  { service: "LNER",                kind: "train",  railFactor: 1.08, durationH: 4.3 },
+        "london|manchester": { service: "Avanti West Coast",   kind: "train",  railFactor: 1.08, durationH: 2.2 },
+        "nyc|washington":    { service: "Amtrak Acela",        kind: "hsRail", railFactor: 1.08, durationH: 2.8 },
+        "nyc|boston":        { service: "Amtrak Acela",        kind: "hsRail", railFactor: 1.10, durationH: 3.6 },
+        "tokyo|osaka":       { service: "Tōkaidō Shinkansen", kind: "hsRail", railFactor: 1.06, durationH: 2.5 },
+        "tokyo|kyoto":       { service: "Tōkaidō Shinkansen", kind: "hsRail", railFactor: 1.06, durationH: 2.2 },
+        "osaka|kyoto":       { service: "Shinkansen",          kind: "hsRail", railFactor: 1.05, durationH: 0.3 },
+        "shanghai|beijing":  { service: "CR400 Fuxing",        kind: "hsRail", railFactor: 1.06, durationH: 4.5 },
+        "sydney|melbourne":  { service: "XPT",                 kind: "train",  railFactor: 1.10, durationH: 11.0 },
+      };
+
+      function corridorFor(aId, bId) {
+        return RAIL_CORRIDORS[`${aId}|${bId}`] || RAIL_CORRIDORS[`${bId}|${aId}`] || null;
+      }
+
+      function haversineKm(a, b) {
+        const R = 6371;
+        const toRad = (d) => (d * Math.PI) / 180;
+        const dLat = toRad(b.lat - a.lat);
+        const dLng = toRad(b.lng - a.lng);
+        const x = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+        return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      }
+      const SAME_REGION = {
+        Europe: ["United Kingdom","Ireland","France","Belgium","Netherlands","Germany","Switzerland","Austria","Spain","Portugal","Italy","Denmark","Sweden","Norway"],
+        NorthAmerica: ["USA","Canada"],
+        EastAsia: ["Japan","South Korea","China","Hong Kong"],
+        SEAsia: ["Singapore","Thailand"],
+        Oceania: ["Australia","New Zealand"],
+      };
+      function regionOf(country) { for (const r of Object.keys(SAME_REGION)) if (SAME_REGION[r].includes(country)) return r; return "Other"; }
+      const sameRegion = (a, b) => regionOf(a.country) === regionOf(b.country);
+
+      function optionsForRoute(from, to) {
+        if (!from || !to || from.id === to.id) return null;
+        const greatCircle = haversineKm(from, to);
+        const corridor = corridorFor(from.id, to.id);
+        const sc = sameRegion(from, to);
+        const include = [];
+        const push = (key, overrides = {}) => include.push({ key, ...overrides });
+
+        if (greatCircle <= 5)  push("walk");
+        if (greatCircle <= 25) push("bike");
+        if (greatCircle <= 40) push("ebike");
+        if (greatCircle <= 35) push("metro");
+        if (greatCircle <= 35) push("tram");
+        if (sc && greatCircle >= 10 && greatCircle <= 1500) push("bus");
+        if (sc) {
+          if (corridor) push(corridor.kind, { service: corridor.service, durationH: corridor.durationH, railFactor: corridor.railFactor });
+          else {
+            if (greatCircle >= 30 && greatCircle <= 1500) push("train");
+            if (greatCircle >= 200 && greatCircle <= 1500) push("hsRail");
+          }
+        }
+        if (sc && greatCircle >= 5 && greatCircle <= 1200) push("ev");
+        if (sc && greatCircle >= 5 && greatCircle <= 1200) push("carpool");
+        const ferryKeys = ["dublin|london","dublin|manchester","dublin|edinburgh"];
+        const pairA = `${from.id}|${to.id}`, pairB = `${to.id}|${from.id}`;
+        if (ferryKeys.includes(pairA) || ferryKeys.includes(pairB)) push("ferry");
+        if (greatCircle >= 300) push("flightSaf");
+        if (greatCircle >= 250) push("flight");
+
+        const seen = new Set();
+        const dedup = include.filter((c) => seen.has(c.key) ? false : seen.add(c.key));
+
+        const computed = dedup.filter((c) => byKey(c.key)).map((c) => {
+          const base = byKey(c.key);
+          const groundFactor = c.railFactor || ({ hsRail: 1.08, train: 1.15, bus: 1.18, ev: 1.25, carpool: 1.25, ferry: 1.10 }[c.key] || 1);
+          const isGround = ["bus","train","hsRail","ev","carpool","ferry"].includes(c.key);
+          const km = isGround ? greatCircle * groundFactor : greatCircle;
+          const co2 = +(km * base.co2Per).toFixed(2);
+          const points = Math.round(km * base.pointsPerKm);
+          const price = base.pricePerKm === 0 ? 0 : km * base.pricePerKm;
+          return {
+            ...base, key: c.key, service: c.service || null, durationH: c.durationH || null,
+            km: +km.toFixed(1), co2, points,
+            price: +price.toFixed(2),
+            lessFlying: lessThanFlying(base.co2Per),
+          };
+        });
+        // savedVs = compare to the WORST option in this route's own list
+        const worst = computed.reduce((w, o) => (o.co2 > w.co2 ? o : w), computed[0] || { co2: 0 });
+        computed.forEach((o) => {
+          o.savedVs = +Math.max(0, worst.co2 - o.co2).toFixed(2);
+          o.comparedTo = worst.service ? `${worst.name} (${worst.service})` : worst.name;
+        });
+        return computed.sort((a, b) => a.co2 - b.co2 || b.points - a.points);
+      }
+
+      const POPULAR_ROUTES = [
+        { from: "london",  to: "paris"      },
+        { from: "tokyo",   to: "osaka"      },
+        { from: "madrid",  to: "barcelona"  },
+        { from: "nyc",     to: "washington" },
+        { from: "paris",   to: "amsterdam"  },
+        { from: "berlin",  to: "munich"     },
+      ];
+
+      /* — Rewards catalogue — */
+      const REWARDS = [
+        { id: "eurostar-upgrade",  category: "vouchers",   partner: "Eurostar",       icon: "🚄",
+          name: "Standard Premier upgrade",  description: "Bump any Standard ticket up to Standard Premier on your next Eurostar booking.",
+          cost: 15000, repeatable: false, gradient: "linear-gradient(135deg,#1a4d3b,#0f3326)" },
+        { id: "nationalrail-25",   category: "vouchers",   partner: "Trainline",      icon: "🚆",
+          name: "€25 train credit",          description: "Apply to any standard-class ticket booked through Trainline across Europe.",
+          cost: 12000, repeatable: false, gradient: "linear-gradient(135deg,#23304a,#0e1422)" },
+        { id: "lime-unlocks",      category: "vouchers",   partner: "Lime",           icon: "🛴",
+          name: "5 free Lime unlocks",       description: "Five free unlocks for a Lime e-bike or scooter, redeemable in any Lime city.",
+          cost: 3000,  repeatable: true,  gradient: "linear-gradient(135deg,#244e2c,#0d1f12)" },
+        { id: "brompton-10",       category: "vouchers",   partner: "Brompton",       icon: "🚲",
+          name: "10% off Brompton store",    description: "A one-time 10% code for the Brompton accessories online store.",
+          cost: 5000,  repeatable: false, gradient: "linear-gradient(135deg,#1d3a55,#0a1a26)" },
+        { id: "patagonia-repair",  category: "vouchers",   partner: "Patagonia",      icon: "🧥",
+          name: "Worn Wear repair voucher",  description: "One free clothing repair at any Patagonia Worn Wear location.",
+          cost: 4000,  repeatable: false, gradient: "linear-gradient(135deg,#23383b,#10191c)" },
+        { id: "pret-coffee",       category: "vouchers",   partner: "Pret a Manger",  icon: "☕",
+          name: "Free Pret hot drink",       description: "Any size hot drink at participating UK Pret stores.",
+          cost: 2000,  repeatable: true,  gradient: "linear-gradient(135deg,#5b1c20,#2e0d0e)" },
+        { id: "ecologi-tree",      category: "planet",     partner: "Ecologi",        icon: "🌳",
+          name: "Plant 1 tree",              description: "Funds the planting of one native tree through Ecologi's reforestation partners.",
+          cost: 1000,  repeatable: true,  gradient: "linear-gradient(135deg,#1c3a23,#0a1c10)" },
+        { id: "ecologi-tree-10",   category: "planet",     partner: "Ecologi",        icon: "🌲",
+          name: "Plant 10 trees",            description: "A small forest, planted in your name.",
+          cost: 9000,  repeatable: true,  gradient: "linear-gradient(135deg,#1c3a23,#0a1c10)" },
+        { id: "climeworks-100",    category: "planet",     partner: "Climeworks",     icon: "🌬️",
+          name: "Capture 100 kg CO₂",        description: "Permanent removal via direct air capture in Iceland.",
+          cost: 4000,  repeatable: true,  gradient: "linear-gradient(135deg,#1e3540,#0c1822)" },
+        { id: "climeworks-1t",     category: "planet",     partner: "Climeworks",     icon: "☁️",
+          name: "Capture 1 t CO₂",           description: "One tonne of CO₂ removed and mineralised underground.",
+          cost: 35000, repeatable: true,  gradient: "linear-gradient(135deg,#1e3540,#0c1822)" },
+        { id: "pro-month",         category: "wanderwell", partner: "WanderWell",     icon: "⭐",
+          name: "1 month of Pro",            description: "Premium maps, deeper analytics, custom goals — for a month.",
+          cost: 6000,  repeatable: true,  gradient: "linear-gradient(135deg,#3a2a1c,#1c150d)" },
+        { id: "badge-saver",       category: "wanderwell", partner: "WanderWell",     icon: "🏅",
+          name: "Climate Saver badge",       description: "A permanent badge that appears on your profile and posts.",
+          cost: 2500,  repeatable: false, gradient: "linear-gradient(135deg,#3a2a1c,#1c150d)" },
+      ];
+      const REWARD_CATEGORIES = [
+        { key: "all",        label: "All" },
+        { key: "vouchers",   label: "Travel & shops" },
+        { key: "planet",     label: "For the planet" },
+        { key: "wanderwell", label: "WanderWell" },
+      ];
+      const rewardById = (id) => REWARDS.find((r) => r.id === id);
+
+      /* =================== STATE =================== */
+      const STORAGE_KEY = "wanderwell-app-v3";
+
+      const defaultState = {
+        currentUserId: 1,
+        trips: SEED_TRIPS,
+        posts: SEED_POSTS,
+        following: [2, 3, 4],
+        bookings: [
+          { id: 200, mode: "hsRail", service: "Eurostar", from: "London", to: "Paris",
+            km: 364, points: 20029, co2: 2.19, durationH: 2.4, when: daysFromNow(12), status: "booked" },
+        ],
+        redemptions: [],
+        points: 20029,
+        activeChallenges: [],
+        rewardFilter: "all",
+        discoverFilter: "world",
+        screen: "home",
+        settings: {
+          monthlyGoal: 250,
+          units: "metric",          // metric | imperial
+          currency: "EUR",          // EUR | GBP | USD
+          notifications: true,
+          weeklyDigest: true,
+          defaultPrivacy: "public", // public | followers | only_me
+          theme: "system",          // system | light | dark
+          language: "en",
+        },
+      };
+
+      function loadState() { try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch (e) {} return null; }
+      function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+      const state = Object.assign({}, defaultState, loadState() || {});
+      if (state.bookings == null)        state.bookings = defaultState.bookings;
+      if (state.points == null)          state.points = defaultState.points;
+      if (state.redemptions == null)     state.redemptions = [];
+      if (state.rewardFilter == null)    state.rewardFilter = "all";
+      if (state.discoverFilter == null)  state.discoverFilter = "world";
+      if (state.activeChallenges == null) state.activeChallenges = [];
+      if (state.settings == null) state.settings = { ...defaultState.settings };
+      else state.settings = { ...defaultState.settings, ...state.settings };
+
+      /* =================== HELPERS =================== */
+      const $ = (s, r = document) => r.querySelector(s);
+      const screens = $("#screens");
+      const toastEl = $("#toast");
+      let toastTimer;
+
+      function toast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+      }
+
+      const currentUser = () => USERS[Object.keys(USERS).find((k) => USERS[k].id === state.currentUserId)];
+
+      function formatTimeAgo(iso) {
+        const diffH = Math.floor((Date.now() - new Date(iso).getTime()) / 36e5);
+        if (diffH < 1) return "Just now";
+        if (diffH === 1) return "1h ago";
+        if (diffH < 24) return `${diffH}h ago`;
+        if (diffH < 48) return "Yesterday";
+        return `${Math.floor(diffH / 24)}d ago`;
+      }
+      function formatFutureDate(iso) {
+        const d = new Date(iso);
+        const diff = Math.round((d.getTime() - Date.now()) / 86400000);
+        if (diff <= 0) return "Today";
+        if (diff === 1) return "Tomorrow";
+        if (diff < 7) return `In ${diff} days`;
+        return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      }
+      function totalCarbonSaved() { return state.trips.reduce((s, t) => s + calcCarbonSaved(t.mode, t.km), 0); }
+      function todayCarbon() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        return state.trips.filter((t) => new Date(t.date).getTime() >= today.getTime())
+          .reduce((s, t) => s + calcCarbonSaved(t.mode, t.km), 0);
+      }
+      function weeklyStats() {
+        const wAgo = Date.now() - 7 * 86400000;
+        const w = state.trips.filter((t) => new Date(t.date).getTime() >= wAgo);
+        const ecoTrips = w.filter((t) => t.mode !== "carpool" && t.mode !== "airplane").length;
+        const carbon = w.reduce((s, t) => s + calcCarbonSaved(t.mode, t.km), 0);
+        const counts = {};
+        w.forEach((t) => (counts[t.mode] = (counts[t.mode] || 0) + 1));
+        const fav = Object.entries(counts).sort((a,b) => b[1] - a[1])[0]?.[0] || "cycling";
+        return { ecoTrips, carbon, favoriteMode: fav };
+      }
+      function currentStreak() {
+        const days = new Set(state.trips
+          .filter((t) => t.mode !== "carpool" && t.mode !== "airplane")
+          .map((t) => new Date(t.date).toDateString()));
+        let streak = 0;
+        for (let i = 0; i < 60; i++) {
+          const d = new Date(); d.setDate(d.getDate() - i);
+          if (days.has(d.toDateString())) streak++;
+          else if (i > 0) break;
+        }
+        return streak;
+      }
+      /* Carbon saved broken down by source — for the Profile breakdown */
+      function carbonBySource() {
+        const buckets = { active: 0, transit: 0, ev: 0 };
+        for (const t of state.trips) {
+          const saved = calcCarbonSaved(t.mode, t.km);
+          if (t.mode === "walking" || t.mode === "cycling") buckets.active += saved;
+          else if (t.mode === "publicTransport") buckets.transit += saved;
+          else if (t.mode === "electricVehicle") buckets.ev += saved;
+        }
+        return buckets;
+      }
+      function formatPoints(n) {
+        if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k";
+        return n.toString();
+      }
+
+      function avatarHtml(user, size = 40, ringClass = "") {
+        const initial = (user.displayName || "?").charAt(0).toUpperCase();
+        const fontSize = Math.max(12, Math.round(size * 0.42));
+        const gradients = [
+          "linear-gradient(135deg, #2f3a3a, #1a2424)",
+          "linear-gradient(135deg, #3b4a3f, #1f2a23)",
+          "linear-gradient(135deg, #4a4337, #2a241c)",
+          "linear-gradient(135deg, #3a3f4a, #1f242e)",
+          "linear-gradient(135deg, #4a3a40, #2a1f23)",
+        ];
+        const g = gradients[(user.id - 1) % gradients.length];
+        return `
+          <div class="avatar ${ringClass}" style="width:${size}px;height:${size}px;background:${g};font-size:${fontSize}px">
+            <span class="initials">${initial}</span>
+            ${user.photo ? `<img src="${user.photo}" alt="${user.displayName}" referrerpolicy="no-referrer" onerror="this.remove()" />` : ""}
+          </div>
+        `;
+      }
+
+      function sectionHeader(title, linkText, linkGo) {
+        return `
+          <div class="flex items-baseline justify-between mb-3">
+            <h2 class="text-[15px] font-semibold tracking-tight">${title}</h2>
+            ${linkText ? `<button class="text-[12px] text-[color:var(--muted-foreground)] font-medium" data-go="${linkGo}">${linkText}</button>` : ""}
+          </div>
+        `;
+      }
+
+      /* — Settings row helpers — */
+      function settingsToggleRow(id, icon, title, caption, on) {
+        return `
+          <button class="w-full flex items-center justify-between px-4 py-3 text-left" data-toggle-setting="${id}">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--secondary); color:var(--muted-foreground)">
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[14px] font-medium">${title}</p>
+                <p class="text-[11px] text-[color:var(--muted-foreground)]">${caption}</p>
+              </div>
+            </div>
+            <span class="toggle-switch ${on ? 'on' : ''}"><span class="dot"></span></span>
+          </button>`;
+      }
+      function settingsLinkRow(icon, title, caption, toastMsg) {
+        return `
+          <button class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-secondary/40" data-toast="${toastMsg}">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--secondary); color:var(--muted-foreground)">
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[14px] font-medium">${title}</p>
+                <p class="text-[11px] text-[color:var(--muted-foreground)]">${caption}</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-[color:var(--muted-foreground)]"></i>
+          </button>`;
+      }
+      function settingsSegmentedRow(id, icon, title, options, active) {
+        return `
+          <div class="px-4 py-3">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--secondary); color:var(--muted-foreground)">
+                  <i data-lucide="${icon}" class="w-4 h-4"></i>
+                </div>
+                <p class="text-[14px] font-medium">${title}</p>
+              </div>
+            </div>
+            <div class="flex gap-1 bg-[color:var(--secondary)] p-1 rounded-full">
+              ${options.map((o) => `
+                <button class="setting-seg flex-1 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all
+                              ${active === o.key
+                                ? "bg-white text-foreground shadow-elev-1"
+                                : "text-[color:var(--muted-foreground)]"}"
+                        data-setting="${id}" data-value="${o.key}">${o.label}</button>
+              `).join("")}
+            </div>
+          </div>`;
+      }
+      function settingsRadioRow(id, title, options, active) {
+        return `
+          <div class="px-4 py-3">
+            <p class="text-[14px] font-medium mb-2.5">${title}</p>
+            <div class="grid grid-cols-3 gap-2">
+              ${options.map((o) => `
+                <button class="setting-seg flex flex-col items-center gap-1 py-2.5 rounded-xl border text-[11px] font-medium transition-all
+                              ${active === o.key
+                                ? "border-[color:var(--app-sage)] bg-[color:var(--app-sage-soft)] text-[color:var(--app-sage)]"
+                                : "border-[color:var(--app-line)] text-[color:var(--muted-foreground)] bg-white"}"
+                        data-setting="${id}" data-value="${o.key}">
+                  <i data-lucide="${o.icon}" class="w-4 h-4"></i> ${o.label}
+                </button>
+              `).join("")}
+            </div>
+          </div>`;
+      }
+      function langLabel(code) {
+        return ({ en: "English", fr: "Français", de: "Deutsch", es: "Español", it: "Italiano", ja: "日本語" }[code]) || "English";
+      }
+
+      /* — Share-form helpers — */
+      function makeShareForm(sourceType, sourceId) {
+        const src = resolveShareSource({ sourceType, sourceId });
+        return {
+          sourceType,                            // "trip" or "booking"
+          sourceId: sourceId || null,
+          title: src ? defaultShareTitle(sourceType, src) : "",
+          body:  src ? defaultShareBody(sourceType, src)  : "",
+          photos: [null, null, null, null],      // up to 4 mock photo URLs
+          privacy: state.settings?.defaultPrivacy || "public",   // public | followers | only_me
+          mute: false,
+          include: { ecoScore: true, co2: true, distance: true, comparison: true },
+        };
+      }
+      /* Normalise a logged trip or upcoming booking into a unified shape. */
+      function resolveShareSource(f) {
+        if (!f || !f.sourceId) return null;
+        if (f.sourceType === "booking") {
+          const b = state.bookings.find((x) => x.id === f.sourceId);
+          if (!b) return null;
+          const mode = byKey(b.mode) || { icon: "🎫", name: b.mode };
+          const co2Per = mode.co2Per ?? 0;
+          const km = b.km;
+          const savedKg = Math.max(0, km * 0.155 - km * co2Per);     // vs standard flight where present, falls back to 0
+          const typicalSavedPct = co2Per ? Math.round((1 - co2Per / 0.155) * 100) : 0;
+          return {
+            kind: "booking", id: b.id,
+            icon: mode.icon, name: mode.name, service: b.service,
+            from: b.from, to: b.to, km, savedKg,
+            ecoScore: mode.ecoScore ?? Math.round(100 - (co2Per / 0.155) * 55),
+            durStr: b.durationH ? formatHours(b.durationH) : (estimateDuration(b.mode, km) ? formatHours(estimateDuration(b.mode, km)) : "—"),
+            typicalSavedPct,
+          };
+        }
+        const t = state.trips.find((x) => x.id === f.sourceId);
+        if (!t) return null;
+        const tm = TRANSPORT_MODES[t.mode] || { icon: "🚗", name: t.mode };
+        const co2Per = tm.carbonPerKm ?? 0;
+        const km = t.km;
+        const savedKg = calcCarbonSaved(t.mode, km);
+        const typicalCo2 = km >= 250 ? km * 0.155 : km * 1.25 * 0.171;
+        const tripCo2 = km * co2Per;
+        const typicalSavedPct = typicalCo2 > 0 ? Math.round(((typicalCo2 - tripCo2) / typicalCo2) * 100) : 0;
+        return {
+          kind: "trip", id: t.id,
+          icon: tm.icon, name: tm.name, service: null,
+          from: t.from, to: t.to, km, savedKg,
+          ecoScore: Math.round(100 - (co2Per / 0.155) * 55),
+          durStr: estimateDuration(t.mode, km) ? formatHours(estimateDuration(t.mode, km)) : "—",
+          typicalSavedPct,
+        };
+      }
+      function defaultShareTitle(type, src) {
+        if (type === "booking") return `Booked: ${src.from} → ${src.to}${src.service ? ` on ${src.service}` : ""}`;
+        return `${src.from} → ${src.to} by ${src.name.toLowerCase()}`;
+      }
+      function defaultShareBody(type, src) {
+        if (type === "booking") {
+          return `Just booked the ${src.service || src.name.toLowerCase()} from ${src.from} to ${src.to} — about ${src.savedKg.toFixed(0)} kg less CO₂ than flying.`;
+        }
+        return `Travelled from ${src.from} to ${src.to} by ${src.name.toLowerCase()} — saved ${src.savedKg.toFixed(1)} kg of CO₂.`;
+      }
+      function heroStat(label, value, unit) {
+        return `
+          <div class="text-center py-3.5 px-2">
+            <p class="font-display text-[20px] leading-none tabular-nums">${value}${unit ? `<span class="text-[11px] text-[color:var(--muted-foreground)] ml-0.5">${unit}</span>` : ""}</p>
+            <p class="text-[10px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-1.5">${label}</p>
+          </div>`;
+      }
+      function heroEcoStat(score) {
+        const b = ecoBadge(score);
+        return `
+          <div class="text-center py-3.5 px-2">
+            <p class="font-display text-[20px] leading-none tabular-nums" style="color:${b.color}">${score}</p>
+            <p class="text-[10px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-1.5">Eco Score</p>
+          </div>`;
+      }
+      function shareSourcePills(f) {
+        const trips    = state.trips.slice(0, 5);
+        const bookings = state.bookings.slice(0, 5);
+        const pill = (active, type, id, icon, primary, secondary) => `
+          <button class="share-source shrink-0 flex items-center gap-2 px-3 py-2 rounded-2xl border text-left
+                        ${active
+                          ? "border-[color:var(--app-sage)] bg-[color:var(--app-sage-soft)]"
+                          : "border-[color:var(--app-line)] bg-white"}"
+                  data-src-type="${type}" data-src-id="${id}">
+            <span class="text-base">${icon}</span>
+            <div class="leading-tight">
+              <div class="text-[12px] font-semibold truncate max-w-[160px]">${primary}</div>
+              <div class="text-[10px] text-[color:var(--muted-foreground)] truncate max-w-[160px]">${secondary}</div>
+            </div>
+          </button>`;
+        const html = [];
+        for (const t of trips) {
+          const tm = TRANSPORT_MODES[t.mode] || { icon: "🚗", name: t.mode };
+          html.push(pill(f.sourceType === "trip" && f.sourceId === t.id,
+            "trip", t.id, tm.icon, `${t.from} → ${t.to}`, `${tm.name} · ${formatTimeAgo(t.date)}`));
+        }
+        for (const b of bookings) {
+          const bm = byKey(b.mode) || { icon: "🎫", name: b.mode };
+          html.push(pill(f.sourceType === "booking" && f.sourceId === b.id,
+            "booking", b.id, bm.icon, `${b.from} → ${b.to}`, `${b.service || bm.name} · ${formatFutureDate(b.when)}`));
+        }
+        return html.join("") || `<p class="text-[12px] text-[color:var(--muted-foreground)] px-2">No trips yet — log one or book one to share it.</p>`;
+      }
+      // A fake gallery of stock photos used for the "Add photo" mock interaction
+      const SHARE_STOCK_PHOTOS = [
+        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1502630859934-b3b41d18206c?w=600&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=600&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1500964757637-c85e8a162699?w=600&q=80&auto=format&fit=crop",
+      ];
+      function photoSlot(url, index) {
+        if (url) {
+          return `
+            <div class="photo-slot filled" data-photo-index="${index}">
+              <img src="${url}" alt="" onerror="this.remove()" />
+              <span class="rm" data-photo-remove="${index}" title="Remove">×</span>
+            </div>`;
+        }
+        return `
+          <div class="photo-slot" data-photo-add="${index}" title="Add a photo">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+          </div>`;
+      }
+      function detailToggle(key, label, value, icon, on) {
+        return `
+          <button class="w-full flex items-center justify-between px-4 py-3 text-left" data-toggle="include-${key}">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--app-sage-soft); color:var(--app-sage)">
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[14px] font-medium">${label}</p>
+                <p class="text-[11px] text-[color:var(--muted-foreground)] tabular-nums">${value}</p>
+              </div>
+            </div>
+            <span class="toggle-switch ${on ? 'on' : ''}"><span class="dot"></span></span>
+          </button>`;
+      }
+      function privacyRow(key, title, caption, icon, active) {
+        const on = active === key;
+        return `
+          <button class="w-full flex items-center justify-between px-4 py-3 text-left" data-privacy="${key}">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:${on ? 'var(--app-sage-soft)' : 'var(--secondary)'}; color:${on ? 'var(--app-sage)' : 'var(--muted-foreground)'}">
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[14px] font-medium">${title}</p>
+                <p class="text-[11px] text-[color:var(--muted-foreground)]">${caption}</p>
+              </div>
+            </div>
+            <span class="w-5 h-5 rounded-full flex items-center justify-center border ${on ? 'border-[color:var(--app-sage)]' : 'border-[color:var(--app-line)]'}">
+              ${on ? `<span class="w-2.5 h-2.5 rounded-full" style="background:var(--app-sage)"></span>` : ""}
+            </span>
+          </button>`;
+      }
+
+      function estimateDuration(key, km) {
+        const speeds = { walk: 5, bike: 16, ebike: 22, metro: 30, tram: 25, bus: 55, train: 90, hsRail: 220, ferry: 30, ev: 90, carpool: 90, flightSaf: 750, flight: 750 };
+        if (!speeds[key] || !km) return null;
+        const overhead = key === "flight" || key === "flightSaf" ? 2.5 : 0;
+        return km / speeds[key] + overhead;
+      }
+      function formatHours(h) {
+        if (h < 1) return `${Math.round(h * 60)} min`;
+        const whole = Math.floor(h);
+        const mins = Math.round((h - whole) * 60);
+        return mins === 0 ? `${whole} h` : `${whole} h ${mins} m`;
+      }
+
+      /* =================== SCREENS =================== */
+      const renderers = {
+        home() {
+          const u = currentUser();
+          const today = todayCarbon();
+          const upcoming = [...state.bookings].sort((a,b) => +new Date(a.when) - +new Date(b.when));
+
+          return `
+            <section class="screen" data-name="home">
+              <!-- Sticky header: brand + greeting + points pill -->
+              <header class="px-5 pt-6 pb-3 sticky top-0 z-10" style="background:hsl(40 15% 98% / .9); backdrop-filter: blur(20px); border-bottom:1px solid hsl(220 14% 91% / .7)">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    ${avatarHtml(u, 40)}
+                    <div class="leading-tight text-left">
+                      <p class="text-[11px] uppercase tracking-[0.14em] flex items-center gap-1" style="color:var(--app-sage)">
+                        <i data-lucide="leaf" class="w-3 h-3"></i> WanderWell
+                      </p>
+                      <h1 class="text-[16px] font-semibold">Hi, ${u.displayName.split(" ")[0]}</h1>
+                    </div>
+                  </div>
+                  <button class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:scale-105 transition-transform"
+                          style="background:var(--app-gold-soft); border:1px solid hsl(38 75% 50% / .2)" data-go="rewards">
+                    <i data-lucide="award" class="w-4 h-4" style="color:var(--app-gold)"></i>
+                    <span class="font-semibold tabular-nums text-[13px]" style="color:hsl(38 60% 25%)">${formatPoints(state.points)}</span>
+                    <span class="text-[10px] uppercase tracking-wider" style="color:hsl(38 35% 38%)">pts</span>
+                  </button>
+                </div>
+              </header>
+
+              <!-- Discover hero banner -->
+              <div class="mx-5 mt-4 rounded-2xl overflow-hidden shadow-elev-1 relative" style="height:180px">
+                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900&q=80&auto=format&fit=crop"
+                     alt="Mountain lake at dawn" class="w-full h-full object-cover"
+                     onerror="this.style.display='none'" />
+                <div class="absolute inset-0" style="background:linear-gradient(115deg, hsl(220 24% 8% / .75) 0%, hsl(220 24% 8% / .25) 60%, transparent 100%)"></div>
+                <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
+                  <p class="text-[10px] uppercase tracking-[0.18em] font-semibold mb-1.5" style="color:hsl(150 40% 80%)">Travel that gives back</p>
+                  <h3 class="font-display text-[22px] leading-tight max-w-[240px] mb-3">Travel sustainably, connect globally.</h3>
+                  <button class="self-start text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full text-white" style="background:var(--app-sage)" data-go="book">
+                    Start your journey
+                  </button>
+                </div>
+              </div>
+
+              <!-- Compact Today's Impact strip + Quick Actions -->
+              <section class="px-5 pt-4">
+                <div class="rounded-2xl p-4 text-white shadow-ink ring-hairline flex items-center justify-between" style="background:var(--app-ink)">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:hsl(150 24% 22%)">
+                      <i data-lucide="leaf" class="w-5 h-5" style="color:hsl(150 40% 80%)"></i>
+                    </div>
+                    <div>
+                      <p class="text-[10px] uppercase tracking-[0.14em] text-white/60">Today's impact</p>
+                      <p class="font-display text-[22px] leading-none tabular-nums mt-0.5">${today.toFixed(1)} <span class="text-[11px] text-white/65 font-sans">kg CO₂ avoided</span></p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 text-emerald-300/90 text-sm font-semibold">
+                    <i data-lucide="arrow-up-right" class="w-4 h-4"></i>+47%
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                  <button class="h-11 rounded-2xl text-white font-medium flex items-center justify-center gap-1.5 shadow-elev-1 text-[13.5px]" style="background:var(--app-ink)" data-go="log">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Log a trip
+                  </button>
+                  <button class="h-11 rounded-2xl font-medium flex items-center justify-center gap-1.5 shadow-elev-1 text-white text-[13.5px]" style="background:var(--app-sage)" data-go="book">
+                    <i data-lucide="ticket" class="w-4 h-4"></i> Book a trip
+                  </button>
+                </div>
+              </section>
+
+              ${upcoming.length ? `
+                <section class="px-5 mt-6">
+                  ${sectionHeader("Upcoming", "All bookings", "trips")}
+                  <div class="space-y-2">${upcoming.slice(0, 2).map(bookingRow).join("")}</div>
+                </section>
+              ` : ""}
+
+              <!-- Trending sustainable destinations -->
+              <section class="mt-7">
+                <div class="px-5 mb-3 flex items-baseline justify-between">
+                  <h2 class="text-[15px] font-semibold tracking-tight">Trending eco destinations</h2>
+                  <button class="text-[12px] text-[color:var(--muted-foreground)] font-medium">See all</button>
+                </div>
+                <div class="flex gap-3 overflow-x-auto px-5 pb-2" style="scrollbar-width:none">
+                  ${DESTINATIONS.map(destinationCard).join("")}
+                </div>
+              </section>
+
+              <!-- Eco-events -->
+              <section class="mt-7">
+                <div class="px-5 mb-3 flex items-baseline justify-between">
+                  <h2 class="text-[15px] font-semibold tracking-tight">Eco-events near you</h2>
+                  <button class="text-[12px] text-[color:var(--muted-foreground)] font-medium">See all</button>
+                </div>
+                <div class="flex gap-3 overflow-x-auto px-5 pb-2" style="scrollbar-width:none">
+                  ${ECO_EVENTS.map(eventCard).join("")}
+                </div>
+              </section>
+
+              <!-- From the community feed + compact "+ Add new post" -->
+              <section class="px-5 mt-7 text-left">
+                <div class="flex items-center justify-between mb-3">
+                  <h2 class="text-[15px] font-semibold tracking-tight">From the community</h2>
+                  <button class="inline-flex items-center gap-1.5 text-[12.5px] font-semibold px-3 py-1.5 rounded-full text-white hover:scale-[1.03] transition-transform"
+                          style="background:var(--app-sage)" data-go="share">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add new post
+                  </button>
+                </div>
+                <div class="space-y-3">
+                  ${state.posts.length ? state.posts.map(postCard).join("") : `
+                    <div class="text-center py-10 text-sm text-[color:var(--muted-foreground)]">
+                      No posts yet — be the first to share a journey.
+                    </div>`}
+                </div>
+              </section>
+
+              <!-- Travel tips -->
+              <section class="mx-5 mt-7 rounded-2xl p-5" style="background:var(--app-sage-soft); border:1px solid hsl(150 30% 26% / .15)">
+                <h2 class="text-[15px] font-semibold tracking-tight mb-3" style="color:var(--app-sage)">Sustainable travel tips</h2>
+                <div class="space-y-3">
+                  ${TRAVEL_TIPS.map((t) => `
+                    <div class="bg-white rounded-xl p-3.5 border border-[color:var(--app-line)]">
+                      <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:var(--app-sage-soft); color:var(--app-sage)">
+                          <i data-lucide="${t.icon}" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                          <h3 class="font-semibold text-[14px]">${t.title}</h3>
+                          <p class="text-[12.5px] text-[color:var(--muted-foreground)] mt-1 leading-snug">${t.body}</p>
+                        </div>
+                      </div>
+                    </div>
+                  `).join("")}
+                </div>
+              </section>
+
+              <!-- Daily eco tip -->
+              <section class="px-5 mt-7 mb-2">
+                <div class="rounded-2xl p-4 text-left" style="background: var(--app-sage-soft); border: 1px solid hsl(150 30% 26% / .15)">
+                  <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="sparkles" class="w-4 h-4" style="color:var(--app-sage)"></i>
+                    <span class="text-[11px] uppercase tracking-[0.16em] font-semibold" style="color:var(--app-sage)">Daily tip</span>
+                  </div>
+                  <p class="text-[14px] leading-relaxed text-foreground/85">
+                    Booking a train instead of a short-haul flight can avoid
+                    <strong>~70 kg of CO₂ per 500 km</strong> — and earns you
+                    <strong>2,500 WanderWell EcoPoints</strong>.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Suggested travellers (compact) -->
+              <section class="px-5 mt-5 mb-6 text-left">
+                <h2 class="text-[15px] font-semibold tracking-tight mb-3">Travellers you might follow</h2>
+                <div class="space-y-2">${suggestionList()}</div>
+              </section>
+            </section>
+          `;
+        },
+
+        settings() {
+          const s = state.settings;
+          const u = currentUser();
+          return `
+            <section class="screen" data-name="settings">
+              <header class="page-hero">
+                <div class="flex items-start justify-between">
+                  <div class="text-left">
+                    <span class="hero-eyebrow"><i data-lucide="settings" class="w-3 h-3"></i> Preferences</span>
+                    <h1 class="hero-title">Settings</h1>
+                    <p class="hero-subtitle">Tune WanderWell to your life.</p>
+                  </div>
+                  <button class="text-[13px] font-medium text-white/80 hover:text-white" data-go="profile">Done</button>
+                </div>
+              </header>
+
+              <main class="px-5 py-5 text-left space-y-6">
+                <!-- Account -->
+                <section>
+                  <p class="eyebrow mb-2.5">Account</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    <div class="flex items-center gap-3 px-4 py-3">
+                      ${avatarHtml(u, 44)}
+                      <div class="flex-1 min-w-0">
+                        <p class="text-[14px] font-semibold truncate">${u.displayName}</p>
+                        <p class="text-[11.5px] text-[color:var(--muted-foreground)] truncate">@${u.username}${u.email ? " · " + u.email : ""}</p>
+                      </div>
+                      <button class="text-[12px] font-semibold text-[color:var(--app-sage)]" data-toast="Profile editing coming soon">Edit</button>
+                    </div>
+                    ${settingsLinkRow("user-cog", "Account & privacy", "Email, password, blocked users", "Account settings coming soon")}
+                    ${settingsLinkRow("globe", "Language", langLabel(s.language), "Language picker coming soon")}
+                  </div>
+                </section>
+
+                <!-- Goals -->
+                <section>
+                  <p class="eyebrow mb-2.5">Sustainability goals</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    <div class="px-4 py-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-3">
+                          <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--app-sage-soft); color:var(--app-sage)">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                          </div>
+                          <div>
+                            <p class="text-[14px] font-medium">Monthly carbon goal</p>
+                            <p class="text-[11px] text-[color:var(--muted-foreground)]">How much CO₂ you aim to avoid each month</p>
+                          </div>
+                        </div>
+                        <p class="font-display text-[18px] tabular-nums">${s.monthlyGoal} <span class="text-[11px] text-[color:var(--muted-foreground)]">kg</span></p>
+                      </div>
+                      <input id="set-goal" type="range" min="50" max="500" step="25" value="${s.monthlyGoal}"
+                             style="width:100%; accent-color:var(--app-sage)" />
+                      <div class="flex justify-between text-[10px] text-[color:var(--muted-foreground)] mt-1 tabular-nums">
+                        <span>50 kg</span><span>250 kg</span><span>500 kg</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Posting defaults -->
+                <section>
+                  <p class="eyebrow mb-2.5">Posting defaults</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${settingsRadioRow("default-privacy", "Default audience", [
+                      { key: "public",    label: "Everyone",  icon: "globe" },
+                      { key: "followers", label: "Followers", icon: "users" },
+                      { key: "only_me",   label: "Only you",  icon: "lock"  },
+                    ], s.defaultPrivacy)}
+                  </div>
+                </section>
+
+                <!-- Units & currency -->
+                <section>
+                  <p class="eyebrow mb-2.5">Units & currency</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${settingsSegmentedRow("set-units", "navigation", "Distance", [
+                      { key: "metric",   label: "Metric (km)" },
+                      { key: "imperial", label: "Imperial (mi)" },
+                    ], s.units)}
+                    ${settingsSegmentedRow("set-currency", "wallet", "Currency", [
+                      { key: "EUR", label: "€ EUR" },
+                      { key: "GBP", label: "£ GBP" },
+                      { key: "USD", label: "$ USD" },
+                    ], s.currency)}
+                  </div>
+                </section>
+
+                <!-- Notifications -->
+                <section>
+                  <p class="eyebrow mb-2.5">Notifications</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${settingsToggleRow("set-notifications", "bell", "Push notifications", "Booking updates, achievements, replies", s.notifications)}
+                    ${settingsToggleRow("set-digest", "mail",  "Weekly impact digest", "A short Friday email recapping your week", s.weeklyDigest)}
+                  </div>
+                </section>
+
+                <!-- Appearance -->
+                <section>
+                  <p class="eyebrow mb-2.5">Appearance</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${settingsSegmentedRow("set-theme", "sun-moon", "Theme", [
+                      { key: "system", label: "System" },
+                      { key: "light",  label: "Light" },
+                      { key: "dark",   label: "Dark" },
+                    ], s.theme)}
+                  </div>
+                </section>
+
+                <!-- About -->
+                <section>
+                  <p class="eyebrow mb-2.5">About</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${settingsLinkRow("life-buoy", "Help & support",  "Get in touch with our team", "Support form coming soon")}
+                    ${settingsLinkRow("file-text", "Privacy policy",  "How we handle your data",    "Privacy policy coming soon")}
+                    ${settingsLinkRow("scroll",    "Terms of service","The fine print",             "Terms coming soon")}
+                    ${settingsLinkRow("info",      "About WanderWell","Version 1.0 · Made with care", "About page coming soon")}
+                  </div>
+                </section>
+
+                <!-- Danger zone -->
+                <section>
+                  <p class="eyebrow mb-2.5" style="color:hsl(15 65% 38%)">Danger zone</p>
+                  <div class="rounded-2xl bg-white border border-[color:var(--app-line)] overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    <button class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-rose-50/40" data-go="home" data-toast="Signed out (demo)">
+                      <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:hsl(15 70% 95%); color:hsl(15 65% 45%)">
+                          <i data-lucide="log-out" class="w-4 h-4"></i>
+                        </div>
+                        <p class="text-[14px] font-medium">Sign out</p>
+                      </div>
+                      <i data-lucide="chevron-right" class="w-4 h-4 text-[color:var(--muted-foreground)]"></i>
+                    </button>
+                    <button class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-rose-50/40" onclick="resetData()">
+                      <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:hsl(15 70% 95%); color:hsl(15 65% 45%)">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                          <p class="text-[14px] font-medium" style="color:hsl(15 65% 38%)">Clear all data</p>
+                          <p class="text-[11px] text-[color:var(--muted-foreground)]">Resets trips, bookings, points and redemptions on this device.</p>
+                        </div>
+                      </div>
+                      <i data-lucide="chevron-right" class="w-4 h-4 text-[color:var(--muted-foreground)]"></i>
+                    </button>
+                  </div>
+                  <p class="text-[10.5px] text-[color:var(--muted-foreground)] mt-3 px-1">
+                    WanderWell stores everything locally in your browser. Clearing data here can't be undone.
+                  </p>
+                </section>
+              </main>
+            </section>
+          `;
+        },
+
+        // Discover has been merged into Home — this alias keeps any old links working.
+        discover() { return renderers.home(); },
+
+        book() {
+          const f = window._bookForm || (window._bookForm = { fromId: "", toId: "", when: "" });
+          const from = cityById(f.fromId);
+          const to   = cityById(f.toId);
+          const options = (from && to && from.id !== to.id) ? optionsForRoute(from, to) : null;
+          const distance = (from && to && from.id !== to.id) ? haversineKm(from, to) : 0;
+          const corridor = (from && to) ? corridorFor(from.id, to.id) : null;
+
+          const optionsHtml = options && options.length
+            ? options.map((o, i) => bookingOptionCard(o, i === 0)).join("")
+            : (from && to && from.id === to.id)
+              ? emptyState("Same city, same place", "Pick two different destinations to see the options.")
+              : emptyState("Pick a route", "Choose where you're going and we'll rank the most sustainable ways to get there.");
+
+          const popularChips = POPULAR_ROUTES.map((r) => {
+            const a = cityById(r.from), b = cityById(r.to);
+            if (!a || !b) return "";
+            const corr = corridorFor(a.id, b.id);
+            const label = `${a.name} → ${b.name}`;
+            const sub = corr ? `via ${corr.service}` : `${Math.round(haversineKm(a, b))} km`;
+            return `
+              <button class="popular-route shrink-0 rounded-2xl border border-[color:var(--app-line)] bg-white px-4 py-3 text-left shadow-elev-1 hover:border-[color:var(--app-sage)]"
+                      data-from="${a.id}" data-to="${b.id}">
+                <div class="text-[13px] font-semibold leading-tight">${label}</div>
+                <div class="text-[11px] text-[color:var(--muted-foreground)] mt-0.5">${sub}</div>
+              </button>`;
+          }).join("");
+
+          return `
+            <section class="screen" data-name="book">
+              <header class="page-hero">
+                <div class="flex items-start justify-between mb-5">
+                  <div class="text-left">
+                    <span class="hero-eyebrow"><i data-lucide="navigation" class="w-3 h-3"></i> Plan ahead</span>
+                    <h1 class="hero-title">Book a trip</h1>
+                    <p class="hero-subtitle">Compare every realistic way to get there, ranked by what's best for the planet.</p>
+                  </div>
+                  <button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:scale-105 transition-transform"
+                          style="background:hsl(38 75% 60% / .15); border:1px solid hsl(38 75% 60% / .3)" data-go="rewards">
+                    <i data-lucide="award" class="w-3.5 h-3.5" style="color:hsl(38 90% 70%)"></i>
+                    <span class="font-semibold tabular-nums text-[12px]">${formatPoints(state.points)}</span>
+                    <span class="text-[10px] text-white/60 uppercase tracking-wider">pts</span>
+                  </button>
+                </div>
+                <div class="rounded-2xl p-4 space-y-3" style="background:hsl(0 0% 100% / .08); backdrop-filter: blur(8px); border:1px solid hsl(0 0% 100% / .08)">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">From</label>
+                      <input id="book-from" list="cities-list" autocomplete="off"
+                             class="input bg-white/15 text-white placeholder-white/40 border-white/10 focus:bg-white/25 focus:border-white/40"
+                             placeholder="e.g. London" value="${from ? cityLabel(from) : ""}" />
+                    </div>
+                    <div>
+                      <label class="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">To</label>
+                      <input id="book-to" list="cities-list" autocomplete="off"
+                             class="input bg-white/15 text-white placeholder-white/40 border-white/10 focus:bg-white/25 focus:border-white/40"
+                             placeholder="e.g. Paris" value="${to ? cityLabel(to) : ""}" />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">When</label>
+                    <input id="book-when" type="date" class="input bg-white/15 text-white placeholder-white/40 border-white/10 focus:bg-white/25 focus:border-white/40" value="${f.when || ""}" />
+                  </div>
+                </div>
+                ${from && to && from.id !== to.id ? `
+                  <div class="mt-4 flex items-center justify-between text-[12px]">
+                    <span class="text-white/65">Approx. distance</span>
+                    <span class="font-semibold tabular-nums">${distance.toFixed(0)} km${corridor ? ` · via ${corridor.service}` : ""}</span>
+                  </div>` : ""}
+              </header>
+
+              <main class="px-5 py-6 text-left">
+                ${!from || !to ? `
+                  <section class="mb-6">
+                    <h2 class="text-[15px] font-semibold tracking-tight mb-3">Popular routes</h2>
+                    <div class="flex gap-3 overflow-x-auto -mx-5 px-5 pb-2" style="scrollbar-width:none">${popularChips}</div>
+                  </section>` : ""}
+
+                ${options && options.length ? `
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 class="text-[15px] font-semibold tracking-tight">Choose your ride</h2>
+                      <p class="text-xs text-[color:var(--muted-foreground)] mt-0.5">Ranked by lowest emissions for this route.</p>
+                    </div>
+                    <div class="text-[10px] uppercase tracking-wider text-[color:var(--muted-foreground)] font-semibold flex items-center gap-1">
+                      <i data-lucide="leaf" class="w-3.5 h-3.5"></i> CO₂ first
+                    </div>
+                  </div>` : ""}
+
+                <div class="space-y-2.5">${optionsHtml}</div>
+
+                ${distance >= 300 ? `
+                  <div class="mt-6 rounded-2xl p-4 text-left" style="background: var(--app-sage-soft); border: 1px solid hsl(150 30% 26% / .15)">
+                    <div class="flex items-center gap-2 mb-1.5">
+                      <i data-lucide="info" class="w-4 h-4" style="color:var(--app-sage)"></i>
+                      <span class="text-[11px] uppercase tracking-[0.16em] font-semibold" style="color:var(--app-sage)">About SAF</span>
+                    </div>
+                    <p class="text-[13px] leading-relaxed text-foreground/85">
+                      Sustainable Aviation Fuel is made from waste oils, plants
+                      or captured CO₂ instead of fossil kerosene. It typically
+                      cuts a flight's emissions by 50–80%. Some airlines let
+                      you opt in at booking.
+                    </p>
+                  </div>` : ""}
+
+                ${to && hotelsForCity(to.id).length ? `
+                  <section class="mt-8">
+                    <div class="flex items-baseline justify-between mb-3">
+                      <div>
+                        <h2 class="text-[15px] font-semibold tracking-tight">Where you'll stay</h2>
+                        <p class="text-xs text-[color:var(--muted-foreground)] mt-0.5">
+                          Eco-certified hotels in ${to.name}, ranked by sustainability.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="space-y-2.5">
+                      ${hotelsForCity(to.id).sort((a,b)=>b.ecoScore-a.ecoScore).map(hotelCard).join("")}
+                    </div>
+                  </section>` : ""}
+              </main>
+
+              <datalist id="cities-list">
+                ${CITIES.map((c) => `<option value="${cityLabel(c)}"></option>`).join("")}
+              </datalist>
+            </section>
+          `;
+        },
+
+        trips() {
+          const upcoming = [...state.bookings].sort((a,b) => +new Date(a.when) - +new Date(b.when));
+          const sortedTrips = [...state.trips].sort((a,b) => +new Date(b.date) - +new Date(a.date));
+          let body = "";
+          if (upcoming.length) {
+            body += `
+              <section class="mb-7">
+                <div class="flex items-baseline justify-between mb-3">
+                  <h2 class="text-[15px] font-semibold tracking-tight">Upcoming</h2>
+                  <span class="text-[11px] text-[color:var(--muted-foreground)] tabular-nums">${upcoming.length} booked</span>
+                </div>
+                <div class="space-y-2">${upcoming.map(bookingRow).join("")}</div>
+              </section>`;
+          }
+          if (!sortedTrips.length) {
+            body += `
+              <div class="text-center py-10">
+                <div class="text-5xl mb-4">🌱</div>
+                <h3 class="text-[15px] font-semibold mb-1">No past trips yet</h3>
+                <p class="text-sm text-[color:var(--muted-foreground)] mb-6 max-w-[260px] mx-auto">Log a trip you've already taken, or book a new one.</p>
+                <div class="flex justify-center gap-2">
+                  <button class="bg-[color:var(--app-ink)] text-white px-5 py-2.5 rounded-full font-medium text-sm" data-go="log">Log a trip</button>
+                  <button class="text-white px-5 py-2.5 rounded-full font-medium text-sm" style="background:var(--app-sage)" data-go="book">Book a trip</button>
+                </div>
+              </div>`;
+          } else {
+            const groups = {};
+            for (const t of sortedTrips) { const k = new Date(t.date).toDateString(); (groups[k] = groups[k] || []).push(t); }
+            const dayKeys = Object.keys(groups).sort((a,b) => +new Date(b) - +new Date(a));
+            const groupedHtml = dayKeys.map((k) => {
+              const dayTrips = groups[k];
+              const dayCarbon = dayTrips.reduce((s, t) => s + calcCarbonSaved(t.mode, t.km), 0);
+              return `
+                <div class="mb-6">
+                  <div class="flex items-center gap-2 mb-3">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[color:var(--muted-foreground)]"></i>
+                    <h3 class="text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--muted-foreground)]">${labelForDate(k)}</h3>
+                    <div class="flex-1 h-px" style="background:var(--app-line)"></div>
+                    <span class="text-[11px] font-semibold tabular-nums" style="color:var(--app-sage)">−${dayCarbon.toFixed(1)} kg</span>
+                  </div>
+                  <div class="space-y-2">${dayTrips.map(tripRow).join("")}</div>
+                </div>`;
+            }).join("");
+            body += `<section><h2 class="text-[15px] font-semibold tracking-tight mb-3">History</h2>${groupedHtml}</section>`;
+          }
+          return `<section class="screen" data-name="trips">${tripsHeader(sortedTrips)}<main class="px-5 py-6 text-left">${body}</main></section>`;
+        },
+
+        profile() {
+          const u = currentUser();
+          const total = totalCarbonSaved();
+          const monthlyGoal = state.settings?.monthlyGoal ?? 250;
+          const monthlyPct = Math.min(100, Math.round((total / monthlyGoal) * 100));
+          const sources = carbonBySource();
+          const claimedSet = new Set(state.activeChallenges || []);
+
+          return `
+            <section class="screen" data-name="profile">
+              <header class="page-hero" style="padding-top: 28px; padding-bottom: 32px;">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="text-left">
+                    <span class="hero-eyebrow"><i data-lucide="user" class="w-3 h-3"></i> Profile</span>
+                    <h1 class="hero-title">Your eco journey</h1>
+                  </div>
+                  <button class="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/15"
+                          style="background:hsl(0 0% 100% / .08); border:1px solid hsl(0 0% 100% / .08)" data-go="settings">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <div class="flex flex-col items-center text-center mt-3">
+                  <div style="padding: 4px; border-radius: 9999px; background: linear-gradient(135deg, hsl(150 40% 70% / .35), hsl(0 0% 100% / .05));">
+                    ${avatarHtml(u, 96)}
+                  </div>
+                  <h2 class="font-display text-[28px] font-semibold mt-4 tracking-tight">${u.displayName}</h2>
+                  <p class="text-white/65 text-sm">@${u.username}</p>
+                  <p class="text-white/80 text-[13px] mt-2 max-w-[260px] leading-snug">${u.bio || ""}</p>
+                  <button class="mt-5 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full transition-all hover:scale-[1.03]"
+                          style="background:linear-gradient(135deg, hsl(38 90% 60% / .22), hsl(38 75% 50% / .08)); border:1px solid hsl(38 75% 60% / .3)" data-go="rewards">
+                    <i data-lucide="award" class="w-4 h-4" style="color:hsl(38 95% 78%)"></i>
+                    <span class="font-display text-[16px] tabular-nums" style="color:hsl(38 95% 88%)">${formatPoints(state.points)}</span>
+                    <span class="text-[11px] text-white/65 uppercase tracking-wider">EcoPoints · Tap to redeem</span>
+                  </button>
+                  <div class="mt-5 grid grid-cols-3 w-full gap-2">
+                    ${statPill(state.trips.length, "Trips")}
+                    ${statPill(total.toFixed(0), "kg CO₂")}
+                    ${statPill(currentStreak(), "Day streak")}
+                  </div>
+                </div>
+              </header>
+
+              <main class="px-5 py-6 space-y-5 text-left">
+                <!-- Carbon footprint breakdown by source (ecotravel idea) -->
+                <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-5">
+                  <h3 class="flex items-center text-[15px] font-semibold mb-4">
+                    <i data-lucide="leaf" class="w-4 h-4 mr-2" style="color:var(--app-sage)"></i> Carbon footprint
+                  </h3>
+                  <div class="mb-3">
+                    <div class="flex justify-between text-[13px] mb-1.5">
+                      <span class="font-medium">Saved this month</span>
+                      <span class="font-semibold tabular-nums" style="color:var(--app-sage)">${total.toFixed(1)} kg CO₂</span>
+                    </div>
+                    <div class="carbon-progress mb-1">
+                      <div style="width:${monthlyPct}%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-[color:var(--muted-foreground)]">
+                      <span>0 kg</span><span>Target: ${monthlyGoal} kg</span>
+                    </div>
+                  </div>
+                  <div class="space-y-1 mt-4">
+                    ${sourceRow("footprints", "Walking & cycling", sources.active)}
+                    ${sourceRow("train",      "Public transport", sources.transit)}
+                    ${sourceRow("battery-charging", "Electric vehicle",  sources.ev)}
+                  </div>
+                </div>
+
+                <!-- Achievements w/ progress bars (ecotravel idea) -->
+                <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-5">
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="flex items-center text-[15px] font-semibold">
+                      <i data-lucide="trophy" class="w-4 h-4 mr-2" style="color:var(--app-sage)"></i> Achievements
+                    </h3>
+                    <span class="text-[11px] text-[color:var(--muted-foreground)] tabular-nums">
+                      ${ACHIEVEMENTS.filter((a) => a.progressFn(state) >= a.target).length} / ${ACHIEVEMENTS.length}
+                    </span>
+                  </div>
+                  <div class="space-y-3">
+                    ${ACHIEVEMENTS.map(achievementRow).join("")}
+                  </div>
+                </div>
+
+                <!-- Next-Level Challenges (ecotravel idea) -->
+                <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-5">
+                  <h3 class="flex items-center text-[15px] font-semibold mb-4">
+                    <i data-lucide="flag" class="w-4 h-4 mr-2" style="color:var(--app-sage)"></i> Next-level challenges
+                  </h3>
+                  <div class="space-y-3">
+                    ${CHALLENGES.map((c) => {
+                      const active = claimedSet.has(c.id);
+                      return `
+                        <div class="rounded-xl p-4 border ${active ? "border-[color:var(--app-sage)] bg-[color:var(--app-sage-soft)]" : "border-[color:var(--app-line)] bg-secondary/40"}">
+                          <div class="flex items-start gap-3">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:white; color:var(--app-sage)">
+                              <i data-lucide="${c.icon}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                              <h4 class="font-semibold text-[14px]">${c.title}</h4>
+                              <p class="text-[12px] text-[color:var(--muted-foreground)] mt-0.5 leading-snug">${c.desc}</p>
+                              <div class="flex items-center gap-2 mt-2 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-semibold" style="background:var(--app-gold-soft); color:hsl(38 60% 25%)">
+                                  <i data-lucide="award" class="w-3 h-3"></i> +${formatPoints(c.points)} pts
+                                </span>
+                                ${active ? `<span class="text-[color:var(--app-sage)] font-semibold">Active</span>` : ""}
+                              </div>
+                            </div>
+                            <button class="challenge-toggle px-3 py-1.5 rounded-full text-[12px] font-medium shrink-0 ${active ? "bg-white border border-[color:var(--app-line)] text-[color:var(--muted-foreground)]" : "text-white"}"
+                                    ${active ? "" : `style="background:var(--app-sage)"`} data-challenge="${c.id}">
+                              ${active ? "Leave" : "Start"}
+                            </button>
+                          </div>
+                        </div>`;
+                    }).join("")}
+                  </div>
+                </div>
+
+                <div class="rounded-2xl p-6 shadow-elev-1" style="background:var(--app-sage-soft); border:1px solid hsl(150 30% 26% / .15)">
+                  <h3 class="text-[15px] font-semibold mb-4 flex items-center">
+                    <i data-lucide="sparkles" class="w-4 h-4 mr-2" style="color:var(--app-sage)"></i> Your impact
+                  </h3>
+                  <div class="grid grid-cols-2 gap-3">
+                    ${impactTile(Math.round(total * 0.045), "Trees planted, equivalent")}
+                    ${impactTile(Math.round(total * 2.4), "Miles not driven")}
+                  </div>
+                  <p class="text-[13px] text-center mt-4 opacity-70">Quiet choices, real difference.</p>
+                </div>
+              </main>
+            </section>
+          `;
+        },
+
+        log() {
+          if (!window._logForm) window._logForm = { mode: "cycling", from: "", to: "", km: "" };
+          const f = window._logForm;
+          const carbon = f.km > 0 ? calcCarbonSaved(f.mode, parseFloat(f.km)) : 0;
+          return `
+            <section class="screen" data-name="log">
+              <header class="page-hero">
+                <span class="hero-eyebrow"><i data-lucide="plus-circle" class="w-3 h-3"></i> New entry</span>
+                <h1 class="hero-title">Log a trip</h1>
+                <p class="hero-subtitle">Record a journey you've already taken — every kilometre counts toward your impact.</p>
+              </header>
+              <form id="log-form" class="px-5 py-6 space-y-5 text-left">
+                <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-5">
+                  <h3 class="text-[15px] font-semibold mb-3">How did you travel?</h3>
+                  <div class="grid grid-cols-3 gap-2">
+                    ${Object.entries(TRANSPORT_MODES).map(([k, m]) => `
+                      <button type="button" data-mode="${k}"
+                        class="mode-btn p-3 rounded-xl text-center border transition-all
+                          ${f.mode === k ? "border-[color:var(--app-ink)] bg-[color:var(--secondary)]" : "border-[color:var(--app-line)] bg-white"}">
+                        <div class="text-xl mb-1.5">${m.icon}</div>
+                        <div class="text-[11px] font-medium leading-tight">${m.name}</div>
+                      </button>`).join("")}
+                  </div>
+                </div>
+                <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-5">
+                  <h3 class="flex items-center text-[15px] font-semibold mb-4">
+                    <i data-lucide="navigation" class="w-4 h-4 mr-2" style="color:var(--app-sage)"></i> Route
+                  </h3>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="text-[11px] uppercase tracking-wider text-[color:var(--muted-foreground)] mb-2 block">From</label>
+                      <input id="from" class="input" placeholder="e.g. Home" value="${f.from || ""}" />
+                    </div>
+                    <div>
+                      <label class="text-[11px] uppercase tracking-wider text-[color:var(--muted-foreground)] mb-2 block">To</label>
+                      <input id="to" class="input" placeholder="e.g. Office" value="${f.to || ""}" />
+                    </div>
+                    <div>
+                      <label class="text-[11px] uppercase tracking-wider text-[color:var(--muted-foreground)] mb-2 block">Distance (km)</label>
+                      <input id="km" type="number" step="0.1" min="0" class="input" placeholder="0.0" value="${f.km || ""}" />
+                    </div>
+                  </div>
+                </div>
+                ${parseFloat(f.km) > 0 ? `
+                  <div class="rounded-2xl p-6 shadow-elev-1 text-center" style="background:var(--app-sage-soft); border:1px solid hsl(150 30% 26% / .15)">
+                    <div class="font-display text-[42px] leading-none tabular-nums">
+                      ${carbon.toFixed(1)} <span class="text-base text-[color:var(--muted-foreground)] ml-1">kg CO₂</span>
+                    </div>
+                    <p class="text-[12px] uppercase tracking-wider font-semibold mt-3" style="color:var(--app-sage)">Estimated carbon saved</p>
+                    <p class="text-[13px] opacity-70 mt-2 max-w-[280px] mx-auto">${carbonMessage(carbon)}</p>
+                  </div>` : ""}
+                <button type="submit" class="w-full text-white h-14 rounded-2xl font-semibold text-base shadow-ink" style="background:var(--app-ink)">Log trip</button>
+              </form>
+            </section>
+          `;
+        },
+
+        rewards() {
+          const filter = state.rewardFilter || "all";
+          const list = filter === "all" ? REWARDS : REWARDS.filter((r) => r.category === filter);
+          const redemptions = state.redemptions || [];
+          return `
+            <section class="screen" data-name="rewards">
+              <header class="page-hero" style="padding-bottom: 36px;">
+                <span class="hero-eyebrow"><i data-lucide="award" class="w-3 h-3"></i> Redeem</span>
+                <h1 class="hero-title">Rewards</h1>
+                <div class="mt-7 rounded-3xl p-6 text-center" style="background:linear-gradient(135deg, hsl(38 90% 60% / .18), hsl(38 75% 50% / .06)); border:1px solid hsl(38 75% 60% / .25)">
+                  <p class="text-[10px] uppercase tracking-[0.18em] text-white/60">Your balance</p>
+                  <div class="font-display text-[52px] leading-none tabular-nums mt-3 flex items-baseline justify-center gap-2" style="color:hsl(38 95% 78%)">
+                    <i data-lucide="award" class="w-7 h-7"></i> ${formatPoints(state.points)}
+                  </div>
+                  <p class="text-[11px] text-white/65 uppercase tracking-wider mt-2">EcoPoints</p>
+                </div>
+              </header>
+
+              <main class="px-5 py-6 text-left">
+                ${howPointsWorkCard()}
+
+                <div class="flex gap-2 overflow-x-auto -mx-5 px-5 mb-4 pb-1" style="scrollbar-width:none">
+                  ${REWARD_CATEGORIES.map((c) => `
+                    <button class="reward-filter shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium border whitespace-nowrap
+                                  ${filter === c.key ? "text-white" : "bg-white text-[color:var(--muted-foreground)] border-[color:var(--app-line)]"}"
+                            ${filter === c.key ? `style="background:var(--app-ink); border-color:var(--app-ink)"` : ""}
+                            data-filter="${c.key}">${c.label}</button>`).join("")}
+                </div>
+
+                <div class="grid grid-cols-1 gap-3">${list.map(rewardCard).join("")}</div>
+
+                ${redemptions.length ? `
+                  <section class="mt-8">
+                    <h2 class="text-[15px] font-semibold tracking-tight mb-3">Your redemptions</h2>
+                    <div class="space-y-2">${redemptions.slice().reverse().map(redemptionRow).join("")}</div>
+                  </section>` : ""}
+              </main>
+            </section>
+          `;
+        },
+
+        share() {
+          // Initialise share form. Source can be a logged trip or a booking.
+          if (!window._shareForm) {
+            const t = state.trips[0]; // default to most recent trip
+            window._shareForm = makeShareForm("trip", t?.id);
+          }
+          const f = window._shareForm;
+          const src = resolveShareSource(f);
+
+          return `
+            <section class="screen" data-name="share">
+              <!-- Sticky modal header (Strava-style) -->
+              <header class="bg-white/95 backdrop-blur-xl border-b border-[color:var(--app-line)] px-5 pt-5 pb-3 sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                  <button class="text-[14px] font-medium text-[color:var(--muted-foreground)] hover:text-foreground transition-colors" data-go="home">Cancel</button>
+                  <div class="text-center">
+                    <p class="eyebrow">${f.sourceType === "booking" ? "Share booking" : "Share activity"}</p>
+                    <h1 class="text-[15px] font-semibold mt-0.5">${src ? `${src.from} → ${src.to}` : "Your trip"}</h1>
+                  </div>
+                  <button class="text-[13px] font-semibold text-white px-3.5 py-1.5 rounded-full shadow-elev-1" style="background:var(--app-sage)" data-share-post>Post</button>
+                </div>
+              </header>
+
+              <main class="text-left">
+                <!-- HERO: Strava-style activity strip with stats -->
+                ${src ? `
+                  <section class="px-5 pt-5">
+                    <div class="rounded-2xl overflow-hidden shadow-elev-1 border border-[color:var(--app-line)] bg-white">
+                      <!-- Route visual band -->
+                      <div class="relative h-24 flex items-center justify-center text-3xl"
+                           style="background:linear-gradient(135deg, var(--app-sage-soft) 0%, hsl(150 30% 82%) 100%); color:var(--app-sage)">
+                        <div class="absolute inset-x-5 top-1/2 -translate-y-1/2 flex items-center justify-between text-[color:var(--app-sage)]">
+                          <div class="text-center">
+                            <i data-lucide="map-pin" class="w-4 h-4 mx-auto"></i>
+                            <p class="text-[11px] font-semibold mt-1 truncate max-w-[120px]">${src.from}</p>
+                          </div>
+                          <div class="flex-1 mx-3 relative">
+                            <div class="h-[2px] w-full" style="background:repeating-linear-gradient(90deg, var(--app-sage) 0, var(--app-sage) 4px, transparent 4px, transparent 8px)"></div>
+                            <div class="absolute left-1/2 -translate-x-1/2 -top-3 w-7 h-7 rounded-full flex items-center justify-center text-base" style="background:var(--app-sage); color:white">${src.icon}</div>
+                          </div>
+                          <div class="text-center">
+                            <i data-lucide="flag" class="w-4 h-4 mx-auto"></i>
+                            <p class="text-[11px] font-semibold mt-1 truncate max-w-[120px]">${src.to}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Stat strip -->
+                      <div class="grid grid-cols-4 divide-x divide-[color:var(--app-line)]">
+                        ${heroStat("Distance", src.km.toFixed(0), "km")}
+                        ${heroStat("Time", src.durStr, "")}
+                        ${heroStat("CO₂ saved", src.savedKg.toFixed(1), "kg")}
+                        ${heroEcoStat(src.ecoScore)}
+                      </div>
+                    </div>
+                  </section>
+                ` : ""}
+
+                <!-- Pick what you're sharing -->
+                <section class="px-5 mt-5">
+                  <p class="eyebrow mb-2">What you're sharing</p>
+                  <div class="flex gap-2 -mx-1 overflow-x-auto pb-1" style="scrollbar-width:none">
+                    ${shareSourcePills(f)}
+                  </div>
+                </section>
+
+                <!-- Title input -->
+                <section class="px-5 mt-5">
+                  <p class="eyebrow mb-2">Title</p>
+                  <input id="share-title" class="input"
+                         placeholder="A name for this post"
+                         value="${f.title || ""}" />
+                </section>
+
+                <!-- Description textarea -->
+                <section class="px-5 mt-4">
+                  <p class="eyebrow mb-2">How'd it go?</p>
+                  <textarea id="share-body" class="input"
+                            style="height:130px; padding-top:14px; line-height:1.5; resize:none"
+                            placeholder="What was the journey like?">${f.body}</textarea>
+                </section>
+
+                <!-- Photos (Strava-style 4-up grid) -->
+                <section class="px-5 mt-5">
+                  <div class="flex items-baseline justify-between mb-2">
+                    <p class="eyebrow">Photos</p>
+                    <span class="text-[11px] text-[color:var(--muted-foreground)]">${f.photos.filter(Boolean).length} / 4</span>
+                  </div>
+                  <div class="grid grid-cols-4 gap-2">
+                    ${[0,1,2,3].map((i) => photoSlot(f.photos[i], i)).join("")}
+                  </div>
+                </section>
+
+                <!-- Trip details to include -->
+                ${src ? `
+                  <section class="px-5 mt-6">
+                    <p class="eyebrow mb-2">Trip details to include</p>
+                    <div class="rounded-2xl border border-[color:var(--app-line)] divide-y divide-[color:var(--app-line)] bg-white overflow-hidden">
+                      ${detailToggle("ecoScore",  "Eco Score",          src.ecoScore,                     "leaf",   f.include.ecoScore)}
+                      ${detailToggle("co2",       "CO₂ saved",          `${src.savedKg.toFixed(1)} kg`,   "wind",   f.include.co2)}
+                      ${detailToggle("distance",  "Distance",           `${src.km.toFixed(0)} km`,        "route",  f.include.distance)}
+                      ${detailToggle("comparison","Carbon Saved vs typical", `${src.typicalSavedPct}% less`, "trending-up", f.include.comparison)}
+                    </div>
+                  </section>
+                ` : ""}
+
+                <!-- Privacy (Strava-style) -->
+                <section class="px-5 mt-6">
+                  <p class="eyebrow mb-2">Who can see this?</p>
+                  <div class="rounded-2xl border border-[color:var(--app-line)] bg-white overflow-hidden divide-y divide-[color:var(--app-line)]">
+                    ${privacyRow("public",    "Everyone",   "Visible on the world feed.",            "globe",   f.privacy)}
+                    ${privacyRow("followers", "Followers",  "Only people who follow you.",           "users",   f.privacy)}
+                    ${privacyRow("only_me",   "Only you",   "A private note for your journal.",      "lock",    f.privacy)}
+                  </div>
+                </section>
+
+                <!-- Mute notifications -->
+                <section class="px-5 mt-4">
+                  <button class="w-full flex items-center justify-between rounded-2xl border border-[color:var(--app-line)] bg-white px-4 py-3" data-toggle="mute">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--secondary)">
+                        <i data-lucide="bell-off" class="w-4 h-4 text-[color:var(--muted-foreground)]"></i>
+                      </div>
+                      <div class="text-left">
+                        <p class="text-[14px] font-medium">Mute notifications</p>
+                        <p class="text-[11px] text-[color:var(--muted-foreground)]">Don't notify your followers</p>
+                      </div>
+                    </div>
+                    <span class="toggle-switch ${f.mute ? 'on' : ''}"><span class="dot"></span></span>
+                  </button>
+                </section>
+
+                <!-- Post button at the bottom too -->
+                <section class="px-5 mt-6 mb-6">
+                  <button class="w-full h-14 rounded-2xl font-semibold text-base shadow-ink text-white" style="background:var(--app-sage)" data-share-post>
+                    Post to feed
+                  </button>
+                </section>
+              </main>
+            </section>
+          `;
+        },
+      };
+
+      /* =================== COMPONENTS =================== */
+      function postCard(post) {
+        const u = Object.values(USERS).find((x) => x.id === post.userId);
+        // Resolve the source — a trip, a booking, or none
+        const src = resolveShareSource({ sourceType: post.bookingId ? "booking" : "trip", sourceId: post.bookingId || post.tripId });
+        const include = post.include || { ecoScore: true, co2: true, distance: true, comparison: true };
+
+        // Carbon comparison numbers
+        let typicalCo2 = 0, tripCo2 = 0, typicalLabel = "Typical trip";
+        if (src) {
+          const co2Per = src.kind === "trip"
+            ? (TRANSPORT_MODES[state.trips.find(t => t.id === src.id)?.mode]?.carbonPerKm ?? 0)
+            : (byKey(state.bookings.find(b => b.id === src.id)?.mode)?.co2Per ?? 0);
+          tripCo2 = src.km * co2Per;
+          typicalCo2 = src.km >= 250 ? src.km * 0.155 : src.km * 1.25 * 0.171;
+          typicalLabel = src.km >= 250 ? "Standard flight" : "Petrol car";
+        }
+        const score = post.ecoScore ?? src?.ecoScore ?? null;
+        const badge = score != null ? ecoBadge(score) : null;
+
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-4">
+            <!-- Author + Eco Score header -->
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="flex items-start gap-3 min-w-0">
+                ${avatarHtml(u, 40)}
+                <div class="min-w-0 text-left">
+                  <div class="font-semibold text-[14px] truncate">${u.displayName}</div>
+                  <div class="flex items-center gap-1.5 text-[11.5px] text-[color:var(--muted-foreground)] truncate">
+                    ${src ? `<i data-lucide="${src.kind === "booking" ? "ticket" : "map-pin"}" class="w-3 h-3 shrink-0"></i><span class="truncate">${src.from} → ${src.to}</span><span>·</span>` : ""}
+                    <span>${formatTimeAgo(post.when)}</span>
+                  </div>
+                </div>
+              </div>
+              ${badge && include.ecoScore !== false ? `
+                <div class="shrink-0 text-right">
+                  <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-bold"
+                       style="background:${badge.bg}; color:${badge.color}">
+                    <i data-lucide="leaf" class="w-3 h-3"></i>
+                    <span class="text-[11px]">${score}</span>
+                  </div>
+                  <p class="text-[9.5px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-1">Eco Score</p>
+                </div>` : ""}
+            </div>
+
+            ${post.title ? `<h3 class="font-display text-[18px] leading-tight mt-1 mb-2">${post.title}</h3>` : ""}
+            ${post.body ? `<p class="text-[14.5px] leading-relaxed mb-3 text-left">${post.body}</p>` : ""}
+
+            ${post.image ? `
+              <div class="rounded-2xl overflow-hidden mb-3 relative aspect-[4/3] bg-secondary">
+                <img src="${post.image}" alt=""
+                     class="w-full h-full object-cover"
+                     loading="lazy" referrerpolicy="no-referrer"
+                     onerror="this.remove()" />
+              </div>` : ""}
+
+            ${src && typicalCo2 > 0 && include.comparison !== false ? `
+              <div class="border rounded-2xl p-3.5 mb-3" style="background:linear-gradient(135deg, var(--app-sage-soft), hsl(150 24% 96%)); border-color:hsl(150 30% 26% / .15)">
+                <div class="flex items-center justify-between mb-2.5">
+                  <span class="text-[11px] uppercase tracking-[0.14em] font-semibold" style="color:var(--app-sage)">Carbon Saved</span>
+                  <span class="font-display text-[16px] tabular-nums" style="color:var(--app-sage)">
+                    ${(typicalCo2 - tripCo2).toFixed(0)} kg CO₂
+                    <span class="text-[11px] font-sans">(${Math.round(((typicalCo2 - tripCo2) / typicalCo2) * 100)}% less)</span>
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                  <div class="rounded-xl p-2.5 bg-white border border-[color:var(--app-line)]">
+                    <div class="flex items-center gap-1 text-[color:var(--app-sage)] font-semibold">
+                      <i data-lucide="leaf" class="w-3 h-3"></i> Your trip
+                    </div>
+                    <div class="mt-1 font-display text-[18px] tabular-nums">${tripCo2.toFixed(0)} <span class="text-[10px] text-[color:var(--muted-foreground)]">kg CO₂</span></div>
+                    <div class="text-[10.5px] text-[color:var(--muted-foreground)] mt-0.5">${src.icon} ${src.name}${src.service ? ` · ${src.service}` : ""}</div>
+                  </div>
+                  <div class="rounded-xl p-2.5 bg-white border border-[color:var(--app-line)]">
+                    <div class="flex items-center gap-1 text-[color:hsl(15_65%_45%)] font-semibold">
+                      <i data-lucide="trending-up" class="w-3 h-3"></i> Typical trip
+                    </div>
+                    <div class="mt-1 font-display text-[18px] tabular-nums">${typicalCo2.toFixed(0)} <span class="text-[10px] text-[color:var(--muted-foreground)]">kg CO₂</span></div>
+                    <div class="text-[10.5px] text-[color:var(--muted-foreground)] mt-0.5">${typicalLabel}</div>
+                  </div>
+                </div>
+                ${include.distance !== false ? `
+                  <div class="flex items-center justify-center gap-3 mt-2.5 text-[11px] text-[color:var(--muted-foreground)] tabular-nums">
+                    <span><i data-lucide="route" class="w-3 h-3 inline-block mr-1"></i>${src.km.toFixed(0)} km</span>
+                    ${src.durStr && src.durStr !== "—" ? `<span>·</span><span><i data-lucide="clock" class="w-3 h-3 inline-block mr-1"></i>${src.durStr}</span>` : ""}
+                  </div>` : ""}
+              </div>` : ""}
+
+            <div class="flex items-center justify-between">
+              <button class="like-btn inline-flex items-center gap-1.5 ${post.liked ? "text-rose-500" : "text-[color:var(--muted-foreground)]"}" data-post="${post.id}">
+                <i data-lucide="heart" class="w-4 h-4 ${post.liked ? "fill-current" : ""}"></i>
+                <span class="text-xs tabular-nums">${post.likeCount}</span>
+              </button>
+              ${post.privacy && post.privacy !== "public" ? `
+                <span class="inline-flex items-center gap-1 text-[10px] text-[color:var(--muted-foreground)]">
+                  <i data-lucide="${post.privacy === 'followers' ? 'users' : 'lock'}" class="w-3 h-3"></i>
+                  ${post.privacy === 'followers' ? 'Followers' : 'Only you'}
+                </span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      function bookingOptionCard(o, isBest) {
+        const dur = o.durationH || estimateDuration(o.key, o.km);
+        const durStr = dur ? formatHours(dur) : "—";
+        const badge = ecoBadge(o.ecoScore);
+        const title = o.service ? `${o.name} · ${o.service}` : o.name;
+        const priceStr = formatPrice(o.price);
+        const lessFlying = o.lessFlying;
+        const isWorst = (o.savedVs ?? 0) === 0;
+        const savedLine = !isWorst && o.savedVs > 0
+          ? `<p class="text-[11.5px] mt-1.5 font-medium" style="color:var(--app-sage)">−${o.savedVs.toFixed(1)} kg vs ${o.comparedTo || "least sustainable"}</p>` : "";
+        return `
+          <div class="option-card book-option bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-4" data-mode="${o.key}">
+            <div class="flex items-start gap-3 mb-2">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style="background:${isBest ? badge.bg : 'var(--secondary)'}">${o.icon}</div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-[15px] truncate">${title}</div>
+                <div class="text-[12px] text-[color:var(--muted-foreground)] tabular-nums mt-0.5">
+                  ${durStr} · ${o.co2 === 0 ? "Zero" : o.co2.toFixed(1) + " kg"} CO₂
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full mb-1" style="background:${badge.bg}; color:${badge.color}">
+                  <span class="text-[10px] uppercase tracking-wider font-semibold">Eco Score:</span>
+                  <span class="text-[12px] font-bold tabular-nums">${o.ecoScore}</span>
+                </div>
+                <div class="font-semibold text-[15px] tabular-nums">${priceStr}</div>
+              </div>
+            </div>
+            ${lessFlying >= 50 ? `<p class="text-[11.5px] mb-2 font-medium" style="color:var(--app-sage)">${lessFlying}% less CO₂ than flying</p>` : ""}
+            ${o.features?.length ? `
+              <ul class="space-y-1 mb-3">
+                ${o.features.slice(0, 3).map((f) => `
+                  <li class="flex items-start gap-2 text-[12.5px] text-foreground/80">
+                    <i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:var(--app-sage)"></i>
+                    <span>${f}</span>
+                  </li>`).join("")}
+              </ul>` : ""}
+            <div class="flex items-end justify-between gap-2 pt-2 border-t border-[color:var(--app-line)]">
+              <div>
+                ${isBest ? `<span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full" style="background:var(--app-sage); color:white">Best for the planet</span>` : ""}
+                ${savedLine}
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-1 px-2.5 py-1 rounded-full" style="background:var(--app-gold-soft)">
+                  <i data-lucide="award" class="w-3.5 h-3.5" style="color:var(--app-gold)"></i>
+                  <span class="font-semibold tabular-nums text-[12px]" style="color:hsl(38 60% 25%)">+${formatPoints(o.points)} pts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function emptyState(title, caption) {
+        return `
+          <div class="text-center py-10 rounded-2xl border border-dashed border-[color:var(--app-line)]" style="background:hsl(40 16% 96% / .6)">
+            <div class="text-3xl mb-2">🌍</div>
+            <p class="text-sm font-medium">${title}</p>
+            <p class="text-xs text-[color:var(--muted-foreground)] mt-1 max-w-[260px] mx-auto">${caption}</p>
+          </div>`;
+      }
+
+      function tripRow(trip) {
+        const m = TRANSPORT_MODES[trip.mode] || byKey(trip.mode) || { icon: "🚗", name: trip.mode };
+        const saved = calcCarbonSaved(trip.mode, trip.km);
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-3.5">
+            <div class="flex items-center gap-3 text-left">
+              <div class="w-11 h-11 rounded-xl bg-[color:var(--secondary)] flex items-center justify-center text-lg shrink-0">${m.icon}</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                  <span class="font-medium text-[14px] truncate">${trip.from} → ${trip.to}</span>
+                  <span class="text-[11px] text-[color:var(--muted-foreground)] shrink-0">${formatTimeAgo(trip.date)}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-[color:var(--muted-foreground)] tabular-nums">
+                  <span>${trip.km.toFixed(1)} km</span><span>·</span>
+                  <span class="font-semibold" style="color:var(--app-sage)">−${saved.toFixed(1)} kg CO₂</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function bookingRow(b) {
+        const m = byKey(b.mode) || { icon: "🎫", name: b.mode };
+        const serviceLine = b.service ? `${m.name} · ${b.service}` : m.name;
+        const dur = b.durationH ? formatHours(b.durationH) : null;
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-3.5">
+            <div class="flex items-center gap-3 text-left">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0" style="background:var(--app-sage-soft)">${m.icon}</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                  <span class="font-medium text-[14px] truncate">${b.from} → ${b.to}</span>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0" style="background:var(--app-gold-soft); color:hsl(38 60% 25%)">+${formatPoints(b.points)} pts</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-[color:var(--muted-foreground)] tabular-nums flex-wrap">
+                  <span class="truncate">${serviceLine}</span><span>·</span>
+                  <span>${Math.round(b.km)} km</span>
+                  ${dur ? `<span>·</span><span>${dur}</span>` : ""}
+                  <span>·</span>
+                  <span class="font-medium">${formatFutureDate(b.when)}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button class="share-booking text-[color:var(--muted-foreground)] hover:text-[color:var(--app-sage)] p-1.5 rounded-lg" data-share-booking="${b.id}" title="Share">
+                  <i data-lucide="share-2" class="w-4 h-4"></i>
+                </button>
+                <button class="cancel-booking text-[color:var(--muted-foreground)] hover:text-rose-500 p-1.5 rounded-lg" data-booking="${b.id}" title="Cancel">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function destinationCard(d) {
+        const badge = ecoBadge(d.score);
+        // If the image fails, the gradient backdrop + emoji are still visible.
+        return `
+          <div class="shrink-0 w-44 rounded-2xl overflow-hidden bg-white border border-[color:var(--app-line)] shadow-elev-1">
+            <div class="relative h-28 flex items-center justify-center text-3xl text-white/70"
+                 style="background:${d.gradient || 'linear-gradient(135deg,#3b4a3f,#1f2a23)'}">
+              <span>🌍</span>
+              <img src="${d.image}" alt="${d.name}"
+                   class="absolute inset-0 w-full h-full object-cover"
+                   loading="lazy" referrerpolicy="no-referrer"
+                   onerror="this.remove()" />
+              <span class="absolute top-2 right-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-md z-10"
+                    style="background:${badge.bg}cc; color:${badge.color}">
+                <i data-lucide="leaf" class="w-2.5 h-2.5"></i> ${d.score}
+              </span>
+            </div>
+            <div class="p-3">
+              <h3 class="font-semibold text-[13.5px] leading-tight">${d.name}</h3>
+              <p class="text-[10.5px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-0.5">${d.country}</p>
+              <p class="text-[11.5px] text-[color:var(--muted-foreground)] mt-1 leading-snug line-clamp-2">${d.tagline}</p>
+            </div>
+          </div>`;
+      }
+
+      function hotelCard(h) {
+        const badge = ecoBadge(h.ecoScore);
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 overflow-hidden">
+            <div class="flex">
+              <div class="relative w-24 h-24 shrink-0 flex items-center justify-center text-2xl text-white/70"
+                   style="background:linear-gradient(135deg,#3b4a3f,#1f2a23)">
+                <span>🏨</span>
+                <img src="${h.image}" alt="${h.name}"
+                     class="absolute inset-0 w-full h-full object-cover"
+                     loading="lazy" referrerpolicy="no-referrer"
+                     onerror="this.remove()" />
+              </div>
+              <div class="flex-1 p-3 min-w-0">
+                <div class="flex items-start justify-between gap-2 mb-1">
+                  <h3 class="font-semibold text-[14px] leading-tight truncate">${h.name}</h3>
+                  <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                        style="background:${badge.bg}; color:${badge.color}">
+                    <i data-lucide="leaf" class="w-2.5 h-2.5"></i> ${h.ecoScore}
+                  </span>
+                </div>
+                <p class="text-[11px] text-[color:var(--muted-foreground)] truncate">${h.location}</p>
+                <div class="flex flex-wrap gap-1 mt-1.5">
+                  ${h.features.slice(0, 2).map((f) => `
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-[color:var(--app-sage-soft)]" style="color:var(--app-sage)">${f}</span>
+                  `).join("")}
+                </div>
+                <div class="flex items-end justify-between mt-2">
+                  <div>
+                    <span class="font-display text-[16px] leading-none tabular-nums">€${h.pricePerNight}</span>
+                    <span class="text-[10px] text-[color:var(--muted-foreground)]">/night</span>
+                  </div>
+                  <button class="text-[11.5px] font-medium px-3 py-1 rounded-full bg-[color:var(--app-ink)] text-white" data-hotel="${h.id}">
+                    Reserve
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function eventCard(e) {
+        return `
+          <div class="shrink-0 w-60 rounded-2xl overflow-hidden bg-white border border-[color:var(--app-line)] shadow-elev-1">
+            <div class="relative h-28 flex items-center justify-center text-3xl text-white/70"
+                 style="background:linear-gradient(135deg,#3b4a3f,#1f2a23)">
+              <span>🎟️</span>
+              <img src="${e.image}" alt="${e.title}"
+                   class="absolute inset-0 w-full h-full object-cover"
+                   loading="lazy" referrerpolicy="no-referrer"
+                   onerror="this.remove()" />
+            </div>
+            <div class="p-3">
+              <h3 class="font-semibold text-[13px] leading-tight">${e.title}</h3>
+              <div class="flex items-center gap-2 text-[10.5px] text-[color:var(--muted-foreground)] mt-1.5">
+                <i data-lucide="calendar" class="w-3 h-3"></i>
+                <span>${formatFutureDate(e.date)}</span>
+                <span>·</span>
+                <span class="tabular-nums">${e.attendees} going</span>
+              </div>
+              <p class="text-[11px] text-[color:var(--muted-foreground)] mt-0.5 truncate">${e.location}</p>
+              <button class="mt-2 text-[11.5px] font-medium px-3 py-1 rounded-full text-white" style="background:var(--app-sage)">
+                I'm in
+              </button>
+            </div>
+          </div>`;
+      }
+
+      function statTile(icon, value, label) {
+        return `
+          <div class="rounded-2xl bg-white border border-[color:var(--app-line)] shadow-elev-1 p-3 text-left">
+            <div class="w-7 h-7 rounded-lg bg-[color:var(--secondary)] flex items-center justify-center text-[color:var(--muted-foreground)] mb-2">
+              <i data-lucide="${icon}" class="w-4 h-4"></i>
+            </div>
+            <div class="font-display text-lg leading-none tabular-nums">${value}</div>
+            <div class="text-[10.5px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-1">${label}</div>
+          </div>`;
+      }
+
+      function statPill(value, label) {
+        return `
+          <div class="rounded-2xl px-2 py-3.5 text-center" style="background:hsl(0 0% 100% / .06); border:1px solid hsl(0 0% 100% / .08)">
+            <div class="font-display text-[22px] leading-none tabular-nums">${value}</div>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-white/60 mt-2">${label}</div>
+          </div>`;
+      }
+
+      function progressRing(pct, size = 120) {
+        const r = (size - 12) / 2; const c = 2 * Math.PI * r; const dash = (pct / 100) * c;
+        return `
+          <div class="flex items-center justify-center mb-6">
+            <div class="relative" style="width:${size}px;height:${size}px">
+              <svg width="${size}" height="${size}" style="transform: rotate(-90deg)">
+                <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="hsl(40 14% 93%)" stroke-width="6"></circle>
+                <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--app-sage)" stroke-width="6"
+                  stroke-linecap="round" stroke-dasharray="${dash} ${c}"
+                  style="transition: stroke-dasharray .8s cubic-bezier(.2,.8,.2,1)"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="font-display text-[28px] leading-none tabular-nums">${Math.round(pct)}<span class="text-base text-[color:var(--muted-foreground)]">%</span></div>
+                  <div class="text-[10px] uppercase tracking-wider text-[color:var(--muted-foreground)] mt-1">of goal</div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function sourceRow(icon, name, kg) {
+        return `
+          <div class="flex justify-between items-center py-2 border-b border-[color:var(--app-line)] last:border-b-0">
+            <div class="flex items-center gap-2">
+              <i data-lucide="${icon}" class="w-4 h-4" style="color:var(--app-sage)"></i>
+              <span class="text-[13px]">${name}</span>
+            </div>
+            <span class="text-[13px] font-semibold tabular-nums" style="color:var(--app-sage)">+${kg.toFixed(1)} kg</span>
+          </div>`;
+      }
+
+      function achievementRow(a) {
+        const progress = a.progressFn(state);
+        const completed = progress >= a.target;
+        const pct = Math.min(100, Math.round((progress / a.target) * 100));
+        return `
+          <div class="border ${completed ? "border-[color:var(--app-sage)] bg-[color:var(--app-sage-soft)]" : "border-[color:var(--app-line)] bg-secondary/40"} rounded-xl p-3">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0" style="background:white">${a.icon}</div>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-[14px] leading-tight">${a.title}</h4>
+                <p class="text-[11px] text-[color:var(--muted-foreground)] mt-0.5">${a.description}</p>
+              </div>
+              ${completed
+                ? `<div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style="background:var(--app-sage)"><i data-lucide="check" class="w-4 h-4 text-white"></i></div>`
+                : `<span class="text-[11px] font-semibold tabular-nums shrink-0">${progress}/${a.target}</span>`}
+            </div>
+            <div class="carbon-progress"><div style="width:${pct}%"></div></div>
+          </div>`;
+      }
+
+      function howPointsWorkCard() {
+        return `
+          <div class="rounded-2xl p-5 mb-5" style="background:var(--app-sage-soft); border:1px solid hsl(150 30% 26% / .15)">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="info" class="w-4 h-4" style="color:var(--app-sage)"></i>
+              <h3 class="text-[14px] font-semibold" style="color:var(--app-sage)">How EcoPoints work</h3>
+            </div>
+            <p class="text-[13.5px] leading-relaxed text-foreground/85 mb-3">
+              We reward you for choosing lower-carbon travel. Every kilometre you book or log earns points — the cleaner the option, the bigger the per-km multiplier.
+            </p>
+            <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[12.5px] text-foreground/85">
+              <span>🚶 Walk</span>            <span class="text-right tabular-nums font-semibold">60 / km</span>
+              <span>🚴 Bicycle</span>         <span class="text-right tabular-nums font-semibold">55 / km</span>
+              <span>🚄 High-speed rail</span> <span class="text-right tabular-nums font-semibold">55 / km</span>
+              <span>🚲 E-bike</span>          <span class="text-right tabular-nums font-semibold">45 / km</span>
+              <span>🚆 Regional train</span>  <span class="text-right tabular-nums font-semibold">40 / km</span>
+              <span>🚌 Coach / bus</span>     <span class="text-right tabular-nums font-semibold">38 / km</span>
+              <span>🚇 Metro / tram</span>    <span class="text-right tabular-nums font-semibold">35 / km</span>
+              <span>🔋 Electric car</span>    <span class="text-right tabular-nums font-semibold">22 / km</span>
+              <span>🚗 Carpool</span>         <span class="text-right tabular-nums font-semibold">18 / km</span>
+              <span>✈️ SAF flight</span>      <span class="text-right tabular-nums font-semibold">8 / km</span>
+              <span>✈️ Standard flight</span> <span class="text-right tabular-nums font-semibold">0 / km</span>
+            </div>
+            <p class="text-[12px] text-foreground/70 mt-3 leading-relaxed">
+              Multiplier × route distance = points. A London → Paris booking on Eurostar (≈ 364 km) earns about <strong>20,000 pts</strong> — enough to plant 20 trees or unlock a Lime ride pack.
+            </p>
+          </div>`;
+      }
+
+      function rewardCard(r) {
+        const claimed = state.redemptions.some((x) => x.rewardId === r.id);
+        const cant = state.points < r.cost;
+        const blocked = (claimed && !r.repeatable) || cant;
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 overflow-hidden">
+            <div class="flex">
+              <div class="w-20 flex items-center justify-center text-4xl shrink-0" style="background:${r.gradient}">${r.icon}</div>
+              <div class="flex-1 p-4 min-w-0">
+                <div class="flex items-start justify-between gap-2 mb-1">
+                  <div class="min-w-0">
+                    <p class="text-[10px] uppercase tracking-wider text-[color:var(--muted-foreground)]">${r.partner}</p>
+                    <h3 class="font-semibold text-[14.5px] leading-tight truncate">${r.name}</h3>
+                  </div>
+                  <div class="flex items-center gap-1 px-2.5 py-1 rounded-full shrink-0" style="background:var(--app-gold-soft)">
+                    <i data-lucide="award" class="w-3.5 h-3.5" style="color:var(--app-gold)"></i>
+                    <span class="font-semibold tabular-nums text-[12px]" style="color:hsl(38 60% 25%)">${formatPoints(r.cost)}</span>
+                  </div>
+                </div>
+                <p class="text-[12px] text-[color:var(--muted-foreground)] leading-snug mb-3">${r.description}</p>
+                <button class="redeem-btn text-[12.5px] font-medium px-3.5 py-1.5 rounded-full
+                              ${blocked ? "bg-[color:var(--secondary)] text-[color:var(--muted-foreground)] cursor-not-allowed" : "bg-[color:var(--app-ink)] text-white hover:bg-[color:var(--app-ink-soft)]"}"
+                        data-reward="${r.id}" ${blocked ? "disabled" : ""}>
+                  ${claimed && !r.repeatable ? "Claimed" : (cant ? `Need ${formatPoints(r.cost - state.points)} more` : "Redeem")}
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function redemptionRow(red) {
+        const r = rewardById(red.rewardId);
+        if (!r) return "";
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-secondary/60">
+            <div class="text-xl">${r.icon}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-[13px] font-medium truncate">${r.name}</div>
+              <div class="text-[11px] text-[color:var(--muted-foreground)]">${r.partner} · ${formatTimeAgo(red.when)}</div>
+            </div>
+            <span class="text-[11px] text-[color:var(--muted-foreground)] tabular-nums">−${formatPoints(red.cost)}</span>
+          </div>`;
+      }
+
+      function impactTile(value, label) {
+        return `
+          <div class="text-center p-3 bg-white rounded-xl border border-[color:var(--app-line)]">
+            <div class="font-display text-xl tabular-nums">${value}</div>
+            <div class="text-[11px] text-[color:var(--muted-foreground)] mt-1 leading-snug">${label}</div>
+          </div>`;
+      }
+
+      function userRow(user) {
+        const followed = state.following.includes(user.id);
+        const btn = `<button class="follow-btn px-3 py-1.5 rounded-full text-[12px] font-medium flex items-center gap-1 shrink-0
+               ${followed ? "border border-[color:var(--app-line)] text-[color:var(--muted-foreground)] bg-white" : "text-white"}"
+               ${followed ? "" : `style="background:var(--app-ink)"`} data-user="${user.id}">
+              <i data-lucide="${followed ? "user-check" : "user-plus"}" class="w-3.5 h-3.5"></i> ${followed ? "Following" : "Follow"}
+            </button>`;
+        return `
+          <div class="bg-white border border-[color:var(--app-line)] rounded-2xl shadow-elev-1 p-3.5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                ${avatarHtml(user, 44)}
+                <div class="min-w-0 text-left">
+                  <h3 class="font-semibold text-[14px] truncate">${user.displayName}</h3>
+                  <p class="text-xs text-[color:var(--muted-foreground)] truncate">@${user.username}</p>
+                  ${user.bio ? `<p class="text-[11.5px] text-[color:var(--muted-foreground)] mt-0.5 truncate">${user.bio}</p>` : ""}
+                </div>
+              </div>
+              ${btn}
+            </div>
+          </div>`;
+      }
+
+      function suggestionList() {
+        const me = state.currentUserId;
+        const suggestions = Object.values(USERS).filter((u) => u.id !== me && !state.following.includes(u.id)).slice(0, 3);
+        if (!suggestions.length) return `<div class="text-center py-8 text-sm text-[color:var(--muted-foreground)]">You've found everyone for now.</div>`;
+        return suggestions.map(userRow).join("");
+      }
+
+      function tripsHeader(trips) {
+        const totalCarbon = trips.reduce((s, t) => s + calcCarbonSaved(t.mode, t.km), 0);
+        return `
+          <header class="page-hero">
+            <span class="hero-eyebrow"><i data-lucide="book-open" class="w-3 h-3"></i> Journal</span>
+            <h1 class="hero-title">Your trips</h1>
+            <p class="hero-subtitle">A running log of everywhere you've travelled with intent.</p>
+            <div class="mt-6 rounded-2xl p-4 grid grid-cols-3 gap-3 divide-x divide-white/10"
+                 style="background:hsl(0 0% 100% / .06); border:1px solid hsl(0 0% 100% / .08)">
+              <div class="text-center px-2"><div class="font-display text-[26px] leading-none tabular-nums">${trips.length}</div>
+                <div class="text-[10px] uppercase tracking-wider text-white/60 mt-2">Logged</div></div>
+              <div class="text-center px-2"><div class="font-display text-[26px] leading-none tabular-nums">${state.bookings.length}</div>
+                <div class="text-[10px] uppercase tracking-wider text-white/60 mt-2">Booked</div></div>
+              <div class="text-center px-2"><div class="font-display text-[26px] leading-none tabular-nums">${totalCarbon.toFixed(1)}</div>
+                <div class="text-[10px] uppercase tracking-wider text-white/60 mt-2">kg saved</div></div>
+            </div>
+          </header>`;
+      }
+
+      function labelForDate(dateKey) {
+        const d = new Date(dateKey);
+        const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+        if (days === 0) return "Today";
+        if (days === 1) return "Yesterday";
+        if (days < 7) return `${days} days ago`;
+        return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      }
+
+      /* =================== RENDER + EVENTS =================== */
+      function render() {
+        const r = renderers[state.screen]; if (!r) return;
+        screens.innerHTML = r();
+        if (window.lucide) lucide.createIcons();
+        // discover now redirects to home (they're merged), so its nav-pill maps to "home"
+        const navMap = { home: "home", discover: "home", trips: "trips", profile: "profile", book: "book", log: null, rewards: null, share: null, settings: "profile" };
+        document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.go === navMap[state.screen]));
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+      function go(name) {
+        // Discover and Home are now the same screen
+        if (name === "discover") name = "home";
+        if (state.screen === name) return;
+        state.screen = name; saveState(); render();
+      }
+
+      document.body.addEventListener("click", (e) => {
+        // Share from a booking row — pre-fill the share form with that booking
+        const shareBooking = e.target.closest("[data-share-booking]");
+        if (shareBooking) {
+          window._shareForm = makeShareForm("booking", +shareBooking.dataset.shareBooking);
+          go("share"); return;
+        }
+
+        const nav = e.target.closest("[data-go]");
+        if (nav) {
+          // Reset share form when entering Share fresh (from + button)
+          if (nav.dataset.go === "share" && state.screen !== "share") {
+            const t = state.trips[0], b = state.bookings[0];
+            window._shareForm = t ? makeShareForm("trip", t.id) : (b ? makeShareForm("booking", b.id) : makeShareForm("trip", null));
+          }
+          go(nav.dataset.go); return;
+        }
+
+        // Share-source pill
+        const srcPill = e.target.closest(".share-source");
+        if (srcPill) {
+          window._shareForm = makeShareForm(srcPill.dataset.srcType, +srcPill.dataset.srcId);
+          render(); return;
+        }
+
+        // Add a photo (mock — cycles through stock library)
+        const addPhoto = e.target.closest("[data-photo-add]");
+        if (addPhoto) {
+          const i = +addPhoto.dataset.photoAdd;
+          const used = new Set(window._shareForm.photos.filter(Boolean));
+          const next = SHARE_STOCK_PHOTOS.find((u) => !used.has(u)) || SHARE_STOCK_PHOTOS[i % SHARE_STOCK_PHOTOS.length];
+          window._shareForm.photos[i] = next;
+          render(); return;
+        }
+        const rmPhoto = e.target.closest("[data-photo-remove]");
+        if (rmPhoto) { window._shareForm.photos[+rmPhoto.dataset.photoRemove] = null; render(); return; }
+
+        // Privacy picker
+        const priv = e.target.closest("[data-privacy]");
+        if (priv) { window._shareForm.privacy = priv.dataset.privacy; render(); return; }
+
+        // Settings toggle row (notifications, digest, etc.)
+        const togSet = e.target.closest("[data-toggle-setting]");
+        if (togSet) {
+          const map = { "set-notifications": "notifications", "set-digest": "weeklyDigest" };
+          const k = map[togSet.dataset.toggleSetting];
+          if (k) { state.settings[k] = !state.settings[k]; saveState(); render(); }
+          return;
+        }
+        // Settings segmented / radio
+        const segSet = e.target.closest(".setting-seg");
+        if (segSet) {
+          const map = {
+            "set-units": "units", "set-currency": "currency", "set-theme": "theme",
+            "default-privacy": "defaultPrivacy",
+          };
+          const k = map[segSet.dataset.setting];
+          if (k) { state.settings[k] = segSet.dataset.value; saveState(); render(); }
+          return;
+        }
+        // Settings link rows that just show a toast (placeholder sub-screens)
+        const toastLink = e.target.closest("[data-toast]");
+        if (toastLink && !toastLink.matches("[data-go]")) {
+          toast(toastLink.dataset.toast);
+          return;
+        }
+
+        // Toggles (mute + include-* details)
+        const tog = e.target.closest("[data-toggle]");
+        if (tog) {
+          const key = tog.dataset.toggle;
+          if (key === "mute") window._shareForm.mute = !window._shareForm.mute;
+          else if (key.startsWith("include-")) {
+            const k = key.slice("include-".length);
+            window._shareForm.include[k] = !window._shareForm.include[k];
+          }
+          render(); return;
+        }
+
+
+        const likeBtn = e.target.closest(".like-btn");
+        if (likeBtn) {
+          const id = +likeBtn.dataset.post; const p = state.posts.find((x) => x.id === id);
+          if (p) { p.liked = !p.liked; p.likeCount += p.liked ? 1 : -1; saveState(); render(); }
+          return;
+        }
+        const followBtn = e.target.closest(".follow-btn");
+        if (followBtn) {
+          const id = +followBtn.dataset.user; const idx = state.following.indexOf(id);
+          if (idx === -1) { state.following.push(id); const u = Object.values(USERS).find((x) => x.id === id); toast(`Following ${u.displayName}`); }
+          else state.following.splice(idx, 1);
+          saveState(); render(); return;
+        }
+        const modeBtn = e.target.closest(".mode-btn");
+        if (modeBtn) { window._logForm.mode = modeBtn.dataset.mode; render(); return; }
+        const popular = e.target.closest(".popular-route");
+        if (popular) { window._bookForm = { fromId: popular.dataset.from, toId: popular.dataset.to, when: window._bookForm?.when || "" }; render(); return; }
+        const bookOpt = e.target.closest(".book-option");
+        if (bookOpt) { bookTrip(bookOpt.dataset.mode); return; }
+        const cancelBooking = e.target.closest(".cancel-booking");
+        if (cancelBooking) {
+          const id = +cancelBooking.dataset.booking; const idx = state.bookings.findIndex((b) => b.id === id);
+          if (idx > -1) { const b = state.bookings[idx]; state.bookings.splice(idx, 1); state.points = Math.max(0, state.points - b.points);
+            toast(`Booking cancelled (−${formatPoints(b.points)} pts)`); saveState(); render(); }
+          return;
+        }
+        const discoverTab = e.target.closest(".discover-tab");
+        if (discoverTab) { state.discoverFilter = discoverTab.dataset.discover; saveState(); render(); return; }
+        const rewardFilter = e.target.closest(".reward-filter");
+        if (rewardFilter) { state.rewardFilter = rewardFilter.dataset.filter; saveState(); render(); return; }
+        const redeemBtn = e.target.closest(".redeem-btn");
+        if (redeemBtn && !redeemBtn.disabled) {
+          const r = rewardById(redeemBtn.dataset.reward); if (!r) return;
+          if (state.points < r.cost) { toast("Not enough EcoPoints"); return; }
+          if (!r.repeatable && state.redemptions.some((x) => x.rewardId === r.id)) { toast("Already claimed"); return; }
+          if (!confirm(`Redeem "${r.name}" for ${formatPoints(r.cost)} EcoPoints?`)) return;
+          state.points -= r.cost;
+          state.redemptions.push({ id: Date.now(), rewardId: r.id, cost: r.cost, when: new Date().toISOString() });
+          toast(`Redeemed "${r.name}"`); saveState(); render(); return;
+        }
+        const hotelBtn = e.target.closest("[data-hotel]");
+        if (hotelBtn) {
+          const h = ECO_HOTELS.find((x) => x.id === +hotelBtn.dataset.hotel);
+          if (h) toast(`Reserved at ${h.name} — confirmation sent`);
+          return;
+        }
+        const challengeBtn = e.target.closest(".challenge-toggle");
+        if (challengeBtn) {
+          const id = challengeBtn.dataset.challenge;
+          const idx = state.activeChallenges.indexOf(id);
+          if (idx === -1) { state.activeChallenges.push(id); toast("Challenge started — good luck!"); }
+          else { state.activeChallenges.splice(idx, 1); toast("Challenge ended"); }
+          saveState(); render(); return;
+        }
+        if (e.target.closest("[data-share-post]")) {
+          const f = window._shareForm || {};
+          if (!(f.body?.trim() || f.title?.trim())) { toast("Add a title or a few words"); return; }
+          const src = resolveShareSource(f);
+          state.posts.unshift({
+            id: Date.now(),
+            userId: state.currentUserId,
+            title: f.title?.trim() || null,
+            body:  f.body?.trim()  || "",
+            tripId:    f.sourceType === "trip"    ? f.sourceId : null,
+            bookingId: f.sourceType === "booking" ? f.sourceId : null,
+            ecoScore: src?.ecoScore ?? null,
+            include: { ...f.include },
+            privacy: f.privacy || "public",
+            mute: !!f.mute,
+            image: f.photos?.find(Boolean) || null,
+            likeCount: 0, liked: false,
+            when: new Date().toISOString(),
+          });
+          window._shareForm = null; saveState();
+          toast("Posted to your feed"); go("home"); return;
+        }
+      });
+
+      document.body.addEventListener("input", (e) => {
+        const id = e.target.id;
+        if (id === "from") window._logForm.from = e.target.value;
+        if (id === "to")   window._logForm.to   = e.target.value;
+        if (id === "km") { window._logForm.km = e.target.value; rerenderPreservingFocus(); }
+        if (id === "book-from" || id === "book-to") {
+          const c = cityByLabel(e.target.value);
+          const key = id === "book-from" ? "fromId" : "toId";
+          if (c) { window._bookForm[key] = c.id; rerenderPreservingFocus(); }
+          else if (window._bookForm[key]) { window._bookForm[key] = ""; rerenderPreservingFocus(); }
+        }
+        if (id === "book-when") window._bookForm.when = e.target.value;
+        if (id === "search-input") doSearch(e.target.value);
+        if (id === "share-body"  && window._shareForm) window._shareForm.body = e.target.value;
+        if (id === "share-title" && window._shareForm) window._shareForm.title = e.target.value;
+        if (id === "set-goal") { state.settings.monthlyGoal = +e.target.value; saveState(); render(); }
+      });
+
+      function rerenderPreservingFocus() {
+        const focusId = document.activeElement?.id;
+        const caret = document.activeElement?.selectionStart;
+        const scroll = window.scrollY;
+        render();
+        window.scrollTo(0, scroll);
+        const again = focusId && document.getElementById(focusId);
+        if (again) { again.focus(); if (caret != null) try { again.setSelectionRange(caret, caret); } catch (e) {} }
+      }
+
+      document.body.addEventListener("submit", (e) => {
+        if (e.target.id !== "log-form") return;
+        e.preventDefault();
+        const f = window._logForm; const km = parseFloat(f.km);
+        if (!f.from.trim() || !f.to.trim() || !(km > 0)) { toast("Fill in From, To, and Distance"); return; }
+        state.trips.unshift({ id: Date.now(), mode: f.mode, from: f.from.trim(), to: f.to.trim(), km, date: new Date().toISOString() });
+        const saved = calcCarbonSaved(f.mode, km); saveState();
+        window._logForm = { mode: "cycling", from: "", to: "", km: "" };
+        toast(`Trip logged — ${saved.toFixed(1)} kg CO₂ avoided`); go("home");
+      });
+
+      function bookTrip(modeKey) {
+        const f = window._bookForm;
+        const from = cityById(f.fromId); const to = cityById(f.toId);
+        if (!from || !to) { toast("Pick a From and a To from the list"); return; }
+        if (from.id === to.id) { toast("Pick two different cities"); return; }
+        const opt = optionsForRoute(from, to).find((o) => o.key === modeKey);
+        if (!opt) { toast("That option isn't available for this route"); return; }
+        state.bookings.unshift({
+          id: Date.now(), mode: opt.key, service: opt.service || null,
+          from: from.name, to: to.name, km: opt.km, points: opt.points, co2: opt.co2,
+          durationH: opt.durationH || estimateDuration(opt.key, opt.km),
+          when: f.when ? new Date(f.when).toISOString() : daysFromNow(7),
+          status: "booked",
+        });
+        state.points += opt.points; saveState();
+        window._bookForm = { fromId: "", toId: "", when: "" };
+        const via = opt.service ? ` via ${opt.service}` : "";
+        toast(`Booked ${from.name} → ${to.name}${via} · +${formatPoints(opt.points)} pts`);
+        go("home");
+      }
+
+      function doSearch(q) {
+        const sec = $("#search-results-section"); const sug = $("#suggestions-section"); const out = $("#search-results");
+        if (!sec || !sug || !out) return;
+        const term = q.trim().toLowerCase();
+        if (term.length < 2) { sec.style.display = "none"; sug.style.display = "block"; return; }
+        sec.style.display = "block"; sug.style.display = "none";
+        const matches = Object.values(USERS).filter((u) => u.id !== state.currentUserId &&
+          (u.displayName.toLowerCase().includes(term) || u.username.toLowerCase().includes(term)));
+        out.innerHTML = matches.length ? matches.map(userRow).join("") : `<div class="text-center py-8 text-sm text-[color:var(--muted-foreground)]">No matches.</div>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      window.resetData = function () {
+        if (confirm("Clear all trips, bookings and points?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+      };
+
+      render();
+    </script>
+  </body>
+</html>

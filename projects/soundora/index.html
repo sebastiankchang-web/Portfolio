@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Soundora — A Quiet Atlas of Sound</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style id="embed-no-scrollbar">
+  html, body { scrollbar-width: none; -ms-overflow-style: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width: 0; height: 0; display: none; }
+</style>
+<style>
+  /* ===================================================
+     DESIGN TOKENS — warm editorial / minimalist
+     =================================================== */
+  :root {
+    --paper:        #F6F1E8;
+    --paper-deep:   #EFE7D7;
+    --surface:      #FFFCF6;
+    --surface-2:    #FBF6EC;
+    --ink:          #1F1A14;
+    --ink-2:        #3D362C;
+    --muted:        #7A6F5E;
+    --muted-2:      #A89B85;
+    --rule:         #E7DECC;
+    --rule-soft:    #EFE7D7;
+
+    --clay:         #B5553A;
+    --clay-deep:    #963F28;
+    --clay-soft:    rgba(181,85,58,.08);
+    --sage:         #6F7F5F;
+    --sage-soft:    rgba(111,127,95,.1);
+    --gold:         #B89154;
+    --gold-soft:    rgba(184,145,84,.1);
+    --plum:         #6B4156;
+    --plum-soft:    rgba(107,65,86,.1);
+
+    --shadow-soft:  0 1px 0 rgba(31,26,20,.04), 0 8px 24px -16px rgba(31,26,20,.18);
+    --shadow-hover: 0 2px 0 rgba(31,26,20,.05), 0 18px 36px -22px rgba(31,26,20,.28);
+
+    --radius-sm:    8px;
+    --radius:       14px;
+    --radius-lg:    22px;
+
+    --serif: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+    --sans:  'Inter', -apple-system, system-ui, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(31,26,20,.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: .6;
+    z-index: 1;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  input, textarea, select { font-family: inherit; }
+
+  /* ===================================================
+     LAYOUT SHELL
+     =================================================== */
+  .shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--rule);
+    padding: 32px 24px 24px;
+    position: sticky; top: 0;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    background: var(--paper);
+    overflow-y: auto;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 4px;
+  }
+  .brand-mark {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    font-style: italic;
+  }
+  .brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--clay); transform: translateY(-6px); }
+  .brand-tag {
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+    margin: 22px 8px 10px;
+    font-weight: 500;
+  }
+  .nav { list-style: none; padding: 0; margin: 0; }
+  .nav li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-2);
+    font-size: 14px;
+    transition: background .25s ease, color .25s ease, transform .25s ease;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  .nav li svg { width: 16px; height: 16px; stroke-width: 1.5; opacity: .75; transition: opacity .25s ease, color .25s ease; }
+  .nav li:hover { background: var(--paper-deep); color: var(--ink); }
+  .nav li:hover svg { opacity: 1; }
+  .nav li.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .nav li.active svg { opacity: 1; color: var(--paper); }
+  .nav li.active::before {
+    content: '';
+    position: absolute;
+    left: -24px; top: 50%;
+    width: 3px; height: 18px;
+    background: var(--clay);
+    transform: translateY(-50%);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .me {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .me-avatar {
+    width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
+    border: 1px solid var(--rule);
+    background: linear-gradient(135deg, var(--clay), var(--gold));
+  }
+  .me-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .me-name { font-weight: 500; font-size: 14px; }
+  .me-meta { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+
+  /* MAIN */
+  .main {
+    padding: 36px 56px 140px;
+    max-width: 1180px;
+    width: 100%;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* TOP BAR (shared) */
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px;
+    gap: 18px;
+  }
+  .date {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .top-actions { display: flex; align-items: center; gap: 14px; }
+  .search {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 13px;
+    min-width: 260px;
+    transition: border-color .25s ease;
+  }
+  .search:focus-within { border-color: var(--ink-2); }
+  .search svg { width: 14px; height: 14px; stroke-width: 1.5; }
+  .search input {
+    border: 0; background: transparent; outline: 0;
+    color: var(--ink); font-size: 13px; flex: 1;
+  }
+  .streak-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px 8px 8px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    transition: border-color .25s ease, transform .25s ease;
+  }
+  .streak-chip:hover { border-color: var(--clay); transform: translateY(-1px); }
+  .streak-flame {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, #E0894A, var(--clay));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+  }
+  .streak-text { font-size: 12px; line-height: 1.2; }
+  .streak-text b { font-weight: 600; }
+  .streak-text span { color: var(--muted); display: block; font-size: 11px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding-bottom: 32px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .page-header .eyebrow { margin-bottom: 14px; }
+  .page-header h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(34px, 4.4vw, 54px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+  .page-header h1 em { font-style: italic; color: var(--clay); font-weight: 400; }
+  .page-header .lede {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 56ch;
+    margin: 0;
+  }
+
+  /* MASTHEAD on home */
+  .masthead {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 56px;
+    align-items: end;
+    padding-bottom: 36px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--clay);
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before {
+    content: ''; width: 22px; height: 1px; background: var(--clay);
+  }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(40px, 5.4vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 16px 0 18px;
+  }
+  .masthead h1 em { font-style: italic; color: var(--clay); font-weight: 400; }
+  .lede {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 46ch;
+    margin: 0;
+  }
+  .lede + .lede { margin-top: 14px; color: var(--muted); font-size: 15px; }
+
+  .masthead-meta {
+    display: flex; gap: 32px;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    width: 100%;
+  }
+  .meta-item .label {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted-2); margin-bottom: 4px; font-weight: 500;
+  }
+  .meta-item .value {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .meta-item .value small { font-size: 12px; color: var(--muted); font-weight: 400; font-family: var(--sans); }
+
+  .feature-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    background: #1a1612;
+    box-shadow: var(--shadow-soft);
+    transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease;
+  }
+  .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .feature-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: saturate(.92) contrast(1.02);
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(15,11,7,.85) 100%);
+  }
+  .feature-overlay {
+    position: absolute; inset: auto 0 0 0;
+    padding: 28px;
+    color: #F6F1E8;
+    z-index: 2;
+  }
+  .feature-overlay .kicker {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: #E8C896; margin-bottom: 10px;
+  }
+  .feature-overlay h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .feature-overlay p {
+    font-size: 13px; line-height: 1.5; opacity: .82;
+    margin: 0 0 18px; max-width: 36ch;
+  }
+  .play-row { display: flex; align-items: center; gap: 12px; }
+  .play-btn {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--paper);
+    color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform .25s ease, background .25s ease;
+  }
+  .play-btn:hover { transform: scale(1.08); background: var(--clay); color: var(--paper); }
+  .play-btn svg { width: 18px; height: 18px; margin-left: 2px; }
+  .play-label { font-size: 13px; }
+  .play-label b { display: block; font-weight: 500; }
+  .play-label span { color: rgba(246,241,232,.65); font-size: 11px; }
+
+  .ribbon {
+    margin: -20px 0 64px;
+    padding: 36px 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 28px;
+  }
+  .ribbon .line { height: 1px; background: var(--rule); }
+  .ribbon .quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--ink-2);
+    text-align: center;
+    max-width: 60ch;
+    letter-spacing: -0.01em;
+  }
+  .ribbon .quote span {
+    color: var(--clay); font-style: normal; font-weight: 500;
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    display: block; margin-top: 8px;
+  }
+
+  /* SECTION HEADER */
+  .section { margin-bottom: 72px; }
+  .section-head {
+    display: flex; align-items: end; justify-content: space-between;
+    margin-bottom: 26px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    gap: 18px;
+  }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -0.015em;
+    margin: 0 0 4px;
+  }
+  .section-head h2 em { font-style: italic; color: var(--clay); }
+  .section-head .sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .section-head .right { display: flex; align-items: center; gap: 16px; }
+  .ghost-link {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-2); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--ink-2);
+    transition: color .25s ease, border-color .25s ease, gap .25s ease;
+    cursor: pointer;
+  }
+  .ghost-link:hover { color: var(--clay); border-color: var(--clay); gap: 10px; }
+  .ghost-link svg { width: 12px; height: 12px; }
+
+  /* GENRES */
+  .genres {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .genre {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .4s ease;
+    cursor: pointer;
+    position: relative;
+  }
+  .genre:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--clay);
+  }
+  .genre-img {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    position: relative;
+  }
+  .genre-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .8s ease;
+    filter: saturate(.9);
+  }
+  .genre:hover .genre-img img { transform: scale(1.05); }
+  .genre-num {
+    position: absolute; top: 14px; left: 16px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--paper);
+    background: rgba(31,26,20,.5);
+    backdrop-filter: blur(8px);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .genre-body { padding: 22px 22px 24px; }
+  .genre-origin {
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--muted-2); margin-bottom: 6px; font-weight: 500;
+  }
+  .genre h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.015em;
+    margin: 0 0 8px;
+  }
+  .genre p { color: var(--muted); font-size: 13.5px; line-height: 1.55; margin: 0 0 18px; }
+  .genre-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  .genre-meta { font-size: 12px; color: var(--muted); }
+  .genre-meta b { color: var(--ink-2); font-weight: 500; }
+  .mini-play {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .25s ease, transform .25s ease;
+  }
+  .mini-play:hover { background: var(--clay); transform: scale(1.06); }
+  .mini-play svg { width: 12px; height: 12px; margin-left: 1px; }
+
+  /* =========================================
+     ATLAS — proper world map
+     ========================================= */
+  .atlas-wrap {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 36px;
+    align-items: stretch;
+  }
+  .atlas {
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    position: relative;
+  }
+  .atlas.full {
+    aspect-ratio: 740/444;
+    padding: 28px 32px;
+  }
+  .worldmap { width: 100%; height: auto; display: block; }
+  .worldmap .land {
+    fill: #E5DAC4;
+    stroke: #C9BBA0;
+    stroke-width: .6;
+    stroke-linejoin: round;
+    fill-rule: evenodd;
+    transition: fill .3s ease;
+  }
+  .worldmap .land.highlight { fill: #D9C49A; }
+  .worldmap .graticule { stroke: rgba(31,26,20,.04); stroke-width: .5; fill: none; }
+
+  .pin {
+    cursor: pointer;
+  }
+  .pin .hit {
+    fill: transparent;
+    pointer-events: all;
+  }
+  .pin .dot, .pin .ring, .pin-pulse, .pin .pin-label {
+    pointer-events: none;
+    transition: opacity .25s ease, fill .25s ease, stroke .25s ease, r .25s ease;
+  }
+  .pin:hover .ring { opacity: 1; stroke-width: 1.5; }
+  .pin:hover .dot { r: 6.5; }
+  .pin:hover .pin-label { opacity: 1; font-weight: 500; }
+  .pin .dot {
+    fill: var(--clay);
+    stroke: var(--paper);
+    stroke-width: 1.5;
+  }
+  .pin.explored .dot { fill: var(--sage); }
+  .pin .ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    opacity: .35;
+  }
+  .pin.explored { color: var(--sage); }
+  .pin:not(.explored) { color: var(--clay); }
+  .pin-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 11px;
+    fill: var(--ink-2);
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .pin-pulse {
+    animation: pulse 2.4s ease-out infinite;
+    transform-origin: center;
+  }
+  @keyframes pulse {
+    0% { r: 5; opacity: .7; }
+    100% { r: 22; opacity: 0; }
+  }
+  .atlas-legend {
+    margin-top: 14px;
+    display: flex; gap: 22px;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: .05em;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-dot.explored { background: var(--sage); }
+  .legend-dot.unexplored { background: var(--clay); }
+
+  /* Region cards (aside) */
+  .atlas-aside { display: flex; flex-direction: column; gap: 16px; }
+  .region-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color .3s ease, transform .3s ease;
+    cursor: pointer;
+  }
+  .region-card:hover { border-color: var(--ink-2); transform: translateX(4px); }
+  .region-card .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .region-card .tag {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    font-weight: 500;
+  }
+  .region-card .tag.new { color: var(--clay); }
+  .region-card .tag.explored { color: var(--sage); }
+  .region-card h4 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 19px; margin: 0 0 4px; letter-spacing: -0.01em;
+  }
+  .region-card p {
+    font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5;
+  }
+  .region-card .arrow {
+    color: var(--muted-2);
+    transition: color .25s ease, transform .25s ease;
+  }
+  .region-card:hover .arrow { color: var(--clay); transform: translateX(3px); }
+
+  /* BADGES */
+  .badge-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .badge {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 24px 22px 22px;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    cursor: pointer;
+  }
+  .badge:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); border-color: var(--ink-2); }
+  .badge.locked { opacity: .55; }
+  .badge-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    border: 1px solid currentColor;
+  }
+  .badge-icon svg { width: 20px; height: 20px; stroke-width: 1.5; }
+  .badge.clay .badge-icon { color: var(--clay); background: var(--clay-soft); }
+  .badge.sage .badge-icon { color: var(--sage); background: var(--sage-soft); }
+  .badge.gold .badge-icon { color: var(--gold); background: var(--gold-soft); }
+  .badge.plum .badge-icon { color: var(--plum); background: var(--plum-soft); }
+  .badge h4 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 17px; margin: 0 0 4px; letter-spacing: -0.01em;
+  }
+  .badge p { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
+  .badge .progress { height: 2px; background: var(--rule); border-radius: 1px; overflow: hidden; }
+  .badge .bar { height: 100%; background: var(--ink); }
+  .badge.clay .bar { background: var(--clay); }
+  .badge.sage .bar { background: var(--sage); }
+  .badge.gold .bar { background: var(--gold); }
+  .badge.plum .bar { background: var(--plum); }
+  .badge .progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-top: 8px;
+  }
+
+  /* LEADERBOARD */
+  .leaderboard {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 8px 0;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 50px 1fr auto auto;
+    gap: 18px;
+    align-items: center;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--rule-soft);
+    transition: background .25s ease;
+  }
+  .lb-row:last-child { border-bottom: 0; }
+  .lb-row:hover { background: var(--surface-2); }
+  .lb-row.you {
+    background: var(--clay-soft);
+    border-left: 2px solid var(--clay);
+  }
+  .lb-rank {
+    font-family: var(--serif); font-style: italic;
+    font-size: 22px; color: var(--muted-2); font-weight: 500;
+  }
+  .lb-row.top1 .lb-rank { color: var(--clay); }
+  .lb-row.top2 .lb-rank { color: var(--gold); }
+  .lb-row.top3 .lb-rank { color: var(--sage); }
+  .lb-user { display: flex; align-items: center; gap: 14px; }
+  .lb-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    overflow: hidden; border: 1px solid var(--rule);
+    background: linear-gradient(135deg, var(--gold), var(--clay));
+  }
+  .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .lb-name { font-weight: 500; font-size: 14px; }
+  .lb-loc {
+    font-size: 11px; color: var(--muted);
+    font-family: var(--serif); font-style: italic;
+  }
+  .lb-genres { display: flex; gap: 4px; }
+  .chip {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .lb-points {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .lb-points small {
+    font-size: 11px; color: var(--muted); font-family: var(--sans);
+    font-weight: 400; margin-left: 4px; letter-spacing: .08em; text-transform: uppercase;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    transition: background .25s ease, color .25s ease;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { background: var(--ink); color: var(--paper); }
+
+  /* Generic cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: border-color .3s ease;
+  }
+  .card:hover { border-color: var(--ink-2); }
+  .card h3 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 22px; margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  .card p { color: var(--muted); margin: 0 0 16px; line-height: 1.55; font-size: 14px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+    transition: background .25s ease, transform .25s ease, border-color .25s ease;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .btn-primary:hover { background: var(--clay); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* Form fields */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .field label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted-2); font-weight: 500;
+  }
+  .field input, .field textarea, .field select {
+    padding: 11px 14px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    outline: 0;
+    transition: border-color .25s ease;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--ink); }
+  .field textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+
+  /* Toggle (switch) */
+  .toggle {
+    width: 38px; height: 22px;
+    background: var(--rule);
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background .3s ease;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--surface);
+    transition: transform .3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+  .toggle.on { background: var(--ink); }
+  .toggle.on::after { transform: translateX(16px); }
+
+  /* Event cards */
+  .event-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    transition: border-color .3s ease, transform .3s ease;
+    cursor: pointer;
+  }
+  .event-card:hover { border-color: var(--clay); transform: translateY(-2px); }
+  .event-img {
+    background-size: cover; background-position: center;
+    min-height: 180px;
+    position: relative;
+  }
+  .event-date {
+    position: absolute; top: 14px; left: 14px;
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    line-height: 1;
+  }
+  .event-date b {
+    font-family: var(--serif);
+    font-size: 22px;
+    display: block;
+  }
+  .event-date span {
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .event-body { padding: 22px 26px; }
+  .event-body h4 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 20px; margin: 0 0 6px; letter-spacing: -0.01em;
+  }
+  .event-meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; display: flex; gap: 14px; }
+  .event-meta svg { width: 12px; height: 12px; vertical-align: middle; margin-right: 4px; }
+  .event-body p { color: var(--muted); font-size: 13.5px; line-height: 1.55; margin: 0 0 14px; }
+  .event-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Emotion echo */
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .mood {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 16px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .25s ease, background .25s ease, transform .25s ease;
+    user-select: none;
+  }
+  .mood:hover { transform: translateY(-2px); border-color: var(--clay); }
+  .mood.selected { background: var(--clay); border-color: var(--clay); color: var(--paper); }
+  .mood-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+  .mood-label { font-size: 11px; letter-spacing: .04em; }
+
+  /* DJ */
+  .dj-prompt {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 28px;
+  }
+  .dj-prompt-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+  .session-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    transition: border-color .3s ease, transform .3s ease;
+    cursor: pointer;
+  }
+  .session-card:hover { border-color: var(--clay); transform: translateY(-2px); }
+  .session-card .sm-meta {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted-2); margin-bottom: 8px;
+  }
+  .session-card h4 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 19px; margin: 0 0 6px; letter-spacing: -0.01em;
+  }
+  .session-card p { color: var(--muted); font-size: 13px; margin: 0 0 14px; line-height: 1.5; }
+  .session-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Duets */
+  .duet-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    transition: border-color .3s ease, transform .3s ease;
+  }
+  .duet-card:hover { border-color: var(--ink-2); transform: translateY(-2px); }
+  .duet-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .duet-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--clay));
+    overflow: hidden;
+  }
+  .duet-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .duet-name { font-weight: 500; font-size: 14px; }
+  .duet-meta { font-size: 11px; color: var(--muted); font-family: var(--serif); font-style: italic; }
+
+  /* NOW PLAYING */
+  .nowplay {
+    position: fixed;
+    bottom: 18px; left: 18px; right: 18px;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 20px;
+    background: rgba(31,26,20,.96);
+    color: var(--paper);
+    border-radius: 999px;
+    box-shadow: 0 20px 50px -20px rgba(31,26,20,.5);
+    backdrop-filter: blur(20px);
+  }
+  .np-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .np-cover {
+    width: 44px; height: 44px; border-radius: 8px; overflow: hidden;
+    background: var(--clay); flex-shrink: 0;
+  }
+  .np-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .np-text { min-width: 0; }
+  .np-title { font-family: var(--serif); font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-artist { font-size: 11.5px; color: rgba(246,241,232,.6); }
+  .np-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .np-btns { display: flex; align-items: center; gap: 14px; }
+  .np-btn { color: rgba(246,241,232,.7); transition: color .25s ease; padding: 4px; }
+  .np-btn:hover { color: var(--paper); }
+  .np-btn svg { width: 14px; height: 14px; stroke-width: 1.6; }
+  .np-play {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--paper); color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform .25s ease;
+  }
+  .np-play:hover { transform: scale(1.08); }
+  .np-play svg { width: 12px; height: 12px; margin-left: 1px; }
+  .np-progress {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    font-size: 10px; color: rgba(246,241,232,.5);
+  }
+  .np-bar { flex: 1; height: 2px; background: rgba(246,241,232,.15); border-radius: 1px; overflow: hidden; }
+  .np-bar div { height: 100%; background: var(--paper); width: 38%; }
+  .np-right { display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
+  .np-vol { display: flex; align-items: center; gap: 8px; color: rgba(246,241,232,.6); }
+  .np-vol svg { width: 14px; height: 14px; }
+  .np-vol-bar { width: 70px; height: 2px; background: rgba(246,241,232,.15); border-radius: 1px; overflow: hidden; }
+  .np-vol-bar div { height: 100%; background: var(--paper); width: 60%; }
+
+  /* Tooltip on map pins */
+  .map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    transform: translate(-50%, calc(-100% - 12px));
+    opacity: 0;
+    transition: opacity .2s ease;
+    white-space: nowrap;
+    z-index: 5;
+  }
+  .map-tooltip.visible { opacity: 1; }
+  .map-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px; height: 8px;
+    background: var(--ink);
+  }
+  .map-tooltip b { display: block; font-family: var(--serif); font-size: 13px; }
+  .map-tooltip span { font-size: 10px; opacity: .7; }
+
+
+  /* RESPONSIVE */
+  @media (max-width: 1080px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 28px 24px 140px; }
+    .masthead { grid-template-columns: 1fr; gap: 32px; }
+    .genres { grid-template-columns: 1fr 1fr; }
+    .atlas-wrap { grid-template-columns: 1fr; }
+    .badge-row { grid-template-columns: 1fr 1fr; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .event-card { grid-template-columns: 1fr; }
+    .nowplay { grid-template-columns: 1fr auto; gap: 14px; padding: 12px 14px; }
+    .np-right { display: none; }
+    .mood-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .top { flex-direction: column; align-items: flex-start; gap: 18px; }
+    .search { min-width: 0; width: 100%; }
+    .genres { grid-template-columns: 1fr; }
+    .badge-row { grid-template-columns: 1fr; }
+    .lb-row { grid-template-columns: 40px 1fr auto; padding: 14px 18px; }
+    .lb-genres { display: none; }
+    .mood-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">Soundora</span>
+      <span class="brand-dot"></span>
+    </div>
+    <div class="brand-tag">A quiet atlas of sound</div>
+
+    <div class="nav-label">Discover</div>
+    <ul class="nav">
+      <li class="active" data-page="page-today">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span>Today</span>
+      </li>
+      <li data-page="page-dj">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17l4-4 4 4 8-8"/><path d="M14 5h6v6"/></svg>
+        <span>Soundora DJ</span>
+      </li>
+      <li data-page="page-emotion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s-7-4.35-7-10a4 4 0 017-2.65A4 4 0 0119 11c0 5.65-7 10-7 10z"/></svg>
+        <span>Emotion Echo</span>
+      </li>
+      <li data-page="page-duets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 18a4 4 0 018 0M16 18a4 4 0 018 0"/><circle cx="7" cy="10" r="3"/><circle cx="20" cy="10" r="3"/></svg>
+        <span>Duets</span>
+      </li>
+    </ul>
+
+    <div class="nav-label">You</div>
+    <ul class="nav">
+      <li data-page="page-achievements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 4h12l-1 8H7L6 4z"/><circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg>
+        <span>Achievements</span>
+      </li>
+      <li data-page="page-events">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+        <span>Events</span>
+      </li>
+      <li data-page="page-leaderboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-3-3.9M4 21v-2a4 4 0 013-3.9M8 11a4 4 0 108-0 4 4 0 00-8 0z"/></svg>
+        <span>Leaderboard</span>
+      </li>
+      <li data-page="page-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8a2 2 0 11-2.8 2.8 1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0 1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3 2 2 0 11-2.8-2.8 1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4 1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8 2 2 0 112.8-2.8 1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0 1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3 2 2 0 112.8 2.8 1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4 1.7 1.7 0 00-1.5 1z"/></svg>
+        <span>Settings</span>
+      </li>
+    </ul>
+
+    <div class="me">
+      <div class="me-avatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60" alt="" onerror="this.style.display='none'">
+      </div>
+      <div>
+        <div class="me-name">Sebastian</div>
+        <div class="me-meta">Level 3 Explorer</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- Top bar (shared) -->
+    <div class="top">
+      <div class="date">Sunday, May 17 · Volume III, Edition 138</div>
+      <div class="top-actions">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input placeholder="Search a country, an instrument, a feeling…" />
+        </div>
+        <div class="streak-chip">
+          <div class="streak-flame">12</div>
+          <div class="streak-text">
+            <b>12-day streak</b>
+            <span>Keep it lit through Tuesday</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: TODAY (HOME)
+         ============================================ -->
+    <div class="page active" id="page-today">
+
+      <section class="masthead">
+        <div>
+          <div class="eyebrow">Today's listening</div>
+          <h1>An invitation to <em>listen widely.</em></h1>
+          <p class="lede">Ten minutes a day, somewhere new. We pick a single thread — a genre, a city, a season — and follow it through the world's record bins.</p>
+          <p class="lede">Today: <strong>Afrobeat</strong>, where Lagos meets jazz and funk. Fela on one side, Ebo Taylor on the other, a horn section in between.</p>
+          <div class="masthead-meta">
+            <div class="meta-item"><div class="label">Duration</div><div class="value">10 <small>min</small></div></div>
+            <div class="meta-item"><div class="label">Origin</div><div class="value">Nigeria · 1960s</div></div>
+            <div class="meta-item"><div class="label">Listeners today</div><div class="value">14,212</div></div>
+          </div>
+        </div>
+
+        <article class="feature-card">
+          <img src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Afrobeat" />
+          <div class="feature-overlay">
+            <div class="kicker">The Daily · No. 138</div>
+            <h3>Afrobeat — the long groove</h3>
+            <p>Polyrhythms in conversation with American funk. Twelve minutes that change how you hear a downbeat.</p>
+            <div class="play-row">
+              <button class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
+              <div class="play-label">
+                <b>Begin listening</b>
+                <span>14 tracks · 32 min</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="ribbon">
+        <div class="line"></div>
+        <div class="quote">
+          "Music is the wallpaper of the world. Travel by ear."
+          <span>— from the Soundora field notes</span>
+        </div>
+        <div class="line"></div>
+      </div>
+
+      <!-- GENRES -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>Field notes from <em>the week</em></h2>
+            <div class="sub">Three sounds we keep coming back to.</div>
+          </div>
+          <div class="right"></div>
+        </div>
+
+        <div class="genres">
+          <article class="genre">
+            <div class="genre-img">
+              <img src="https://images.pexels.com/photos/995301/pexels-photo-995301.jpeg?auto=compress&cs=tinysrgb&w=900" alt="">
+              <div class="genre-num">01</div>
+            </div>
+            <div class="genre-body">
+              <div class="genre-origin">Nigeria · West Africa</div>
+              <h3>Afrobeat</h3>
+              <p>Where West African polyrhythm meets American funk. Built for the long groove and the longer night.</p>
+              <div class="genre-foot">
+                <div class="genre-meta"><b>14</b> tracks · <b>32</b> min</div>
+                <button class="mini-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
+              </div>
+            </div>
+          </article>
+
+          <article class="genre">
+            <div class="genre-img">
+              <img src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=900" alt="">
+              <div class="genre-num">02</div>
+            </div>
+            <div class="genre-body">
+              <div class="genre-origin">South Korea · East Asia</div>
+              <h3>K-Pop</h3>
+              <p>Pop, hip-hop and R&amp;B refracted through Seoul. As much choreography as composition.</p>
+              <div class="genre-foot">
+                <div class="genre-meta"><b>18</b> tracks · <b>41</b> min</div>
+                <button class="mini-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
+              </div>
+            </div>
+          </article>
+
+          <article class="genre">
+            <div class="genre-img">
+              <img src="https://images.pexels.com/photos/2381462/pexels-photo-2381462.jpeg?auto=compress&cs=tinysrgb&w=900" alt="">
+              <div class="genre-num">03</div>
+            </div>
+            <div class="genre-body">
+              <div class="genre-origin">Andalusia · Southern Spain</div>
+              <h3>Flamenco</h3>
+              <p>Guitar, voice, and palmas — three instruments and one conversation that has lasted four hundred years.</p>
+              <div class="genre-foot">
+                <div class="genre-meta"><b>11</b> tracks · <b>28</b> min</div>
+                <button class="mini-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ATLAS PREVIEW -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>The <em>Atlas</em></h2>
+            <div class="sub">Seven regions. Three explored. Pick a pin.</div>
+          </div>
+          <div class="right"></div>
+        </div>
+
+        <div class="atlas-wrap">
+          <div class="atlas" id="atlas-home">
+            <!-- World map injected by JS -->
+          </div>
+          <aside class="atlas-aside">
+            <div class="region-card">
+              <div class="row">
+                <span class="tag new">New · today</span>
+                <span class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              </div>
+              <h4>Africa</h4>
+              <p>Polyrhythms, kora, palm wine guitar. Start with Afrobeat and let it pull you south.</p>
+            </div>
+            <div class="region-card">
+              <div class="row">
+                <span class="tag explored">Visited · April</span>
+                <span class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              </div>
+              <h4>Europe</h4>
+              <p>From Sicilian tarantella to Berlin techno. You've heard 14 tracks.</p>
+            </div>
+            <div class="region-card">
+              <div class="row">
+                <span class="tag new">Suggested</span>
+                <span class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              </div>
+              <h4>South America</h4>
+              <p>Bossa nova for the slow hours; samba for everything after sundown.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ACHIEVEMENTS PREVIEW -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>The <em>collection</em></h2>
+            <div class="sub">Quiet achievements, slowly earned.</div>
+          </div>
+          <div class="right">
+            <a class="ghost-link" data-page="page-achievements">See all badges
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="badge-row">
+          <div class="badge clay">
+            <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
+            <h4>World Traveler</h4>
+            <p>Listen across five regions of the atlas.</p>
+            <div class="progress"><div class="bar" style="width:60%"></div></div>
+            <div class="progress-meta"><span>3 of 5 regions</span><span>60%</span></div>
+          </div>
+          <div class="badge sage">
+            <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg></div>
+            <h4>Steady Hand</h4>
+            <p>Listen for five consecutive days.</p>
+            <div class="progress"><div class="bar" style="width:100%"></div></div>
+            <div class="progress-meta"><span>5 of 5 days</span><span>Earned</span></div>
+          </div>
+          <div class="badge gold">
+            <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18V6l12 2v10"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+            <h4>Music Master</h4>
+            <p>Complete one hundred daily listens.</p>
+            <div class="progress"><div class="bar" style="width:38%"></div></div>
+            <div class="progress-meta"><span>38 of 100</span><span>38%</span></div>
+          </div>
+          <div class="badge plum locked">
+            <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+            <h4>Night Owl</h4>
+            <p>Listen after midnight for seven nights.</p>
+            <div class="progress"><div class="bar" style="width:14%"></div></div>
+            <div class="progress-meta"><span>1 of 7 nights</span><span>Locked</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD PREVIEW -->
+      <section class="section" style="margin-bottom: 40px;">
+        <div class="section-head">
+          <div>
+            <h2>This week's <em>listeners</em></h2>
+            <div class="sub">Curious ears, ranked gently.</div>
+          </div>
+          <div class="right">
+            <a class="ghost-link" data-page="page-leaderboard">Full leaderboard
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="leaderboard">
+          <div class="lb-row top1">
+            <div class="lb-rank">I.</div>
+            <div class="lb-user">
+              <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=60" alt=""></div>
+              <div><div class="lb-name">Mira Okafor</div><div class="lb-loc">Lagos · explored 6 regions</div></div>
+            </div>
+            <div class="lb-genres"><span class="chip">Afrobeat</span><span class="chip">Jazz</span><span class="chip">+4</span></div>
+            <div class="lb-points">2,418<small>pts</small></div>
+          </div>
+          <div class="lb-row top2">
+            <div class="lb-rank">II.</div>
+            <div class="lb-user">
+              <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=60" alt=""></div>
+              <div><div class="lb-name">Theo Brenner</div><div class="lb-loc">Berlin · 23-day streak</div></div>
+            </div>
+            <div class="lb-genres"><span class="chip">Techno</span><span class="chip">Krautrock</span><span class="chip">+2</span></div>
+            <div class="lb-points">2,205<small>pts</small></div>
+          </div>
+          <div class="lb-row top3">
+            <div class="lb-rank">III.</div>
+            <div class="lb-user">
+              <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&auto=format&fit=crop&q=60" alt=""></div>
+              <div><div class="lb-name">Anya Volkov</div><div class="lb-loc">Tbilisi · perfect month</div></div>
+            </div>
+            <div class="lb-genres"><span class="chip">Folk</span><span class="chip">Ambient</span><span class="chip">+5</span></div>
+            <div class="lb-points">2,094<small>pts</small></div>
+          </div>
+          <div class="lb-row you">
+            <div class="lb-rank">XIV.</div>
+            <div class="lb-user">
+              <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60" alt=""></div>
+              <div><div class="lb-name">Sebastian · you</div><div class="lb-loc">12-day streak · Level 3</div></div>
+            </div>
+            <div class="lb-genres"><span class="chip">Afrobeat</span><span class="chip">Flamenco</span><span class="chip">+1</span></div>
+            <div class="lb-points">1,127<small>pts</small></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================
+         PAGE: ATLAS (full world map)
+         ============================================ -->
+    
+
+    <!-- ============================================
+         PAGE: SOUNDORA DJ
+         ============================================ -->
+    <div class="page" id="page-dj">
+      <div class="page-header">
+        <div class="eyebrow">Soundora DJ</div>
+        <h1>Describe a mood. <em>We'll cue the records.</em></h1>
+        <p class="lede">Tell the DJ what you're after — a feeling, a place, an artist to start from — and it builds a session in seconds.</p>
+      </div>
+
+      <div class="dj-prompt">
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Your prompt</label>
+          <textarea placeholder="e.g. Late-night driving music that starts in São Paulo and ends in Tokyo…"></textarea>
+        </div>
+        <div class="dj-prompt-row">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="chip">Calm</span><span class="chip">Late night</span><span class="chip">Latin America</span><span class="chip">Acoustic</span><span class="chip">+ Add</span>
+          </div>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l4-4 4 4 8-8"/><path d="M14 5h6v6"/></svg>
+            Generate session
+          </button>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Recent <em>sessions</em></h2>
+          <div class="sub">Pick up where you left off.</div>
+        </div>
+        <div class="right"><div class="tabs"><div class="tab active">All</div><div class="tab">Recent</div><div class="tab">Saved</div></div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="session-card">
+          <div class="sm-meta">May 19 · 42 min</div>
+          <h4>Global Exploration Mix</h4>
+          <p>Western pop blended with global rhythms. Started in Lagos, ended in São Paulo.</p>
+          <div class="session-chips"><span class="chip">Pop</span><span class="chip">World</span><span class="chip">Fusion</span></div>
+        </div>
+        <div class="session-card">
+          <div class="sm-meta">May 17 · 28 min</div>
+          <h4>Quiet Sunday</h4>
+          <p>Acoustic guitar, slow tempos, room to think. Brazilian and Japanese folk in dialogue.</p>
+          <div class="session-chips"><span class="chip">Folk</span><span class="chip">Acoustic</span><span class="chip">Brazil</span></div>
+        </div>
+        <div class="session-card">
+          <div class="sm-meta">May 14 · 51 min</div>
+          <h4>Berlin to Beirut</h4>
+          <p>Cold-room electronics melting into oud and ney. A late-night highway mix.</p>
+          <div class="session-chips"><span class="chip">Electronic</span><span class="chip">Arabic</span><span class="chip">Night</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: EMOTION ECHO
+         ============================================ -->
+    <div class="page" id="page-emotion">
+      <div class="page-header">
+        <div class="eyebrow">Emotion Echo</div>
+        <h1>Music, and how it <em>changes you.</em></h1>
+        <p class="lede">Record how you feel before a track and how you feel after. Over time, you'll see which sounds reliably do the work.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Now playing</h3>
+          <p>"Zombie" — Fela Kuti · 3:12</p>
+          <label style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-2); display:block; margin-bottom: 10px;">Before listening, I feel…</label>
+          <div class="mood-grid">
+            <div class="mood selected"><span class="mood-emoji">😌</span><div class="mood-label">Calm</div></div>
+            <div class="mood"><span class="mood-emoji">😐</span><div class="mood-label">Neutral</div></div>
+            <div class="mood"><span class="mood-emoji">😔</span><div class="mood-label">Low</div></div>
+            <div class="mood"><span class="mood-emoji">🥺</span><div class="mood-label">Tender</div></div>
+            <div class="mood"><span class="mood-emoji">😤</span><div class="mood-label">Restless</div></div>
+            <div class="mood"><span class="mood-emoji">✨</span><div class="mood-label">Curious</div></div>
+          </div>
+          <label style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-2); display:block; margin: 18px 0 10px;">After listening, I feel…</label>
+          <div class="mood-grid">
+            <div class="mood"><span class="mood-emoji">😌</span><div class="mood-label">Calm</div></div>
+            <div class="mood selected"><span class="mood-emoji">😀</span><div class="mood-label">Lifted</div></div>
+            <div class="mood"><span class="mood-emoji">🤔</span><div class="mood-label">Thoughtful</div></div>
+            <div class="mood"><span class="mood-emoji">🕊️</span><div class="mood-label">Peaceful</div></div>
+            <div class="mood"><span class="mood-emoji">⚡</span><div class="mood-label">Energized</div></div>
+            <div class="mood"><span class="mood-emoji">💛</span><div class="mood-label">Warm</div></div>
+          </div>
+          <div class="field" style="margin-top: 18px;">
+            <label>A note for later</label>
+            <textarea placeholder="The horns reminded me of summer at home."></textarea>
+          </div>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+            Save entry
+          </button>
+        </div>
+
+        <div class="card">
+          <h3>Recent entries</h3>
+          <p>The patterns your ear has noticed.</p>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="padding:16px 18px; border:1px solid var(--rule); border-radius:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                <div style="font-family:var(--serif); font-weight:500;">Saudade — Caetano Veloso</div>
+                <div style="font-size:11px; color:var(--muted);">May 15</div>
+              </div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;">Low → Tender · "It made the rain feel intentional."</div>
+            </div>
+            <div style="padding:16px 18px; border:1px solid var(--rule); border-radius:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                <div style="font-family:var(--serif); font-weight:500;">Strobe — deadmau5</div>
+                <div style="font-size:11px; color:var(--muted);">May 13</div>
+              </div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;">Restless → Peaceful · "Eight minutes that re-set the day."</div>
+            </div>
+            <div style="padding:16px 18px; border:1px solid var(--rule); border-radius:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                <div style="font-family:var(--serif); font-weight:500;">Concierto de Aranjuez</div>
+                <div style="font-size:11px; color:var(--muted);">May 11</div>
+              </div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;">Curious → Warm · "The adagio. Always the adagio."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: DUETS
+         ============================================ -->
+    <div class="page" id="page-duets">
+      <div class="page-header">
+        <div class="eyebrow">Duet Discovery</div>
+        <h1>Listen with <em>someone.</em></h1>
+        <p class="lede">Invite a friend, pick a region, and find common ground in a stranger's record collection.</p>
+      </div>
+
+      <div class="section-head">
+        <div><h2>Pending <em>invitations</em></h2><div class="sub">Three people are waiting to listen.</div></div>
+        <div class="right"><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Invite a friend</button></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="duet-card">
+          <div class="duet-head">
+            <div class="duet-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=60" alt=""></div>
+            <div>
+              <div class="duet-name">Theo Brenner</div>
+              <div class="duet-meta">Berlin · sent yesterday</div>
+            </div>
+          </div>
+          <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">Theo wants to share a Krautrock primer. 7 tracks, 38 minutes.</p>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary">Accept</button>
+            <button class="btn btn-ghost">Maybe later</button>
+          </div>
+        </div>
+
+        <div class="duet-card">
+          <div class="duet-head">
+            <div class="duet-avatar"><img src="https://images.unsplash.com/photo-1502323777036-f29e3972d82f?w=200&auto=format&fit=crop&q=60" alt=""></div>
+            <div>
+              <div class="duet-name">Júlio Reis</div>
+              <div class="duet-meta">São Paulo · sent 2 days ago</div>
+            </div>
+          </div>
+          <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">Júlio queued a bossa-to-MPB walk. Starts gentle.</p>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary">Accept</button>
+            <button class="btn btn-ghost">Maybe later</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top: 60px;">
+        <div><h2>Past <em>duets</em></h2><div class="sub">Listens you've shared.</div></div>
+      </div>
+
+      <div class="leaderboard">
+        <div class="lb-row">
+          <div class="lb-rank" style="font-size: 18px;">·</div>
+          <div class="lb-user">
+            <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=60" alt=""></div>
+            <div><div class="lb-name">Mira Okafor</div><div class="lb-loc">Lagos · West African primer</div></div>
+          </div>
+          <div class="lb-genres"><span class="chip">Afrobeat</span><span class="chip">Highlife</span></div>
+          <div style="font-size:12px; color:var(--muted);">12 tracks · finished</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank" style="font-size: 18px;">·</div>
+          <div class="lb-user">
+            <div class="lb-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&auto=format&fit=crop&q=60" alt=""></div>
+            <div><div class="lb-name">Anya Volkov</div><div class="lb-loc">Tbilisi · Caucasian folk</div></div>
+          </div>
+          <div class="lb-genres"><span class="chip">Folk</span><span class="chip">Choral</span></div>
+          <div style="font-size:12px; color:var(--muted);">9 tracks · finished</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: ACHIEVEMENTS
+         ============================================ -->
+    <div class="page" id="page-achievements">
+      <div class="page-header">
+        <div class="eyebrow">Achievements</div>
+        <h1>The <em>collection.</em></h1>
+        <p class="lede">Listening is the work. Badges are a quiet record of it.</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">All</div>
+        <div class="tab">Earned</div>
+        <div class="tab">In progress</div>
+        <div class="tab">Locked</div>
+      </div>
+
+      <div class="badge-row">
+        <div class="badge clay">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
+          <h4>World Traveler</h4>
+          <p>Listen across five regions of the atlas.</p>
+          <div class="progress"><div class="bar" style="width:60%"></div></div>
+          <div class="progress-meta"><span>3 of 5 regions</span><span>60%</span></div>
+        </div>
+        <div class="badge sage">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg></div>
+          <h4>Steady Hand</h4>
+          <p>Listen for five consecutive days.</p>
+          <div class="progress"><div class="bar" style="width:100%"></div></div>
+          <div class="progress-meta"><span>5 of 5 days</span><span>Earned</span></div>
+        </div>
+        <div class="badge gold">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18V6l12 2v10"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <h4>Music Master</h4>
+          <p>Complete one hundred daily listens.</p>
+          <div class="progress"><div class="bar" style="width:38%"></div></div>
+          <div class="progress-meta"><span>38 of 100</span><span>38%</span></div>
+        </div>
+        <div class="badge plum locked">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+          <h4>Night Owl</h4>
+          <p>Listen after midnight for seven nights.</p>
+          <div class="progress"><div class="bar" style="width:14%"></div></div>
+          <div class="progress-meta"><span>1 of 7 nights</span><span>Locked</span></div>
+        </div>
+        <div class="badge sage">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v8M8 12h8"/><circle cx="12" cy="12" r="10"/></svg></div>
+          <h4>Genre Explorer</h4>
+          <p>Listen to ten different genres.</p>
+          <div class="progress"><div class="bar" style="width:70%"></div></div>
+          <div class="progress-meta"><span>7 of 10 genres</span><span>70%</span></div>
+        </div>
+        <div class="badge clay locked">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11V7l-5 3M3 11V7l5 3"/><path d="M3 11v6a4 4 0 004 4h10a4 4 0 004-4v-6"/></svg></div>
+          <h4>Polyglot Ear</h4>
+          <p>Hear a track in ten different languages.</p>
+          <div class="progress"><div class="bar" style="width:30%"></div></div>
+          <div class="progress-meta"><span>3 of 10 languages</span><span>Locked</span></div>
+        </div>
+        <div class="badge gold">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M2 12h20"/></svg></div>
+          <h4>Wide Field</h4>
+          <p>Listen on all seven continents.</p>
+          <div class="progress"><div class="bar" style="width:43%"></div></div>
+          <div class="progress-meta"><span>3 of 7 continents</span><span>43%</span></div>
+        </div>
+        <div class="badge plum locked">
+          <div class="badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s-7-4.35-7-10a4 4 0 017-2.65A4 4 0 0119 11c0 5.65-7 10-7 10z"/></svg></div>
+          <h4>True Believer</h4>
+          <p>Save 50 entries in Emotion Echo.</p>
+          <div class="progress"><div class="bar" style="width:24%"></div></div>
+          <div class="progress-meta"><span>12 of 50</span><span>Locked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: EVENTS
+         ============================================ -->
+    <div class="page" id="page-events">
+      <div class="page-header">
+        <div class="eyebrow">Events</div>
+        <h1>What's <em>playing nearby.</em></h1>
+        <p class="lede">Concerts, festivals and listening rooms within reach of your city. Pulled from a few good calendars.</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">Nearby</div>
+        <div class="tab">This week</div>
+        <div class="tab">This month</div>
+        <div class="tab">Saved</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="event-card">
+          <div class="event-img" style="background-image:url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=900')">
+            <div class="event-date"><b>15</b><span>Jul</span></div>
+          </div>
+          <div class="event-body">
+            <h4>World Music Festival</h4>
+            <div class="event-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>Central Park · New York</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>Jul 15 · 7 PM</span>
+            </div>
+            <p>A two-day celebration of diverse musical traditions — Africa, Asia and Latin America on three stages.</p>
+            <div class="event-chips"><span class="chip">World</span><span class="chip">Folk</span><span class="chip">Fusion</span></div>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-img" style="background-image:url('https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&q=80&w=900')">
+            <div class="event-date"><b>03</b><span>Jun</span></div>
+          </div>
+          <div class="event-body">
+            <h4>Late Night with Tom Misch</h4>
+            <div class="event-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>The Sinclair · Cambridge</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>Jun 3 · 9 PM</span>
+            </div>
+            <p>A small room, a soft groove. UK soul-jazz that's about pocket more than pyrotechnics.</p>
+            <div class="event-chips"><span class="chip">Soul</span><span class="chip">Jazz</span><span class="chip">UK</span></div>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-img" style="background-image:url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&q=80&w=900')">
+            <div class="event-date"><b>22</b><span>Aug</span></div>
+          </div>
+          <div class="event-body">
+            <h4>Sahel Sounds Showcase</h4>
+            <div class="event-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>Mississippi Studios · Portland</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>Aug 22 · 8 PM</span>
+            </div>
+            <p>Three artists from the Sahel region. Bring patience — these arrangements unfold.</p>
+            <div class="event-chips"><span class="chip">West Africa</span><span class="chip">Desert blues</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: LEADERBOARD
+         ============================================ -->
+    <div class="page" id="page-leaderboard">
+      <div class="page-header">
+        <div class="eyebrow">Leaderboard</div>
+        <h1>Curious ears, <em>ranked gently.</em></h1>
+        <p class="lede">Points are for staying with it — daily streaks, regions explored, mood-journal entries written. Not for being right.</p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap: 18px; flex-wrap: wrap; margin-bottom: 24px;">
+        <div class="tabs" style="margin-bottom: 0;">
+          <div class="tab active">Global</div>
+          <div class="tab">Friends</div>
+          <div class="tab">Leagues</div>
+        </div>
+        <div class="search" style="min-width: 240px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input placeholder="Find a listener…" />
+        </div>
+      </div>
+
+      <div class="leaderboard">
+        <div class="lb-row top1">
+          <div class="lb-rank">I.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Mira Okafor</div><div class="lb-loc">Lagos · explored 6 regions</div></div></div>
+          <div class="lb-genres"><span class="chip">Afrobeat</span><span class="chip">Jazz</span><span class="chip">+4</span></div>
+          <div class="lb-points">2,418<small>pts</small></div>
+        </div>
+        <div class="lb-row top2">
+          <div class="lb-rank">II.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Theo Brenner</div><div class="lb-loc">Berlin · 23-day streak</div></div></div>
+          <div class="lb-genres"><span class="chip">Techno</span><span class="chip">Krautrock</span><span class="chip">+2</span></div>
+          <div class="lb-points">2,205<small>pts</small></div>
+        </div>
+        <div class="lb-row top3">
+          <div class="lb-rank">III.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Anya Volkov</div><div class="lb-loc">Tbilisi · perfect month</div></div></div>
+          <div class="lb-genres"><span class="chip">Folk</span><span class="chip">Ambient</span><span class="chip">+5</span></div>
+          <div class="lb-points">2,094<small>pts</small></div>
+        </div>
+        <div class="lb-row"><div class="lb-rank">IV.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Kenji Watanabe</div><div class="lb-loc">Osaka · city pop curator</div></div></div>
+          <div class="lb-genres"><span class="chip">City pop</span><span class="chip">Jazz</span></div>
+          <div class="lb-points">1,872<small>pts</small></div>
+        </div>
+        <div class="lb-row"><div class="lb-rank">V.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Sofia Marquez</div><div class="lb-loc">Buenos Aires · 18-day streak</div></div></div>
+          <div class="lb-genres"><span class="chip">Tango</span><span class="chip">Folklore</span></div>
+          <div class="lb-points">1,690<small>pts</small></div>
+        </div>
+        <div class="lb-row you"><div class="lb-rank">XIV.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Sebastian · you</div><div class="lb-loc">12-day streak · Level 3</div></div></div>
+          <div class="lb-genres"><span class="chip">Afrobeat</span><span class="chip">Flamenco</span><span class="chip">+1</span></div>
+          <div class="lb-points">1,127<small>pts</small></div>
+        </div>
+        <div class="lb-row"><div class="lb-rank">XV.</div>
+          <div class="lb-user"><div class="lb-avatar"><img src="https://images.unsplash.com/photo-1502323777036-f29e3972d82f?w=200&auto=format&fit=crop&q=60"></div><div><div class="lb-name">Júlio Reis</div><div class="lb-loc">São Paulo · 8-day streak</div></div></div>
+          <div class="lb-genres"><span class="chip">Bossa</span><span class="chip">MPB</span><span class="chip">+3</span></div>
+          <div class="lb-points">1,108<small>pts</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         PAGE: SETTINGS
+         ============================================ -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div class="eyebrow">Settings</div>
+        <h1>Make Soundora <em>yours.</em></h1>
+        <p class="lede">A handful of toggles. Most of the magic stays where it should — in the music.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Profile</h3>
+          <p>How you appear on the leaderboard and in duets.</p>
+          <div style="display:flex; align-items:center; gap:18px; margin-bottom: 22px;">
+            <div class="me-avatar" style="width: 64px; height: 64px;">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60" alt="">
+            </div>
+            <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Change photo</button>
+          </div>
+          <div class="field">
+            <label>Display name</label>
+            <input type="text" value="Sebastian">
+          </div>
+          <div class="field">
+            <label>Home city</label>
+            <input type="text" placeholder="Where do you listen from?">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Listening</h3>
+          <p>Bits of how Soundora behaves while you listen.</p>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--rule);">
+              <div>
+                <div style="font-weight:500; font-size:14px;">Autoplay daily listens</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">Start the day's session when you open the app.</div>
+              </div>
+              <div class="toggle on" data-toggle></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--rule);">
+              <div>
+                <div style="font-weight:500; font-size:14px;">Show cultural notes</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">A few sentences of context alongside each track.</div>
+              </div>
+              <div class="toggle on" data-toggle></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--rule);">
+              <div>
+                <div style="font-weight:500; font-size:14px;">Streak reminders</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">A quiet ping if you haven't listened by evening.</div>
+              </div>
+              <div class="toggle" data-toggle></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+              <div>
+                <div style="font-weight:500; font-size:14px;">Translate lyrics</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">English subtitles for non-English songs.</div>
+              </div>
+              <div class="toggle on" data-toggle></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Spotify connection</h3>
+          <p>Soundora plays through your Spotify account.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px; background: var(--paper-deep); border-radius:10px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:#1DB954; display:flex; align-items:center; justify-content:center; color:white; font-weight:700;">S</div>
+              <div>
+                <div style="font-weight:500; font-size:14px;">Connected as Sebastian</div>
+                <div style="font-size:11px; color:var(--muted);">Premium account · Web Player</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost">Disconnect</button>
+          </div>
+          <div style="font-size:12px; color:var(--muted); line-height:1.5;">Without Spotify, daily listens play 30-second previews. With it, the whole record.</div>
+        </div>
+
+        <div class="card">
+          <h3>Appearance</h3>
+          <p>Choose how Soundora reads at a glance.</p>
+          <div class="field">
+            <label>Theme</label>
+            <select>
+              <option>Editorial (cream)</option>
+              <option>Editorial (ink)</option>
+              <option>System default</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Type size</label>
+            <select>
+              <option>Comfortable</option>
+              <option>Compact</option>
+              <option>Generous</option>
+            </select>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-top:1px solid var(--rule);">
+            <div>
+              <div style="font-weight:500; font-size:14px;">Reduce motion</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Disable animated transitions and pulses.</div>
+            </div>
+            <div class="toggle" data-toggle></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap: 12px; margin-top: 32px;">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Save changes</button>
+      </div>
+    </div>
+
+    <!-- Colophon footer -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-top: 24px; margin-top: 40px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px;">
+      <div style="font-family: var(--serif); font-style: italic;">Soundora — printed daily, listened to slowly.</div>
+      <div>Volume III · Edition 138 · May 17, 2026</div>
+    </div>
+
+  </main>
+</div>
+
+<!-- NOW PLAYING BAR -->
+<div class="nowplay" id="nowplay">
+  <div class="np-left">
+    <div class="np-cover"><img src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=200&auto=format&fit=crop&q=60" alt=""></div>
+    <div class="np-text">
+      <div class="np-title">Zombie</div>
+      <div class="np-artist">Fela Kuti · The Daily, No. 138</div>
+    </div>
+  </div>
+  <div class="np-controls">
+    <div class="np-btns">
+      <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+      <button class="np-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12L20 6v12z"/></svg></button>
+      <button class="np-play" id="ppBtn"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
+      <button class="np-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4 6l10.5 6L4 18z"/></svg></button>
+      <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></svg></button>
+    </div>
+    <div class="np-progress">
+      <span id="curTime">1:14</span>
+      <div class="np-bar"><div id="progBar"></div></div>
+      <span>3:12</span>
+    </div>
+  </div>
+  <div class="np-right">
+    <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h10M4 18h7"/></svg></button>
+    <div class="np-vol">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15 9a4 4 0 010 6M19 5a8 8 0 010 14"/></svg>
+      <div class="np-vol-bar"><div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===================================================
+     WORLD MAP — embedded SVG continent paths
+     viewBox 1000 x 500 (equirectangular-ish)
+     =================================================== */
+  const CONTINENT_PATHS = {
+    eurasiaAfrica: "M616,99 L584,92 L577,94 L575,92 L564,93 L558,90 L536,89 L529,85 L525,85 L528,86 L526,89 L516,91 L507,85 L501,87 L482,85 L483,82 L480,80 L472,80 L461,75 L460,77 L465,78 L462,81 L450,82 L448,85 L442,85 L443,88 L437,89 L435,87 L433,90 L429,86 L425,90 L427,94 L414,91 L418,94 L406,94 L399,98 L396,97 L398,95 L394,94 L395,100 L371,90 L356,92 L349,95 L348,100 L336,108 L337,115 L341,116 L345,113 L348,119 L346,121 L344,117 L341,118 L341,126 L337,126 L329,132 L329,127 L322,120 L324,118 L321,116 L322,114 L316,116 L317,121 L310,124 L309,130 L316,128 L316,125 L320,123 L322,125 L319,126 L317,133 L324,131 L329,133 L318,137 L324,143 L321,149 L309,149 L307,159 L314,165 L290,198 L292,202 L290,219 L306,237 L333,233 L335,237 L343,239 L341,250 L348,259 L352,273 L347,288 L353,299 L354,311 L362,327 L375,325 L388,312 L388,307 L394,303 L392,294 L405,282 L402,259 L409,248 L419,239 L426,225 L426,221 L413,224 L410,219 L432,209 L442,197 L434,188 L430,193 L426,193 L425,188 L423,189 L417,180 L419,178 L431,187 L435,185 L438,189 L454,189 L464,200 L467,196 L470,210 L479,229 L484,224 L484,212 L497,198 L505,196 L513,207 L512,211 L519,210 L522,218 L521,229 L526,233 L529,242 L527,243 L521,236 L516,236 L524,245 L528,254 L539,265 L562,268 L566,271 L566,268 L574,267 L571,272 L579,267 L578,265 L577,267 L571,266 L563,269 L561,266 L555,267 L553,264 L539,262 L537,260 L538,252 L536,253 L532,249 L531,245 L534,244 L532,236 L526,231 L523,222 L525,217 L535,227 L543,221 L543,216 L534,202 L541,198 L540,205 L543,205 L543,199 L550,197 L559,189 L561,180 L558,178 L560,177 L559,174 L552,168 L556,162 L550,163 L545,159 L550,154 L552,159 L557,156 L564,162 L566,168 L570,168 L571,166 L563,157 L567,148 L572,149 L574,136 L571,131 L573,130 L580,141 L583,141 L578,137 L581,135 L569,124 L569,127 L556,123 L560,113 L578,114 L577,109 L579,107 L584,110 L587,107 L589,109 L587,120 L600,131 L599,119 L592,112 L602,112 L604,108 L610,107 L604,103 L605,100 L617,103 Z M314,166 L315,167 L322,167 L326,164 L331,164 L332,163 L333,163 L334,164 L335,164 L336,163 L342,163 L343,162 L344,163 L345,163 L345,164 L344,165 L345,166 L345,168 L343,170 L344,171 L346,171 L348,173 L352,173 L355,176 L357,176 L358,177 L359,177 L361,179 L363,177 L363,174 L364,173 L368,173 L369,174 L371,174 L372,175 L373,175 L374,176 L378,176 L379,177 L381,177 L382,176 L387,176 L388,177 L389,177 L392,174 L392,171 L393,170 L393,164 L392,163 L390,163 L388,165 L387,165 L384,163 L383,163 L382,164 L380,164 L379,163 L376,163 L375,158 L374,157 L374,156 L375,155 L374,154 L370,154 L367,156 L368,157 L367,158 L369,160 L370,160 L370,161 L369,161 L368,162 L368,163 L366,163 L365,160 L361,155 L361,152 L356,148 L353,147 L353,145 L352,144 L351,145 L350,145 L350,144 L349,143 L348,144 L348,146 L350,148 L350,149 L353,152 L355,152 L355,153 L356,154 L359,155 L359,156 L358,155 L357,155 L356,156 L356,157 L357,158 L353,162 L353,163 L350,162 L349,161 L349,160 L352,161 L353,160 L354,160 L355,159 L355,157 L354,156 L353,156 L353,155 L352,154 L349,153 L347,151 L346,151 L345,150 L345,148 L343,146 L341,146 L337,149 L336,149 L335,148 L332,148 L331,149 L331,152 L330,153 L328,153 L324,157 L324,158 L325,159 L321,163 L318,163 L317,164 L315,164 L314,165 Z M376,151 L379,154 L382,154 L385,152 L391,152 L394,154 L401,154 L402,153 L402,150 L401,149 L398,148 L396,146 L393,145 L392,144 L391,144 L390,145 L388,145 L387,146 L383,141 L382,141 L377,146 L377,148 L376,149 Z M363,100 L360,104 L359,104 L355,108 L355,110 L358,112 L357,113 L357,114 L356,114 L354,116 L354,120 L352,120 L350,122 L349,122 L348,121 L347,122 L347,123 L348,124 L349,124 L350,125 L352,125 L353,124 L355,124 L356,123 L357,123 L358,124 L360,124 L362,122 L362,119 L364,116 L364,114 L365,115 L367,113 L366,112 L364,112 L362,110 L362,106 L365,103 L366,103 L367,102 L367,101 L366,100 Z M389,184 L394,193 L394,195 L397,198 L397,203 L401,207 L401,208 L402,209 L402,212 L405,214 L406,214 L409,218 L410,217 L410,214 L409,213 L409,209 L407,207 L406,204 L401,199 L401,195 L399,192 L398,192 L397,189 L394,185 L394,184 L393,183 L390,183 Z M410,145 L410,146 L411,147 L412,147 L412,149 L418,155 L417,156 L417,158 L416,159 L416,160 L421,164 L425,164 L427,162 L426,161 L426,159 L425,158 L425,157 L424,156 L423,156 L423,153 L422,152 L422,150 L421,149 L420,149 L417,146 L418,146 L419,145 L419,144 L420,144 L421,143 L421,141 L420,140 L416,140 Z",
+    americas: "M316,72 L305,72 L305,70 L299,69 L258,72 L257,70 L216,72 L210,74 L212,77 L210,80 L207,80 L206,76 L202,82 L191,80 L195,83 L186,87 L191,89 L191,94 L187,96 L186,92 L183,96 L178,97 L174,95 L182,92 L179,90 L184,85 L177,88 L168,84 L159,84 L152,88 L160,88 L158,94 L146,93 L145,91 L127,94 L106,89 L84,94 L82,100 L80,98 L73,100 L73,103 L79,103 L66,107 L62,111 L65,113 L63,115 L68,116 L56,122 L69,117 L74,118 L78,113 L89,112 L92,109 L103,115 L102,123 L105,124 L105,129 L102,133 L105,137 L94,155 L94,166 L99,171 L102,182 L100,185 L107,195 L102,179 L104,175 L105,181 L115,196 L114,202 L128,211 L135,210 L140,215 L147,217 L151,225 L161,231 L163,227 L166,228 L168,239 L160,250 L162,254 L160,261 L171,281 L184,290 L186,334 L189,346 L192,347 L190,354 L193,355 L192,360 L196,365 L208,373 L216,372 L205,364 L208,355 L203,353 L208,344 L206,345 L204,342 L208,342 L210,337 L216,335 L215,328 L222,326 L229,313 L228,306 L242,298 L245,292 L245,278 L253,268 L253,262 L242,254 L234,254 L232,251 L226,250 L221,246 L220,239 L214,234 L208,234 L201,227 L201,223 L192,225 L183,220 L180,223 L179,219 L172,223 L169,228 L166,226 L158,227 L155,223 L157,213 L146,211 L152,199 L145,199 L142,205 L135,206 L131,201 L130,194 L138,181 L142,179 L150,181 L151,178 L155,177 L162,179 L163,187 L166,190 L167,175 L178,168 L189,154 L196,152 L195,150 L204,144 L207,145 L206,148 L218,142 L212,142 L209,138 L212,136 L209,133 L216,136 L216,133 L226,130 L227,132 L221,139 L231,141 L231,135 L227,133 L230,126 L224,120 L223,112 L216,115 L214,113 L216,111 L212,107 L203,109 L202,107 L203,112 L199,114 L200,119 L193,123 L188,131 L185,128 L187,122 L174,117 L173,113 L189,103 L196,105 L196,107 L199,106 L196,105 L199,103 L203,104 L198,99 L206,98 L210,92 L216,91 L221,96 L208,103 L215,103 L222,108 L228,104 L225,101 L227,98 L229,101 L235,99 L229,94 L230,91 L222,85 L205,86 L205,83 L220,83 L221,80 L247,73 L247,76 L237,77 L238,80 L252,82 L250,89 L254,88 L255,90 L250,93 L253,91 L255,93 L250,95 L247,101 L249,108 L257,112 L266,101 L297,91 L296,86 L303,84 L302,80 L306,79 L303,77 Z M202,85 L200,87 L199,86 L198,86 L196,88 L196,91 L195,92 L197,94 L198,93 L199,94 L197,96 L198,97 L199,97 L201,95 L202,95 L205,92 L204,91 L201,91 L201,89 L205,86 L204,85 Z",
+    australia: "M610,273 L608,276 L608,279 L607,280 L607,284 L604,288 L602,288 L601,287 L601,286 L598,285 L595,282 L595,281 L598,277 L598,276 L597,276 L596,275 L595,276 L594,275 L592,275 L590,273 L589,273 L589,274 L590,275 L589,276 L588,276 L587,275 L587,274 L585,274 L586,275 L586,276 L582,282 L581,282 L579,280 L576,280 L573,283 L573,284 L572,285 L571,285 L571,286 L570,287 L569,286 L567,288 L566,291 L564,293 L563,293 L562,294 L559,294 L558,295 L555,295 L553,297 L550,298 L549,299 L549,301 L548,302 L548,306 L547,307 L547,313 L548,314 L548,316 L547,317 L547,318 L548,319 L548,321 L545,325 L545,326 L548,328 L549,327 L551,327 L554,325 L561,325 L563,323 L564,323 L567,321 L572,321 L573,320 L579,320 L580,321 L582,321 L583,322 L583,327 L584,327 L586,325 L587,326 L587,327 L585,329 L585,330 L586,330 L585,329 L586,328 L587,328 L590,330 L590,331 L589,332 L589,334 L590,335 L592,335 L593,336 L595,336 L596,335 L597,335 L599,337 L603,334 L606,334 L607,333 L608,333 L608,332 L610,330 L610,329 L620,319 L621,316 L624,312 L623,311 L623,310 L624,309 L624,305 L621,301 L621,299 L620,299 L619,298 L619,294 L618,294 L615,291 L615,287 L614,286 L614,282 L611,280 L611,275 L610,274 Z",
+    indonesia1: "M588,250 L592,253 L591,254 L592,255 L592,257 L593,256 L594,256 L595,257 L596,257 L597,258 L599,258 L602,260 L602,261 L604,264 L601,266 L602,267 L605,266 L607,268 L612,268 L612,267 L613,266 L616,265 L619,267 L619,268 L621,271 L624,271 L625,272 L626,272 L626,271 L620,265 L621,262 L620,261 L619,261 L616,257 L615,257 L612,255 L610,255 L607,253 L605,253 L602,251 L600,253 L599,252 L598,252 L599,253 L597,255 L596,255 L594,253 L594,252 L595,251 L593,249 L590,249 L589,250 Z",
+    indonesia2: "M564,235 L562,235 L561,234 L561,233 L560,232 L559,232 L556,237 L554,237 L553,238 L553,239 L551,241 L549,241 L547,244 L546,244 L545,243 L544,244 L544,249 L546,251 L546,254 L549,254 L550,255 L551,255 L552,254 L553,255 L554,255 L555,256 L555,257 L558,256 L559,251 L561,249 L561,246 L562,245 L563,246 L564,245 L563,245 L562,244 L562,242 L560,240 L561,239 L561,238 L563,236 L564,236 Z",
+    madagascar: "M423,276 L422,276 L422,277 L420,279 L420,280 L416,284 L414,284 L412,286 L412,294 L410,297 L410,303 L411,304 L411,305 L412,305 L413,306 L416,305 L418,302 L418,299 L419,298 L420,293 L422,290 L422,287 L424,284 L424,278 L423,277 Z",
+    japan: "M594,144 L593,144 L593,145 L590,147 L587,147 L585,145 L582,144 L584,147 L584,148 L583,149 L583,151 L586,153 L585,154 L585,155 L587,158 L587,161 L585,163 L584,163 L583,162 L583,165 L582,166 L578,166 L575,169 L575,170 L574,171 L573,171 L573,172 L575,172 L576,173 L576,175 L577,176 L578,176 L578,173 L579,172 L580,172 L583,170 L584,171 L585,171 L585,169 L586,168 L589,168 L592,166 L591,165 L591,163 L590,162 L590,157 L584,151 L585,150 L586,150 L587,151 L589,151 L589,150 L590,149 L591,149 L591,148 L590,147 Z",
+    newZealand: "M661,334 L658,335 L656,333 L657,332 L656,331 L656,328 L655,327 L655,333 L654,334 L654,335 L650,338 L651,339 L651,340 L649,342 L648,341 L647,342 L646,341 L645,341 L639,346 L629,350 L627,352 L626,352 L626,353 L627,353 L628,354 L630,354 L631,353 L632,353 L638,348 L640,348 L648,342 L651,342 L653,340 L654,340 L656,337 L658,337 Z",
+    iceland1: "M292,100 L293,100 L294,101 L293,102 L292,102 L293,102 L294,103 L294,104 L297,104 L298,105 L307,102 L307,101 L304,99 L303,99 L302,100 L298,100 L297,101 L295,99 L293,99 Z",
+    iceland2: "M421,79 L419,79 L418,80 L413,80 L412,81 L409,81 L408,82 L407,82 L404,86 L403,89 L405,89 L406,90 L410,90 L411,91 L411,90 L410,90 L408,88 L408,86 L411,83 L412,83 L415,81 L418,81 L419,80 L421,80 Z",
+    iceland3: "M576,244 L574,246 L571,246 L570,245 L568,245 L567,246 L566,246 L566,249 L565,250 L565,253 L564,254 L564,255 L565,256 L565,260 L566,260 L566,255 L567,254 L568,255 L569,258 L570,258 L571,259 L571,260 L572,260 L572,257 L571,257 L570,256 L570,254 L569,253 L569,252 L570,251 L573,250 L573,249 L572,249 L571,250 L569,250 L568,251 L566,249 L566,247 L567,246 L572,246 L573,247 L574,247 L576,245 Z",
+    island1: "M345,75 L350,79 L353,79 L356,76 L357,76 L359,78 L362,78 L361,77 L359,77 L358,76 L359,75 L364,75 L365,74 L354,74 L353,75 L352,74 L351,75 Z",
+    island2: "M188,81 L187,81 L186,80 L184,80 L182,82 L181,82 L178,80 L178,78 L177,78 L176,79 L171,79 L170,80 L166,80 L166,81 L169,81 L170,80 L172,80 L173,81 L172,82 L173,82 L175,84 L176,84 L177,83 L179,83 L180,82 L183,82 L184,83 L185,83 Z",
+  };
+
+  /*
+     Region pins: hand-tuned x/y in 1000x500 viewBox to land cleanly on the drawn continents.
+  */
+  const REGIONS = [
+    { id: 'north-america', name: 'North America', sub: "Jazz, blues, country", x: 136, y: 155, explored: true },
+    { id: 'south-america', name: 'South America', sub: "Bossa nova, samba, cumbia", x: 206, y: 296, explored: false, pulse: true },
+    { id: 'europe', name: 'Europe', sub: "Folk, classical, techno", x: 335, y: 138, explored: true },
+    { id: 'africa', name: 'Africa · today', sub: "Today's Daily", x: 374, y: 261, explored: false, pulse: true },
+    { id: 'middle-east', name: 'Middle East', sub: "Maqam, oud, qanun", x: 409, y: 184, explored: false },
+    { id: 'south-asia', name: 'South Asia', sub: "Hindustani, Bollywood", x: 478, y: 203, explored: false },
+    { id: 'east-asia', name: 'East Asia', sub: "K-pop, city pop, gagaku", x: 543, y: 178, explored: true },
+    { id: 'oceania', name: 'Oceania', sub: "Maori, Aboriginal songlines", x: 592, y: 306, explored: false },
+  ];
+
+  function renderWorldMap(container, opts={}) {
+    const showLabels = opts.labels !== false;
+    const paths = Object.entries(CONTINENT_PATHS)
+      .map(([k, d]) => `<path class="land" d="${d}" data-land="${k}"></path>`).join('');
+
+    const pins = REGIONS.map(r => {
+      const { x, y } = r;
+      const pulse = r.pulse ? `<circle class="ring pin-pulse" cx="${x}" cy="${y}" r="6"/>` : '';
+      const ring  = `<circle class="ring" cx="${x}" cy="${y}" r="11"/>`;
+      const dot   = `<circle class="dot" cx="${x}" cy="${y}" r="4.5"/>`;
+      const label = showLabels ? `<text class="pin-label" x="${x}" y="${y - 16}">${r.name}</text>` : '';
+      // Transparent hit area, large and stable — receives hover so the visible
+      // sub-elements can change without re-triggering hover state
+      const hit   = `<circle class="hit" cx="${x}" cy="${y}" r="18"/>`;
+      return `<g class="pin ${r.explored ? 'explored' : ''}" data-region="${r.id}" data-name="${r.name}" data-sub="${r.sub}">${pulse}${ring}${dot}${label}${hit}</g>`;
+    }).join('');
+
+    container.innerHTML = `
+      <svg class="worldmap" viewBox="0 0 740 444" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <g>${paths}</g>
+        <g>${pins}</g>
+      </svg>
+      <div class="map-tooltip" id="${container.id}-tt"></div>
+      <div class="atlas-legend">
+        <span class="legend-item"><span class="legend-dot explored"></span> ${REGIONS.filter(r=>r.explored).length} explored</span>
+        <span class="legend-item"><span class="legend-dot unexplored"></span> ${REGIONS.filter(r=>!r.explored).length} waiting</span>
+      </div>
+    `;
+
+    // Tooltip behavior — suppressed while in pin-edit mode
+    const tt = container.querySelector('.map-tooltip');
+    container.querySelectorAll('.pin').forEach(pin => {
+      pin.addEventListener('mouseenter', () => {
+        if (typeof editMode !== 'undefined' && editMode) return;
+        tt.innerHTML = `<b>${pin.dataset.name}</b><span>${pin.dataset.sub}</span>`;
+        tt.classList.add('visible');
+      });
+      pin.addEventListener('mousemove', (e) => {
+        if (typeof editMode !== 'undefined' && editMode) return;
+        const rect = container.getBoundingClientRect();
+        tt.style.left = (e.clientX - rect.left) + 'px';
+        tt.style.top  = (e.clientY - rect.top)  + 'px';
+      });
+      pin.addEventListener('mouseleave', () => tt.classList.remove('visible'));
+    });
+  }
+
+  /* ===================================================
+     PAGE SWITCHING
+     =================================================== */
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav li').forEach(li => li.classList.remove('active'));
+    const navLi = document.querySelector(`.nav li[data-page="${pageId}"]`);
+    if (navLi) navLi.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const id = el.dataset.page;
+      if (id) showPage(id);
+    });
+  });
+
+  /* ===================================================
+     NOW PLAYING
+     =================================================== */
+  (function(){
+    const btn  = document.getElementById('ppBtn');
+    const icon = document.getElementById('playIcon');
+    const bar  = document.getElementById('progBar');
+    const cur  = document.getElementById('curTime');
+    let playing = true;
+    let pct = 38;
+
+    function setIcon() {
+      if (playing) {
+        icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      } else {
+        icon.innerHTML = '<path d="M6 4l14 8-14 8V4z"/>';
+      }
+    }
+    btn.addEventListener('click', () => { playing = !playing; setIcon(); });
+    setIcon();
+
+    setInterval(() => {
+      if (!playing) return;
+      pct = (pct + 0.25) % 100;
+      bar.style.width = pct + '%';
+      const total = 192;
+      const t = Math.floor(total * pct/100);
+      cur.textContent = Math.floor(t/60) + ':' + String(t%60).padStart(2,'0');
+    }, 250);
+  })();
+
+  /* ===================================================
+     TOGGLES
+     =================================================== */
+  document.querySelectorAll('[data-toggle]').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('on'));
+  });
+
+  /* ===================================================
+     TABS
+     =================================================== */
+  document.querySelectorAll('.tabs').forEach(group => {
+    group.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        group.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
+
+  /* ===================================================
+     MOOD SELECT
+     =================================================== */
+  document.querySelectorAll('.mood-grid').forEach(grid => {
+    grid.querySelectorAll('.mood').forEach(m => {
+      m.addEventListener('click', () => {
+        grid.querySelectorAll('.mood').forEach(x => x.classList.remove('selected'));
+        m.classList.add('selected');
+      });
+    });
+  });
+
+  /* ===================================================
+     INITIAL RENDER
+     =================================================== */
+  // Clear any pin positions saved during the edit-mode session so the
+  // baked-in defaults always render.
+  try { localStorage.removeItem('soundora.pinPositions.v1'); } catch (e) {}
+  renderWorldMap(document.getElementById('atlas-home'), { labels: true });
+</script>
+</body>
+</html>

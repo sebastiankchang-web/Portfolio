@@ -1,0 +1,47 @@
+2:31:22 PM [express] serving on port 5000
+[replit-cartographer] Error processing /home/runner/workspace/client/src/App.tsx: TypeError: traverse is not a function
+    at TransformPluginContext.transform [90m(file:///home/runner/workspace/[39mnode_modules/[4m@replit/vite-plugin-cartographer[24m/dist/index.mjs:53:9[90m)[39m
+    at async PluginContainer.transform [90m(file:///home/runner/workspace/[39mnode_modules/[4mvite[24m/dist/node/chunks/dep-CHZK6zbr.js:49098:18[90m)[39m
+    at async loadAndTransform [90m(file:///home/runner/workspace/[39mnode_modules/[4mvite[24m/dist/node/chunks/dep-CHZK6zbr.js:51931:27[90m)[39m
+[replit-cartographer] Error processing /home/runner/workspace/client/src/App.tsx: TypeError: traverse is not a function
+    at TransformPluginContext.transform [90m(file:///home/runner/workspace/[39mnode_modules/[4m@replit/vite-plugin-cartographer[24m/dist/index.mjs:53:9[90m)[39m
+    at async PluginContainer.transform [90m(file:///home/runner/workspace/[39mnode_modules/[4mvite[24m/dist/node/chunks/dep-CHZK6zbr.js:49098:18[90m)[39m
+    at async loadAndTransform [90m(file:///home/runner/workspace/[39mnode_modules/[4mvite[24m/dist/node/chunks/dep-CHZK6zbr.js:51931:27[90m)[39m
+    at async Proxy.warmupRequest [90m(file:///home/runner/workspace/[39mnode_modules/[4mvite[24m/dist/node/chunks/dep-CHZK6zbr.js:62995:9[90m)[39m
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m2:31:25 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Native rollup parse not available. Use @rollup/wasm-node.[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36m/home/runner/workspace/client/src/main.tsx?v=PaeJHgVgqOJZn3z1Z3Qw6[39m
+      at parse (/home/runner/workspace/node_modules/rollup/dist/native.js:22:9)
+      at parseAst (file:///home/runner/workspace/node_modules/rollup/dist/es/shared/parseAst.js:2069:115)
+      at transformCjsImport (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:64594:16)
+      at interopNamedImports (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:64566:23)
+      at file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:64355:19
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async Promise.all (index 0)
+      at async TransformPluginContext.transform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:64258:7)
+      at async PluginContainer.transform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:49098:18)
+      at async loadAndTransform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:51931:27)
