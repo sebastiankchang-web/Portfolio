@@ -1082,8 +1082,14 @@
     .mood-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 640px) {
-    .top { flex-direction: column; align-items: flex-start; gap: 18px; }
+    .top { flex-direction: column; align-items: stretch; gap: 14px; margin-bottom: 28px; }
+    .date { font-size: 12px; }
+    .top-actions { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
     .search { min-width: 0; width: 100%; }
+    .streak-chip { padding: 6px 12px 6px 6px; align-self: flex-start; }
+    .streak-flame { width: 22px; height: 22px; font-size: 11px; }
+    .streak-text { font-size: 11px; }
+    .streak-text span { display: none; }   /* hide "Keep it lit through Tuesday" — too cramped on phones */
     .genres { grid-template-columns: 1fr; }
     .badge-row { grid-template-columns: 1fr; }
     .lb-row { grid-template-columns: 40px 1fr auto; padding: 14px 18px; }
