@@ -170,7 +170,7 @@
 
   /* MAIN */
   .main {
-    padding: 36px 56px 140px;
+    padding: 36px 56px 56px;   /* trimmed bottom — now-playing bar removed */
     max-width: 1180px;
     width: 100%;
   }
@@ -503,13 +503,13 @@
   .mini-play svg { width: 12px; height: 12px; margin-left: 1px; }
 
   /* =========================================
-     ATLAS — proper world map
+     ATLAS — full-width map, region cards underneath
      ========================================= */
   .atlas-wrap {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 36px;
-    align-items: stretch;
+    display: block;
+  }
+  .atlas-wrap > .atlas {
+    margin-bottom: 24px;
   }
   .atlas {
     background: var(--surface-2);
@@ -589,8 +589,12 @@
   .legend-dot.explored { background: var(--sage); }
   .legend-dot.unexplored { background: var(--clay); }
 
-  /* Region cards (aside) */
-  .atlas-aside { display: flex; flex-direction: column; gap: 16px; }
+  /* Region cards — horizontal row under the map */
+  .atlas-aside {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
   .region-card {
     background: var(--surface);
     border: 1px solid var(--rule);
@@ -599,7 +603,7 @@
     transition: border-color .3s ease, transform .3s ease;
     cursor: pointer;
   }
-  .region-card:hover { border-color: var(--ink-2); transform: translateX(4px); }
+  .region-card:hover { border-color: var(--ink-2); transform: translateY(-2px); }
   .region-card .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .region-card .tag {
     font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
@@ -1015,14 +1019,61 @@
   .map-tooltip span { font-size: 10px; opacity: .7; }
 
 
+  /* =========================================
+     COMPACT CORNER MINI-PLAYER
+     ========================================= */
+  .mini-player {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    gap: 4px 10px;
+    width: 240px;
+    padding: 8px 10px 9px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(31,26,20,.10), 0 2px 6px rgba(31,26,20,.04);
+    font-family: var(--sans);
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .mini-player:hover { transform: translateY(-1px); }
+  .mp-cover { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; grid-row: span 2; }
+  .mp-meta { grid-row: span 2; min-width: 0; line-height: 1.1; }
+  .mp-title { font-size: 12px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-artist { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .mp-play {
+    grid-row: span 2;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    border: none; cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .mp-play:hover { transform: scale(1.06); background: var(--clay); }
+  .mp-bar { display: none; }   /* progress bar omitted for compactness */
+
+  @media (max-width: 540px) {
+    .mini-player { right: 10px; bottom: 10px; width: 200px; padding: 6px 8px; }
+    .mp-cover { width: 28px; height: 28px; }
+    .mp-title { font-size: 11px; }
+    .mp-artist { font-size: 9.5px; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 1080px) {
     .shell { grid-template-columns: 1fr; }
     .sidebar { display: none; }
-    .main { padding: 28px 24px 140px; }
+    .main { padding: 28px 24px 48px; }
     .masthead { grid-template-columns: 1fr; gap: 32px; }
     .genres { grid-template-columns: 1fr 1fr; }
-    .atlas-wrap { grid-template-columns: 1fr; }
+    .atlas-aside { grid-template-columns: 1fr; }
     .badge-row { grid-template-columns: 1fr 1fr; }
     .grid-2, .grid-3 { grid-template-columns: 1fr; }
     .event-card { grid-template-columns: 1fr; }
@@ -1911,36 +1962,18 @@
   </main>
 </div>
 
-<!-- NOW PLAYING BAR -->
-<div class="nowplay" id="nowplay">
-  <div class="np-left">
-    <div class="np-cover"><img src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=200&auto=format&fit=crop&q=60" alt=""></div>
-    <div class="np-text">
-      <div class="np-title">Zombie</div>
-      <div class="np-artist">Fela Kuti · The Daily, No. 138</div>
-    </div>
+<!-- Compact corner mini-player — small, unobtrusive -->
+<div class="mini-player" id="nowplay" aria-label="Now playing">
+  <img class="mp-cover" src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=160&auto=format&fit=crop&q=60" alt="">
+  <div class="mp-meta">
+    <div class="mp-title">Zombie</div>
+    <div class="mp-artist">Fela Kuti</div>
   </div>
-  <div class="np-controls">
-    <div class="np-btns">
-      <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
-      <button class="np-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12L20 6v12z"/></svg></button>
-      <button class="np-play" id="ppBtn"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></button>
-      <button class="np-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4 6l10.5 6L4 18z"/></svg></button>
-      <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></svg></button>
-    </div>
-    <div class="np-progress">
-      <span id="curTime">1:14</span>
-      <div class="np-bar"><div id="progBar"></div></div>
-      <span>3:12</span>
-    </div>
-  </div>
-  <div class="np-right">
-    <button class="np-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h10M4 18h7"/></svg></button>
-    <div class="np-vol">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15 9a4 4 0 010 6M19 5a8 8 0 010 14"/></svg>
-      <div class="np-vol-bar"><div></div></div>
-    </div>
-  </div>
+  <button class="mp-play" id="ppBtn" aria-label="Play / pause">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M6 4l14 8-14 8V4z"/></svg>
+  </button>
+  <div class="mp-bar"><div id="progBar" style="width:38%"></div></div>
+  <span id="curTime" hidden>1:14</span>
 </div>
 
 <script>
@@ -2046,13 +2079,14 @@
   });
 
   /* ===================================================
-     NOW PLAYING
+     NOW PLAYING (no-op if the player bar isn't on the page)
      =================================================== */
   (function(){
     const btn  = document.getElementById('ppBtn');
     const icon = document.getElementById('playIcon');
     const bar  = document.getElementById('progBar');
     const cur  = document.getElementById('curTime');
+    if (!btn || !icon || !bar || !cur) return;  // player removed for portfolio embed
     let playing = true;
     let pct = 38;
 
