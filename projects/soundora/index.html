@@ -895,6 +895,42 @@
     padding: 24px 28px;
     margin-bottom: 28px;
   }
+  .dj-prompt textarea#djPromptTxt { transition: border-color .2s ease, box-shadow .2s ease; }
+  .dj-prompt textarea#djPromptTxt:focus { outline: none; border-color: var(--clay); box-shadow: 0 0 0 3px rgba(184,92,59,.12); }
+  .dj-suggest {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule);
+  }
+  .dj-suggest-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .dj-suggest-label svg { width: 13px; height: 13px; color: var(--clay); }
+  .dj-suggest-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .dj-suggest-chip {
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+    text-align: left;
+    line-height: 1.3;
+  }
+  .dj-suggest-chip:hover {
+    background: var(--clay-soft);
+    border-color: var(--clay);
+    color: var(--ink);
+    transform: translateY(-1px);
+  }
+  .dj-suggest-chip:active { transform: translateY(0); }
   .dj-prompt-row {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -910,6 +946,158 @@
     cursor: pointer;
   }
   .session-card:hover { border-color: var(--clay); transform: translateY(-2px); }
+
+  /* ----- DJ — generated "now playing" session mockup ----- */
+  .dj-now {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    align-items: stretch;
+    background: linear-gradient(135deg, #1F1A14 0%, #2A2017 100%);
+    color: #F6F1E8;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: 0 28px 60px rgba(31,26,20,.20);
+    transition: box-shadow .4s ease, transform .4s ease;
+  }
+  .dj-now.just-generated {
+    box-shadow: 0 28px 60px rgba(184,92,59,.30), 0 0 0 2px rgba(184,92,59,.45);
+    animation: dj-pop .55s ease-out;
+  }
+  @keyframes dj-pop {
+    0%   { transform: scale(.985); }
+    60%  { transform: scale(1.008); }
+    100% { transform: scale(1); }
+  }
+  .dj-now-cover {
+    position: relative;
+    aspect-ratio: 1/1;
+    width: 100%;
+    min-width: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--clay), #5A2818);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .dj-now-cover img {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: .9;
+    filter: saturate(.85) contrast(1.05);
+  }
+  .dj-now-cover .play-pulse {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dj-now-cover .play-pulse-btn {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff;
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .dj-now-cover .play-pulse-btn svg { width: 22px; height: 22px; margin-left: 2px; fill: currentColor; }
+  .dj-now-meta { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .dj-now-tag {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: #E8C896;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .dj-now-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: #E8C896; animation: dj-blink 1.6s ease-in-out infinite; }
+  @keyframes dj-blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  .dj-now-meta h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 26px; line-height: 1.12;
+    color: #F6F1E8;
+    margin: 0;
+  }
+  .dj-now-meta h2 em { font-style: italic; color: #E8C896; }
+  .dj-now-blurb {
+    font-size: 13px; line-height: 1.5;
+    color: rgba(246,241,232,.78);
+    max-width: 48ch;
+  }
+  .dj-now-stats {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 4px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.10);
+    font-size: 11px; color: rgba(246,241,232,.55);
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .dj-now-stats b { color: #F6F1E8; font-weight: 500; font-family: var(--serif); font-size: 14px; letter-spacing: 0; text-transform: none; margin-right: 6px; }
+  .dj-progress { display: flex; align-items: center; gap: 10px; }
+  .dj-progress-bar {
+    flex: 1; height: 3px; border-radius: 999px;
+    background: rgba(255,255,255,.10); overflow: hidden;
+  }
+  .dj-progress-bar > div { height: 100%; width: 38%; background: linear-gradient(90deg, var(--clay), #E0894A); border-radius: 999px; }
+  .dj-time { font-size: 11px; color: rgba(246,241,232,.6); font-variant-numeric: tabular-nums; }
+
+  /* Track list under the player */
+  .dj-tracklist {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .dj-tracklist h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 18px;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--rule);
+    margin: 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .dj-tracklist h3 .small { font-family: var(--sans); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .dj-track {
+    display: grid;
+    grid-template-columns: 28px 36px 1fr auto 56px;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--rule);
+    transition: background .2s ease;
+    cursor: pointer;
+  }
+  .dj-track:last-child { border-bottom: none; }
+  .dj-track:hover { background: var(--surface-2); }
+  .dj-track.playing { background: var(--clay-soft); }
+  .dj-track .dj-idx { font-family: var(--serif); font-style: italic; color: var(--muted); font-size: 13px; }
+  .dj-track.playing .dj-idx { color: var(--clay); }
+  .dj-track .dj-cover {
+    width: 36px; height: 36px; border-radius: 6px;
+    background: linear-gradient(135deg, #c9bba0, #8a7e6e);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .dj-track .dj-title { font-weight: 500; font-size: 14px; line-height: 1.25; color: var(--ink); min-width: 0; }
+  .dj-track .dj-title small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; margin-top: 1px; }
+  .dj-track .dj-from {
+    font-family: var(--serif); font-style: italic;
+    font-size: 12px; color: var(--muted);
+    white-space: nowrap;
+  }
+  .dj-track .dj-dur { color: var(--muted); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+  .dj-track.playing .dj-title { color: var(--clay); }
+  .dj-equalizer {
+    display: inline-flex; gap: 2px; align-items: flex-end;
+    width: 14px; height: 14px;
+  }
+  .dj-equalizer i {
+    display: block; width: 2px; background: var(--clay);
+    animation: dj-eq 1.1s ease-in-out infinite;
+  }
+  .dj-equalizer i:nth-child(1) { height: 60%; animation-delay: .0s; }
+  .dj-equalizer i:nth-child(2) { height: 100%; animation-delay: .15s; }
+  .dj-equalizer i:nth-child(3) { height: 40%; animation-delay: .3s; }
+  @keyframes dj-eq {
+    0%, 100% { transform: scaleY(.45); }
+    50%      { transform: scaleY(1); }
+  }
   .session-card .sm-meta {
     font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
     color: var(--muted-2); margin-bottom: 8px;
@@ -1066,6 +1254,14 @@
     .mp-artist { font-size: 9.5px; }
   }
 
+  /* Intermediate width — sidebar gone but not full mobile (Soundora inside a desktop browser-frame on a phone). */
+  @media (max-width: 900px) and (min-width: 641px) {
+    .dj-now { grid-template-columns: 140px 1fr; gap: 18px; padding: 20px; }
+    .dj-now-cover { width: 140px; max-width: 140px; }
+    .dj-now-meta h2 { font-size: 22px; }
+    .dj-track .dj-from { font-size: 11px; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 1080px) {
     .shell { grid-template-columns: 1fr; }
@@ -1108,6 +1304,27 @@
     /* Tabs wrap cleanly */
     .tabs { flex-wrap: wrap; gap: 6px; }
     .tab { font-size: 12px; padding: 6px 12px; }
+
+    /* DJ page — stack prompt elements + sessions */
+    .dj-prompt { padding: 18px 18px; }
+    .dj-prompt-row { grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
+    .dj-prompt-row .btn-primary { width: 100%; justify-content: center; }
+    /* Keep the cover side-by-side but small on phones — full-width square overpowered the text */
+    .dj-now { grid-template-columns: 96px 1fr; gap: 14px; padding: 16px; }
+    .dj-now-cover { aspect-ratio: 1/1; width: 96px; max-width: 96px; }
+    .dj-now-cover .play-pulse-btn { width: 38px; height: 38px; }
+    .dj-now-cover .play-pulse-btn svg { width: 14px; height: 14px; }
+    .dj-now-meta { gap: 8px; }
+    .dj-now-meta h2 { font-size: 18px; line-height: 1.2; }
+    .dj-now-blurb { font-size: 12.5px; }
+    .dj-now-stats { gap: 12px; padding-top: 10px; font-size: 10px; }
+    .dj-now-stats b { font-size: 12px; }
+    .dj-track { grid-template-columns: 20px 32px 1fr 40px; gap: 10px; padding: 10px 14px; }
+    .dj-track .dj-from { display: none; }  /* hide origin/year column to save space */
+    .dj-tracklist h3 { padding: 14px 16px 10px; font-size: 16px; }
+    .grid-3 { grid-template-columns: 1fr; gap: 14px; }
+    .section-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .section-head .right { margin-left: 0; }
   }
 
   /* =========================================
@@ -1502,16 +1719,108 @@
       <div class="dj-prompt">
         <div class="field" style="margin-bottom: 14px;">
           <label>Your prompt</label>
-          <textarea placeholder="e.g. Late-night driving music that starts in São Paulo and ends in Tokyo…"></textarea>
+          <textarea id="djPromptTxt" placeholder="e.g. Late-night driving music that starts in São Paulo and ends in Tokyo…"></textarea>
         </div>
         <div class="dj-prompt-row">
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <span class="chip">Calm</span><span class="chip">Late night</span><span class="chip">Latin America</span><span class="chip">Acoustic</span><span class="chip">+ Add</span>
           </div>
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" id="djGenBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l4-4 4 4 8-8"/><path d="M14 5h6v6"/></svg>
-            Generate session
+            <span class="dj-gen-label">Generate session</span>
           </button>
+        </div>
+
+        <!-- AI-suggested prompts — click to fill -->
+        <div class="dj-suggest">
+          <div class="dj-suggest-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/></svg>
+            Soundora suggests
+          </div>
+          <div class="dj-suggest-row">
+            <button class="dj-suggest-chip" data-prompt="Late-night driving music that starts in São Paulo and ends in Tokyo.">Late-night driving — São Paulo to Tokyo</button>
+            <button class="dj-suggest-chip" data-prompt="Songs my grandmother would have danced to in the 1970s.">Songs my grandmother would have danced to</button>
+            <button class="dj-suggest-chip" data-prompt="Folk music with no English in it, for cooking dinner alone.">Folk music, no English, cooking alone</button>
+            <button class="dj-suggest-chip" data-prompt="Music that sounds like a thunderstorm rolling in.">Sounds like a thunderstorm rolling in</button>
+            <button class="dj-suggest-chip" data-prompt="Sunday-morning music from somewhere I've never been.">Sunday morning, somewhere I've never been</button>
+            <button class="dj-suggest-chip" data-prompt="Pre-club warm-up — Lagos, 2am, summer.">Lagos, 2am, pre-club warm-up</button>
+            <button class="dj-suggest-chip" data-prompt="A mix that feels like reading a novel by candlelight.">Reading a novel by candlelight</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- "Generated" mockup state — what shows after Generate session is clicked -->
+      <div class="dj-now" id="djNow">
+        <div class="dj-now-cover">
+          <img src="https://images.unsplash.com/photo-1509479200622-4503f27f12ef?w=600&q=80&auto=format&fit=crop" alt="">
+          <div class="play-pulse">
+            <div class="play-pulse-btn"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8V4z"/></svg></div>
+          </div>
+        </div>
+        <div class="dj-now-meta">
+          <div class="dj-now-tag"><span class="dot"></span>Now playing · Generated 2 min ago</div>
+          <h2>São Paulo to Tokyo <em>— a midnight drive.</em></h2>
+          <p class="dj-now-blurb">From the prompt: <em>"Late-night driving music that starts in São Paulo and ends in Tokyo."</em> 11 tracks, 47 minutes, sliding from samba-jazz to dream pop to city-pop.</p>
+          <div class="dj-progress">
+            <span class="dj-time">12:31</span>
+            <div class="dj-progress-bar"><div></div></div>
+            <span class="dj-time">47:08</span>
+          </div>
+          <div class="dj-now-stats">
+            <span><b>11</b> tracks</span>
+            <span><b>4</b> countries</span>
+            <span><b>3</b> genres</span>
+            <span><b>0</b> repeats</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generated track list -->
+      <div class="dj-tracklist">
+        <h3>The session <span class="small">Tap a track to skip</span></h3>
+        <div class="dj-track">
+          <div class="dj-idx">i.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#A9744E,#6A3A1F)">♪</div>
+          <div class="dj-title">Águas de Março <small>Elis Regina &amp; Tom Jobim</small></div>
+          <div class="dj-from">São Paulo · 1974</div>
+          <div class="dj-dur">3:32</div>
+        </div>
+        <div class="dj-track playing">
+          <div class="dj-idx">ii.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#6B8AA0,#2E465B)">♪</div>
+          <div class="dj-title">Toda Menina Baiana <small>Gilberto Gil</small></div>
+          <div class="dj-from">Salvador · 1979</div>
+          <div class="dj-dur">
+            <span class="dj-equalizer"><i></i><i></i><i></i></span>
+          </div>
+        </div>
+        <div class="dj-track">
+          <div class="dj-idx">iii.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#E0894A,#A9462A)">♪</div>
+          <div class="dj-title">Plastic Love <small>Mariya Takeuchi</small></div>
+          <div class="dj-from">Tokyo · 1984</div>
+          <div class="dj-dur">8:01</div>
+        </div>
+        <div class="dj-track">
+          <div class="dj-idx">iv.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#9C8EBE,#5A4C7A)">♪</div>
+          <div class="dj-title">Stay With Me <small>Miki Matsubara</small></div>
+          <div class="dj-from">Tokyo · 1979</div>
+          <div class="dj-dur">3:42</div>
+        </div>
+        <div class="dj-track">
+          <div class="dj-idx">v.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#C9A96E,#7A5F35)">♪</div>
+          <div class="dj-title">Sodade <small>Cesária Évora</small></div>
+          <div class="dj-from">Mindelo · 1992</div>
+          <div class="dj-dur">5:18</div>
+        </div>
+        <div class="dj-track">
+          <div class="dj-idx">vi.</div>
+          <div class="dj-cover" style="background:linear-gradient(135deg,#7A8D6E,#3F4D33)">♪</div>
+          <div class="dj-title">Midnight Pretenders <small>Tomoko Aran</small></div>
+          <div class="dj-from">Tokyo · 1983</div>
+          <div class="dj-dur">5:54</div>
         </div>
       </div>
 
@@ -2159,6 +2468,60 @@
       if (id) showPage(id);
     });
   });
+
+  /* ===================================================
+     DJ SUGGESTED PROMPTS — clicking a chip fills the textarea
+     =================================================== */
+  document.querySelectorAll('.dj-suggest-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const txt = document.getElementById('djPromptTxt');
+      if (!txt) return;
+      txt.value = chip.dataset.prompt || chip.textContent.trim();
+      txt.focus();
+      // brief pulse so the user sees it landed
+      txt.style.transition = 'box-shadow .25s ease';
+      txt.style.boxShadow = '0 0 0 3px rgba(184,92,59,.20)';
+      setTimeout(() => { txt.style.boxShadow = ''; }, 600);
+    });
+  });
+
+  /* ===================================================
+     DJ GENERATE — fake-loading state + scroll to mockup + pulse highlight
+     =================================================== */
+  (function(){
+    const btn = document.getElementById('djGenBtn');
+    const now = document.getElementById('djNow');
+    if (!btn || !now) return;
+    const label = btn.querySelector('.dj-gen-label');
+    const origText = label ? label.textContent : 'Generate session';
+
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.style.cursor = 'progress';
+      if (label) label.textContent = 'Generating…';
+
+      // Brief "loading" beat so the act of generating feels real
+      setTimeout(() => {
+        // Reset button
+        btn.disabled = false;
+        btn.style.opacity = '';
+        btn.style.cursor = '';
+        if (label) label.textContent = origText;
+
+        // Smooth-scroll to the now-playing card and pulse-highlight it
+        now.classList.remove('just-generated');
+        // force reflow so the animation restarts every click
+        void now.offsetWidth;
+        now.classList.add('just-generated');
+        now.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Strip the highlight class once the glow fades
+        setTimeout(() => now.classList.remove('just-generated'), 2200);
+      }, 850);
+    });
+  })();
 
   /* ===================================================
      FUNCTIONAL TABS — Events page filters
