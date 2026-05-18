@@ -1095,6 +1095,59 @@
     .lb-row { grid-template-columns: 40px 1fr auto; padding: 14px 18px; }
     .lb-genres { display: none; }
     .mood-grid { grid-template-columns: repeat(2, 1fr); }
+    /* Feature card on phones — stronger gradient + smaller text so overlay doesn't cover the photo */
+    .feature-card { aspect-ratio: 3/4; }
+    .feature-card::after { background: linear-gradient(180deg, transparent 25%, rgba(15,11,7,.92) 90%); }
+    .feature-overlay { padding: 18px; }
+    .feature-overlay h3 { font-size: 20px; }
+    .feature-overlay p { font-size: 12.5px; margin-bottom: 12px; max-width: none; }
+    /* Page header tighter */
+    .page-header h1 { font-size: clamp(26px, 7vw, 36px); }
+    .page-header { padding-bottom: 24px; margin-bottom: 28px; }
+    .masthead { padding-bottom: 24px; margin-bottom: 32px; }
+    /* Tabs wrap cleanly */
+    .tabs { flex-wrap: wrap; gap: 6px; }
+    .tab { font-size: 12px; padding: 6px 12px; }
+  }
+
+  /* =========================================
+     MOBILE BOTTOM NAV (sidebar is hidden ≤ 1080)
+     ========================================= */
+  .mobile-nav { display: none; }
+  @media (max-width: 1080px) {
+    .mobile-nav {
+      position: fixed;
+      bottom: 12px; left: 50%; transform: translateX(-50%);
+      z-index: 40;
+      display: flex;
+      gap: 4px;
+      padding: 6px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      box-shadow: 0 14px 36px rgba(31,26,20,.14), 0 2px 6px rgba(31,26,20,.06);
+    }
+    .mobile-nav-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      color: var(--muted);
+      background: transparent;
+      border: 0; cursor: pointer;
+      transition: color .2s ease, background .2s ease;
+    }
+    .mobile-nav-btn svg { width: 18px; height: 18px; stroke-width: 1.6; }
+    .mobile-nav-btn:hover { color: var(--ink); background: var(--surface); }
+    .mobile-nav-btn.active { color: var(--paper); background: var(--ink); }
+    /* Push content above the floating nav + mini-player */
+    .main { padding-bottom: 110px; }
+    /* Make sure mini-player doesn't overlap the mobile nav */
+    .mini-player { bottom: 70px; right: 12px; }
+  }
+  @media (max-width: 540px) {
+    .mini-player { bottom: 66px; }
   }
 </style>
 </head>
@@ -1968,6 +2021,25 @@
   </main>
 </div>
 
+<!-- Mobile bottom navigation (visible only when sidebar is hidden) -->
+<nav class="mobile-nav" aria-label="Sections">
+  <button class="mobile-nav-btn active" data-page="page-today" aria-label="Today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+  </button>
+  <button class="mobile-nav-btn" data-page="page-dj" aria-label="DJ">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17l4-4 4 4 8-8"/><path d="M14 5h6v6"/></svg>
+  </button>
+  <button class="mobile-nav-btn" data-page="page-emotion" aria-label="Emotion Echo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s-7-4.35-7-10a4 4 0 017-2.65A4 4 0 0119 11c0 5.65-7 10-7 10z"/></svg>
+  </button>
+  <button class="mobile-nav-btn" data-page="page-events" aria-label="Events">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+  </button>
+  <button class="mobile-nav-btn" data-page="page-leaderboard" aria-label="Leaderboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-3-3.9M4 21v-2a4 4 0 013-3.9M8 11a4 4 0 108 0 4 4 0 00-8 0z"/></svg>
+  </button>
+</nav>
+
 <!-- Compact corner mini-player — small, unobtrusive -->
 <div class="mini-player" id="nowplay" aria-label="Now playing">
   <img class="mp-cover" src="https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=160&auto=format&fit=crop&q=60" alt="">
@@ -2065,7 +2137,7 @@
   }
 
   /* ===================================================
-     PAGE SWITCHING
+     PAGE SWITCHING (sidebar + mobile bottom-nav)
      =================================================== */
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2074,6 +2146,10 @@
     document.querySelectorAll('.nav li').forEach(li => li.classList.remove('active'));
     const navLi = document.querySelector(`.nav li[data-page="${pageId}"]`);
     if (navLi) navLi.classList.add('active');
+    // Sync mobile bottom-nav active state
+    document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+    const mobBtn = document.querySelector(`.mobile-nav-btn[data-page="${pageId}"]`);
+    if (mobBtn) mobBtn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -2083,6 +2159,54 @@
       if (id) showPage(id);
     });
   });
+
+  /* ===================================================
+     FUNCTIONAL TABS — Events page filters
+     =================================================== */
+  (function(){
+    const eventsPage = document.getElementById('page-events');
+    if (!eventsPage) return;
+    const tabsRow = eventsPage.querySelector('.tabs');
+    const cards   = Array.from(eventsPage.querySelectorAll('.event-card'));
+    if (!tabsRow || !cards.length) return;
+
+    // Tag each card with which filters it belongs to.  Order in HTML:
+    // 0 = World Music Festival (Jul 15), 1 = Tom Misch (Jun 3), 2 = Sahel Sounds (Aug 22).
+    const meta = [
+      { tabs: ['Nearby', 'This month', 'Saved'] },
+      { tabs: ['Nearby', 'This week', 'This month'] },
+      { tabs: ['This month'] }
+    ];
+    cards.forEach((card, i) => card.dataset.tabs = (meta[i] || { tabs: [] }).tabs.join('|'));
+
+    const empty = document.createElement('div');
+    empty.className = 'tab-empty';
+    empty.style.cssText = 'padding:40px 20px;text-align:center;color:var(--muted);font-style:italic;border:1px dashed var(--rule);border-radius:var(--radius);margin-top:8px;';
+    empty.textContent = 'Nothing scheduled here yet — try another filter.';
+    cards[0].parentElement.appendChild(empty);
+    empty.hidden = true;
+
+    function filter(label) {
+      let visible = 0;
+      cards.forEach(card => {
+        const tabs = (card.dataset.tabs || '').split('|');
+        const show = tabs.includes(label);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      empty.hidden = visible > 0;
+    }
+
+    tabsRow.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabsRow.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        filter(tab.textContent.trim());
+      });
+    });
+    // Initial state
+    filter('Nearby');
+  })();
 
   /* ===================================================
      NOW PLAYING (no-op if the player bar isn't on the page)
