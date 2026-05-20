@@ -122,8 +122,8 @@
         max-width: 100%; min-width: 0;
         display: block;
       }
-      .input[type="date"] { text-align: center; }
-      .input[type="date"]::-webkit-date-and-time-value { text-align: center; }
+      .input[type="date"] { text-align: left; }
+      .input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 
       .toast {
         position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -1493,9 +1493,16 @@
                              placeholder="e.g. Paris" value="${to ? cityLabel(to) : ""}" />
                     </div>
                   </div>
-                  <div>
-                    <label class="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">When</label>
-                    <input id="book-when" type="date" class="input bg-white/15 text-white placeholder-white/40 border-white/10 focus:bg-white/25 focus:border-white/40" value="${f.when || ""}" />
+                  <div class="flex gap-2 items-end">
+                    <div class="flex-1 min-w-0">
+                      <label class="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">When</label>
+                      <input id="book-when" type="date" class="input book-when-input bg-white/15 text-white placeholder-white/40 border-white/10 focus:bg-white/25 focus:border-white/40" value="${f.when || ""}" />
+                    </div>
+                    <button id="book-search" type="button"
+                            class="shrink-0 flex items-center justify-center gap-1.5 h-12 px-5 rounded-2xl font-semibold text-[14px] transition-transform hover:scale-[1.03] active:scale-95"
+                            style="background:var(--app-sage); color:#fff;">
+                      <i data-lucide="search" class="w-4 h-4"></i> Search
+                    </button>
                   </div>
                 </div>
                 ${from && to && from.id !== to.id ? `
@@ -2618,6 +2625,31 @@
         if (modeBtn) { window._logForm.mode = modeBtn.dataset.mode; render(); return; }
         const popular = e.target.closest(".popular-route");
         if (popular) { window._bookForm = { fromId: popular.dataset.from, toId: popular.dataset.to, when: window._bookForm?.when || "" }; render(); return; }
+        const searchBtn = e.target.closest("#book-search");
+        if (searchBtn) {
+          // Resolve whatever is typed in the From / To fields, then show ranked routes
+          const fromEl = document.getElementById("book-from");
+          const toEl   = document.getElementById("book-to");
+          const whenEl = document.getElementById("book-when");
+          const fromCity = fromEl ? cityByLabel(fromEl.value) : null;
+          const toCity   = toEl ? cityByLabel(toEl.value) : null;
+          window._bookForm = window._bookForm || { fromId: "", toId: "", when: "" };
+          if (whenEl) window._bookForm.when = whenEl.value;
+          if (!fromCity || !toCity) {
+            toast("Pick a city for both From and To");
+            return;
+          }
+          if (fromCity.id === toCity.id) { toast("Choose two different cities"); return; }
+          window._bookForm.fromId = fromCity.id;
+          window._bookForm.toId   = toCity.id;
+          saveState(); render();
+          // Scroll to the ranked options once they render
+          requestAnimationFrame(() => {
+            const opts = document.querySelector('.book-option');
+            if (opts) opts.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+          return;
+        }
         const bookOpt = e.target.closest(".book-option");
         if (bookOpt) { bookTrip(bookOpt.dataset.mode); return; }
         const cancelBooking = e.target.closest(".cancel-booking");
