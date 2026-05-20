@@ -112,9 +112,17 @@
         border: 1px solid transparent;
         font-size: 14px; color: var(--foreground); font-family: inherit;
         transition: border-color .15s, background .15s;
+        box-sizing: border-box; min-width: 0;
       }
       .input:focus { outline: none; border-color: var(--app-sage); background: white; }
       .input::placeholder { color: hsl(220 9% 55%); }
+      /* Native date inputs have an intrinsic min-width and overflow narrow screens — normalise */
+      .input[type="date"] {
+        -webkit-appearance: none; appearance: none;
+        max-width: 100%; min-width: 0;
+        display: block;
+      }
+      .input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 
       .toast {
         position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
