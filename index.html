@@ -889,7 +889,7 @@
     .journey-step:first-child { border-top: none; padding-top: 0; }
     /* Embeds */
     .live-stack > .embed-block { margin-bottom: 64px; }
-    .trio-fullwidth { width: 100%; max-width: none; margin: 32px 0 64px; }
+    .trio-fullwidth, .syd-fullwidth { width: 100%; max-width: none; margin: 32px 0 64px; }
     .chapter-aligned { max-width: none; margin: 0 0 56px; }
     .embed-stacked .embed-caption { grid-template-columns: 1fr; gap: 24px; max-width: none; }
     .embed-stacked .cap-right { max-width: none; }
@@ -1150,21 +1150,23 @@
     .embed-split .phone-frame { max-width: 280px; margin: 0 auto; order: 2; }
     .embed-split .phone-frame iframe { height: 520px; }
 
-    /* WanderWell scaled frame — wider on mobile, native-resolution render */
+    /* Scaled frames (Jamly + WanderWell) — fill most of the screen on phones.
+       Exact scale/height is computed by fitScaledFrames() in JS; these are fallbacks. */
     .embed-split .phone-frame.phone-frame-scaled {
-      max-width: 360px;
-      height: 625px;             /* 820 × (338/460) + 22 bezel */
+      max-width: 440px;
+      width: 100%;
+      height: 760px;
       margin: 0 auto;
     }
     .embed-split .phone-frame.phone-frame-scaled .phone-stage {
-      transform: scale(calc(338 / 460));   /* 360 − 22 bezel = 338 inner */
+      transform: scale(calc(418 / 460));   /* 440 − 22 bezel = 418 inner */
     }
     .embed-split .phone-frame.phone-frame-scaled .phone-stage iframe {
       height: 820px;
     }
     .browser-frame iframe { height: 480px; }
     .trio-fullwidth .browser-frame iframe,
-    .syd-fullwidth .browser-frame iframe { height: 560px; }   /* bit taller so Soundora's mobile layout breathes */
+    .syd-fullwidth .browser-frame iframe { height: 560px; }
     .browser-bar { padding: 8px 12px; }
     .browser-url { font-size: 10px; padding: 4px 10px; max-width: none; }
     .embed-caption h4 { font-size: 22px; }
@@ -1208,13 +1210,9 @@
     .embed-split .phone-frame iframe { height: 460px; }
     .browser-frame iframe { height: 380px; }
     .contact-grid { grid-template-columns: 1fr; }
-    /* WanderWell — keep at near-full-phone-width */
+    /* Keep scaled frames near full phone width on very small screens */
     .embed-split .phone-frame.phone-frame-scaled {
-      max-width: 300px;
-      height: 518px;  /* 820 * (278/460) ≈ 496 + 22 = 518 */
-    }
-    .embed-split .phone-frame.phone-frame-scaled .phone-stage {
-      transform: scale(calc(278 / 460));   /* 300 − 22 = 278 */
+      max-width: 100%;
     }
   }
 
@@ -1781,6 +1779,36 @@
 
 <!-- Instagram embed processor — converts the .instagram-media blockquotes into live posts -->
 <script async src="https://www.instagram.com/embed.js"></script>
+
+<!-- Fit the scaled phone frames (Jamly + WanderWell) to whatever width they end up at,
+     so they're as large as possible while always fitting inside their container. -->
+<script>
+  (function () {
+    var NATIVE_W = 460, NATIVE_H = 820, BEZEL = 22; // 11px each side
+    function fitScaledFrames() {
+      document.querySelectorAll('.phone-frame.phone-frame-scaled').forEach(function (frame) {
+        var stage = frame.querySelector('.phone-stage');
+        if (!stage) return;
+        var innerW = frame.clientWidth - BEZEL;            // available content width
+        if (innerW <= 0) return;
+        var scale = innerW / NATIVE_W;
+        stage.style.transformOrigin = 'top left';
+        stage.style.transform = 'scale(' + scale + ')';
+        frame.style.height = (NATIVE_H * scale + BEZEL) + 'px';
+      });
+    }
+    var raf;
+    function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(fitScaledFrames); }
+    window.addEventListener('resize', schedule);
+    window.addEventListener('orientationchange', schedule);
+    window.addEventListener('load', fitScaledFrames);
+    if (document.readyState !== 'loading') fitScaledFrames();
+    else document.addEventListener('DOMContentLoaded', fitScaledFrames);
+    // run a couple more times as fonts/layout settle
+    setTimeout(fitScaledFrames, 300);
+    setTimeout(fitScaledFrames, 1000);
+  })();
+</script>
 
 
 </body>
