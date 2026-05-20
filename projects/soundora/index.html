@@ -1278,6 +1278,13 @@
     .mood-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 640px) {
+    /* Hard guard against horizontal overflow on phones */
+    html, body { overflow-x: hidden; max-width: 100vw; }
+    .shell, .main, .page { max-width: 100%; overflow-x: hidden; }
+    .main { width: 100%; }
+    /* Inline-styled search boxes (leaderboard) must go full width, not 240px min */
+    #page-leaderboard .search { min-width: 0 !important; width: 100%; }
+    #page-leaderboard .tabs { margin-bottom: 0; }
     .top { flex-direction: column; align-items: stretch; gap: 14px; margin-bottom: 28px; }
     .date { font-size: 12px; }
     .top-actions { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
@@ -1288,8 +1295,12 @@
     .streak-text span { display: none; }   /* hide "Keep it lit through Tuesday" — too cramped on phones */
     .genres { grid-template-columns: 1fr; }
     .badge-row { grid-template-columns: 1fr; }
-    .lb-row { grid-template-columns: 40px 1fr auto; padding: 14px 18px; }
+    .lb-row { grid-template-columns: 36px minmax(0,1fr) auto; padding: 14px 16px; gap: 12px; }
     .lb-genres { display: none; }
+    .lb-user { min-width: 0; gap: 10px; }
+    .lb-user > div { min-width: 0; }
+    .lb-name, .lb-loc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-points { font-size: 16px; white-space: nowrap; }
     .mood-grid { grid-template-columns: repeat(2, 1fr); }
     /* Feature card on phones — stronger gradient + smaller text so overlay doesn't cover the photo */
     .feature-card { aspect-ratio: 3/4; }
