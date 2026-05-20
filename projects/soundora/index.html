@@ -1301,9 +1301,19 @@
     .page-header h1 { font-size: clamp(26px, 7vw, 36px); }
     .page-header { padding-bottom: 24px; margin-bottom: 28px; }
     .masthead { padding-bottom: 24px; margin-bottom: 32px; }
-    /* Tabs wrap cleanly */
-    .tabs { flex-wrap: wrap; gap: 6px; }
-    .tab { font-size: 12px; padding: 6px 12px; }
+    /* Tabs — keep on one line, scroll horizontally instead of wrapping inside the pill */
+    .tabs {
+      display: flex; flex-wrap: nowrap;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { font-size: 12px; padding: 6px 13px; white-space: nowrap; flex-shrink: 0; }
+    /* Leaderboard / DJ tab rows that sit beside a search box should wrap to their own row */
+    .section-head .right { width: 100%; }
+    .section-head .right .tabs { width: 100%; }
 
     /* DJ page — stack prompt elements + sessions */
     .dj-prompt { padding: 18px 18px; }
