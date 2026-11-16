@@ -4,6 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sebastian Kai-Wei Chang — Portfolio</title>
+<meta name="description" content="I figure out where a business could go next, then help make it happen. Market-entry work for Nordic and Italian brands, plus the websites and content behind it. Based in Rotterdam." />
+<link rel="canonical" href="https://sebastiankchang.com/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Sebastian Kai-Wei Chang" />
+<meta property="og:title" content="Sebastian Kai-Wei Chang — Portfolio" />
+<meta property="og:description" content="I figure out where a business could go next, then help make it happen. Market-entry work for Nordic and Italian brands, plus the websites and content behind it. Based in Rotterdam." />
+<meta property="og:url" content="https://sebastiankchang.com/" />
+<meta property="og:image" content="https://sebastiankchang.com/assets/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Sebastian Kai-Wei Chang: I figure out where a business could go next, then help make it happen." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Sebastian Kai-Wei Chang — Portfolio" />
+<meta name="twitter:description" content="I figure out where a business could go next, then help make it happen. Market-entry work for Nordic and Italian brands, plus the websites and content behind it. Based in Rotterdam." />
+<meta name="twitter:image" content="https://sebastiankchang.com/assets/og-image.jpg" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,0,400;9..144,1,300;9..144,1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1378,6 +1395,82 @@
     .orange-block .embed-caption { grid-template-columns: 1fr; gap: 18px; }
     .orange-posters { grid-template-columns: 1fr; gap: 18px; }
   }
+
+  /* ============= Experience (Nov 2026 refresh) ============= */
+  section#experience { background: var(--feature); }
+  .exp-list { display: grid; gap: 0; }
+  .exp-item { display: grid; grid-template-columns: 160px 1fr; gap: 40px; padding: 36px 0; border-top: 1px solid var(--rule); }
+  .exp-item:last-child { padding-bottom: 0; }
+  .exp-when { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute); line-height: 1.7; }
+  .exp-body h3 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 300; margin: 0 0 6px; }
+  .exp-body .exp-role { color: var(--soft); font-size: 14px; margin: 0 0 20px; }
+  .exp-facts { display: grid; grid-template-columns: 110px 1fr; gap: 10px 24px; margin: 0; max-width: 760px; }
+  .exp-facts dt { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); padding-top: 4px; }
+  .exp-facts dd { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.6; }
+  .todo { color: #E8B95A; font-style: italic; }
+  .exp-media { margin: 26px 0 0; display: grid; gap: 14px; max-width: 760px; }
+  .exp-media.wide-media { max-width: none; }
+  .exp-embed .embed-scroll { height: 620px; overflow-y: auto; background: #fff; }
+  .exp-embed iframe { height: 3200px; background: #fff; pointer-events: none; }
+  .exp-embed iframe.short { height: 1500px; }
+  .exp-intro { margin: 0 0 8px 200px; max-width: 916px; }
+  .exp-lead { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(20px, 2.1vw, 26px); line-height: 1.45; color: var(--ink); margin: 0 0 28px; }
+  .exp-lead strong { font-weight: 400; }
+  .exp-lead-sub { color: var(--mute); font-size: 14px; margin: 0 0 14px; }
+  .exp-kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .exp-kinds a { display: block; border: 1px solid var(--rule); border-radius: 10px; padding: 22px 24px 24px; text-decoration: none; color: inherit; transition: border-color .2s; }
+  .exp-kinds a:hover { border-color: var(--ink); }
+  .exp-kinds .num, .exp-group .num { font-family: 'Fraunces', serif; font-size: 12px; letter-spacing: 0.2em; color: var(--mute); }
+  .exp-kinds h3 { font-size: 22px; font-weight: 300; margin: 10px 0 8px; }
+  .exp-kinds p { margin: 0; color: var(--mute); font-size: 14px; line-height: 1.55; }
+  .exp-group { margin-top: 72px; padding-bottom: 16px; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); font-weight: 500; scroll-margin-top: 90px; }
+  .exp-group .num { margin-right: 14px; }
+  .exp-group em { font-style: normal; color: var(--mute); font-weight: 400; }
+  .exp-item { scroll-margin-top: 90px; }
+  .exp-sum { font-size: 17px; line-height: 1.55; color: var(--ink); margin: 6px 0 22px; max-width: 760px; }
+  .exp-more { font-size: 15px; line-height: 1.6; color: var(--mute); margin: 0 0 20px; max-width: 760px; }
+  .exp-points { margin: 0 0 6px; padding-left: 18px; max-width: 760px; color: var(--ink); font-size: 15px; line-height: 1.6; }
+  .exp-points li { margin-bottom: 6px; }
+  .exp-stats.pair { grid-template-columns: repeat(2, minmax(0, 260px)); margin-bottom: 4px; }
+  .exp-body > .exp-media { margin-top: 22px; }
+  .exp-note { margin: 28px 0 0 200px; max-width: 760px; color: var(--mute); font-size: 14px; line-height: 1.6; }
+  @media (max-width: 900px) {
+    .exp-intro, .exp-note { margin-left: 0; }
+    .exp-kinds { grid-template-columns: 1fr; }
+    .exp-group { margin-top: 52px; }
+  }
+  .exp-facts ul { margin: 0; padding-left: 18px; }
+  .exp-facts li { margin-bottom: 6px; }
+  .exp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .exp-stats div { border: 1px solid var(--rule); border-radius: 8px; padding: 18px 16px; }
+  .exp-stats strong { display: block; font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(30px, 3.4vw, 44px); line-height: 1; color: var(--ink); }
+  .exp-stats span { display: block; margin-top: 10px; font-size: 12px; line-height: 1.4; color: var(--mute); }
+  .exp-bars { display: grid; gap: 10px; margin-top: 6px; }
+  .exp-bar { display: grid; grid-template-columns: 170px 1fr 44px; gap: 14px; align-items: center; font-size: 13px; color: var(--mute); }
+  .exp-bar i { display: block; height: 10px; border-radius: 5px; background: var(--se); min-width: 4px; }
+  .exp-bar b { font-weight: 500; color: var(--ink); text-align: right; }
+  .exp-photo img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  @media (max-width: 900px) {
+    .exp-embed .embed-scroll { height: 480px; }
+    .exp-stats { grid-template-columns: repeat(2, 1fr); }
+    .exp-bar { grid-template-columns: 120px 1fr 36px; gap: 10px; }
+  }
+  .exp-shot { display: block; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: #fff; }
+  .exp-shot img, .exp-strip img { display: block; width: 100%; height: auto; }
+  .exp-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .exp-strip.three { grid-template-columns: repeat(3, 1fr); }
+  .exp-strip.two { grid-template-columns: repeat(2, 1fr); }
+  .exp-strip img { border-radius: 6px; border: 1px solid var(--rule); background: #fff; }
+  .exp-media figcaption { font-size: 11px; letter-spacing: 0.04em; color: var(--mute); }
+  @media (max-width: 900px) {
+    .exp-strip { grid-template-columns: repeat(2, 1fr); }
+    .exp-strip.three { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  }
+  @media (max-width: 900px) {
+    .exp-item { grid-template-columns: 1fr; gap: 12px; padding: 28px 0; }
+    .exp-facts { grid-template-columns: 1fr; gap: 4px; }
+    .exp-facts dd { margin-bottom: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -1386,6 +1479,7 @@
   <div class="inner">
     <a href="#top" class="brand" aria-label="Back to top">Sebastian Kai-Wei Chang</a>
     <div class="nav-right">
+      <a href="#experience">Experience</a>
       <a href="#italy">Milan</a>
       <a href="#sweden">Lund</a>
       <a href="#australia">Sydney</a>
@@ -1406,17 +1500,162 @@
   <div class="container hero-grid">
     <div>
       <div class="eyebrow">Portfolio · 2026</div>
-      <h1>Brand, content<br>&amp; design thinking,<br><em>across four countries.</em></h1>
-      <p class="lede">Born in <strong>Taipei</strong>. Sharpened across <strong>Sydney</strong>, <strong>Lund</strong> and <strong>Milan</strong>. Currently an MSc candidate at Bocconi. <em>Next up: MSc Management of Innovation, RSM Rotterdam — September 2026.</em></p>
+      <h1 style="text-wrap:balance">I figure out where a business could go next,<br><em>then help make it happen.</em></h1>
+      <p class="lede">From <strong>Taipei</strong>, with time in <strong>Sydney</strong>, <strong>Lund</strong>, <strong>Milan</strong> and <strong>Stockholm</strong>. I'm doing my master's at <strong>RSM Rotterdam</strong> and working on market-entry projects for Nordic and Italian brands, including a UK market push for Orrefors Kosta Boda.</p>
       <div class="meta">
-        <div><span>Based in</span><strong>Milan → Rotterdam</strong></div>
+        <div><span>Based in</span><strong>Rotterdam</strong></div>
         <div><span>Languages</span><strong>English (fluent) · Mandarin (native) · Swedish (conversational) · Japanese (conversational) · Danish (basic) · Dutch (basic)</strong></div>
-        <div><span>Open to</span><strong>Internships</strong></div>
+        <div><span>Available</span><strong>Two days a week (up to 16 hours) alongside my MSc, and full-time from summer 2027</strong></div>
       </div>
     </div>
     <div class="hero-photo"><img src="assets/hero.jpg" alt="Sebastian Chang"></div>
   </div>
 </header>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-head">
+      <div class="num">— Experience</div>
+      <div><h2>Recent work.</h2></div>
+    </div>
+    <div class="exp-intro">
+      <p class="exp-lead">Since summer 2026 I've worked with <strong>Italia Svezia</strong>, a small firm in Stockholm that helps Italian companies expand into Sweden, and Swedish companies into Italy. I started as an R&amp;D intern and stayed on as a freelancer. One of its biggest clients is <strong>Orrefors Kosta Boda</strong>, the Swedish maker of crystal and art glass.</p>
+      <p class="exp-lead-sub">My work there comes in two kinds:</p>
+      <div class="exp-kinds">
+        <a href="#work-finding"><span class="num">01</span><h3>Finding customers</h3><p>Working out which shops, hotels, distributors and companies a brand should talk to in a new market, and giving the team a list they can act on.</p></a>
+        <a href="#work-building"><span class="num">02</span><h3>Building websites and ordering tools</h3><p>Designing and building the sites a business sells through, then improving them once they are live.</p></a>
+      </div>
+    </div>
+    <div class="exp-list">
+
+      <div class="exp-group" id="work-finding"><span class="num">01</span> Finding customers <em>for Orrefors Kosta Boda</em></div>
+
+      <div class="exp-item" id="okb-uk">
+        <div class="exp-when">October 2026</div>
+        <div class="exp-body">
+          <h3>UK market push</h3>
+          <p class="exp-sum">Which shops, hotels and distributors in the UK might stock Swedish glass? I researched them, merged my findings into the team's existing list, and prepared it for phone calls: who to ring first, when they are open and who to ask for.</p>
+          <div class="exp-stats pair">
+            <div><strong>131</strong><span>UK companies on the 2026–27 target list</span></div>
+            <div><strong>141</strong><span>contacts, grouped in the order to call them</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item" id="okb-outreach">
+        <div class="exp-when">Summer 2026</div>
+        <div class="exp-body">
+          <h3>International outreach</h3>
+          <p class="exp-sum">The same question across Europe and beyond. I built a list for each market, then combined them into one, removed duplicates and suggested how to approach each type of company. The team used it for its outreach.</p>
+          <div class="exp-stats pair">
+            <div><strong>650</strong><span>retailers, showrooms and distributors in the combined list</span></div>
+            <div><strong>22</strong><span>markets covered by the expansion list</span></div>
+          </div>
+          <figure class="exp-media exp-photo">
+            <img src="assets/work/maison-objet-2026.jpg" width="1400" height="1050" loading="lazy" alt="Sebastian at the Kosta Boda stand at Maison&amp;Objet in Paris">
+            <figcaption>At the Kosta Boda stand, Maison&amp;Objet, Paris, September 2026.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="exp-item" id="okb-gifting">
+        <div class="exp-when">Summer 2026</div>
+        <div class="exp-body">
+          <h3>Corporate gifting</h3>
+          <p class="exp-sum">Companies buy gifts when they have something to celebrate, so I looked for Swedish companies with an anniversary or milestone coming up, and for the foreign branches of Swedish groups. Each came with a suggested reason to get in touch.</p>
+          <p class="exp-more">I also prepared a brand introduction in English and Chinese, and a tailored gift proposal for a Chinese technology company.</p>
+          <div class="exp-stats pair">
+            <div><strong>41</strong><span>Swedish companies with an anniversary coming up</span></div>
+            <div><strong>46</strong><span>foreign branches of Swedish groups</span></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="exp-note">Also for Italia Svezia's clients: pitch decks, newsletters in English, Italian and French, and a business case for a new product covering six European markets.</p>
+
+      <div class="exp-group" id="work-building"><span class="num">02</span> Building websites and ordering tools</div>
+
+      <div class="exp-item" id="okb-portal">
+        <div class="exp-when">Autumn 2026<br>In development</div>
+        <div class="exp-body">
+          <h3>Wholesale portal for Orrefors Kosta Boda</h3>
+          <p class="exp-sum">An online ordering site I'm building for the shops that stock Orrefors Kosta Boda, so they will be able to browse the range and place orders themselves. It is still in development. I'm building it with Lovable, an AI app builder.</p>
+          <ul class="exp-points">
+            <li>A catalogue of 764 products with search and filters.</li>
+            <li>Shops ask for access and are approved before they can order.</li>
+            <li>A camera tool that recognises a product from a photo.</li>
+          </ul>
+          <figure class="exp-media wide-media">
+            <div class="exp-shot"><img src="assets/work/okb-portal-dashboard.jpg" width="1400" height="708" loading="lazy" alt="Dashboard of the Orrefors Kosta Boda wholesale portal"></div>
+            <div class="exp-strip two">
+              <img src="assets/work/okb-portal-signin.jpg" width="900" height="397" loading="lazy" alt="Sign-in page of the wholesale portal">
+              <img src="assets/work/okb-portal-catalog.jpg" width="900" height="409" loading="lazy" alt="Catalogue page of the wholesale portal with search and filters">
+            </div>
+            <figcaption>The dashboard a retailer sees after signing in, the sign-in page and the catalogue.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="exp-item" id="veckanspris">
+        <div class="exp-when">June 2026<br>Ongoing</div>
+        <div class="exp-body">
+          <h3>Veckanspris</h3>
+          <p class="exp-sum">Veckanspris is a Swedish website that gathers each week's grocery deals from the big supermarket chains and from local shops, so people can see where they save most. I redesigned the offers search so people can filter by category, refreshed the navigation and animations, and I make its weekly social posts.</p>
+          <p class="exp-more">The redesign is live. Scroll it here:</p>
+          <figure class="exp-media wide-media">
+            <div class="browser-frame exp-embed">
+              <div class="browser-bar">
+                <div class="browser-dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">veckanspris.se</div>
+                <div style="width:56px"></div>
+              </div>
+              <div class="embed-scroll" tabindex="0" role="group" aria-label="Scrollable view of veckanspris.se"><iframe src="https://www.veckanspris.se/" loading="lazy" title="Veckanspris — live site, view only" sandbox="allow-scripts allow-same-origin" inert tabindex="-1"></iframe></div>
+            </div>
+            <figcaption>A live view of the site: scroll inside the frame to look around. Links and buttons are switched off here.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="exp-item" id="italienska-smaker">
+        <div class="exp-when">Summer 2026<br>Ongoing</div>
+        <div class="exp-body">
+          <h3>Italienska Smaker</h3>
+          <p class="exp-sum">Italienska Smaker is an Italian delicatessen in Norrköping, Sweden, that also sells online. I work on its webshop and on new ways for it to sell.</p>
+          <ul class="exp-points">
+            <li>Built an ordering site for its business customers, which is live.</li>
+            <li>Reworked the top of the homepage so visitors see what the shop sells straight away.</li>
+            <li>Wrote its product listings for Foodora, the delivery app.</li>
+            <li>Set up a fundraiser for school classes: each class gets a code and a flyer, and earns 20% of what it sells. It is being tried with a first class.</li>
+          </ul>
+          <figure class="exp-media wide-media">
+            <div class="browser-frame exp-embed">
+              <div class="browser-bar">
+                <div class="browser-dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">italienskasmaker.se</div>
+                <div style="width:56px"></div>
+              </div>
+              <div class="embed-scroll" tabindex="0" role="group" aria-label="Scrollable view of italienskasmaker.se"><iframe class="short" src="https://www.italienskasmaker.se/" loading="lazy" title="Italienska Smaker — live site, view only" sandbox="allow-scripts allow-same-origin" inert tabindex="-1"></iframe></div>
+            </div>
+            <figcaption>A live view of the webshop: scroll inside the frame to look around. Links, the basket and checkout are switched off here.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="exp-group" id="work-studies"><span class="num">03</span> Alongside my studies</div>
+
+      <div class="exp-item" id="rsm-clinic">
+        <div class="exp-when">Rotterdam<br>2026</div>
+        <div class="exp-body">
+          <h3>RSM Honours Innovation Clinic</h3>
+          <p class="exp-sum">A selective programme at Rotterdam School of Management in which students work on a real company's innovation problem. Mine is for Stedin, a Dutch electricity grid operator.</p>
+          <p class="exp-more">The question: how can Stedin keep longer-term innovation going, and get promising trial projects into everyday use faster, while the electricity grid is short of capacity?</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- INTRO: two best-performing posts -->
 <section class="intro-posts" id="about">
@@ -1424,16 +1663,16 @@
     <!-- About block — now sits inside the Taipei photo section -->
     <div class="about-grid">
       <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--mute);">About</div>
-      <div><p class="about-line">I build brands, stories and visual systems — living somewhere at the seam of <em>strategy, storytelling and craft.</em></p></div>
+      <div><p class="about-line">My work ranges from researching new markets and potential partners to <em>building websites and making content.</em></p></div>
       <div>
         <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--mute);margin-bottom:16px;">Practice</div>
         <div class="pills">
-          <span class="pill">Brand strategy</span>
-          <span class="pill">Social content</span>
-          <span class="pill">Graphic design</span>
+          <span class="pill">Market entry</span>
+          <span class="pill">Prospect research</span>
+          <span class="pill">Partnerships</span>
           <span class="pill">E-commerce</span>
-          <span class="pill">Photography</span>
-          <span class="pill">Video</span>
+          <span class="pill">Web builds</span>
+          <span class="pill">Content</span>
           <span class="pill">UX research</span>
         </div>
       </div>
@@ -1445,11 +1684,11 @@
       <p>Two of my best-performing posts — a fast intro to how I think and how I make.</p>
     </div>
     <div class="ig-grid intro-ig">
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DXCWZ4wCBUW/" data-instgrm-version="14">
-        <a href="https://www.instagram.com/p/DXCWZ4wCBUW/" target="_blank" rel="noopener">View this post on Instagram</a>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DcY-mauiLMB/" data-instgrm-version="14">
+        <a href="https://www.instagram.com/p/DcY-mauiLMB/" target="_blank" rel="noopener">View this post on Instagram</a>
       </blockquote>
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DCRQ6okx6qb/" data-instgrm-version="14">
-        <a href="https://www.instagram.com/reel/DCRQ6okx6qb/" target="_blank" rel="noopener">View this reel on Instagram</a>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DeCmRZriFXD/" data-instgrm-version="14">
+        <a href="https://www.instagram.com/p/DeCmRZriFXD/" target="_blank" rel="noopener">View this post on Instagram</a>
       </blockquote>
     </div>
   </div>
@@ -1463,7 +1702,7 @@
       <div class="num">Chapter 01 — Italy</div>
       <div>
         <h2>Milan.</h2>
-        <div class="sub">2025 — 2026 · MSc candidate, Economics and Management in Arts, Culture, Media and Entertainment · Bocconi University</div>
+        <div class="sub">2025 — 2026 · MSc candidate, one year completed · Economics and Management in Arts, Culture, Media and Entertainment · Bocconi University</div>
       </div>
     </div>
     <div class="chapter-grid">
@@ -1574,9 +1813,9 @@
     <!-- BSAS — Project 04. Live Instagram embeds. -->
     <div class="chapter-aligned bsas-feature">
       <div class="bsas-intro">
-        <div class="ix">Project 04 · Bocconi · Ongoing role</div>
+        <div class="ix">Project 04 · Bocconi · 2025 — 2026</div>
         <h4>BSAS — <em>Milan's art month, designed monthly.</em></h4>
-        <p>As Social Media Manager for the <strong>Bocconi Students' Arts Society</strong>, I lead a team of ten across Instagram and LinkedIn — overseeing strategy, calendar, design and voice. The posts below are pulled live from Instagram — swipe each carousel to see the slides.</p>
+        <p>As Social Media Manager for the <strong>Bocconi Students' Arts Society</strong>, I led a team of ten across Instagram and LinkedIn, overseeing strategy, calendar, design and voice. The posts below are pulled live from Instagram — swipe each carousel to see the slides.</p>
         <div class="embed-tags">
           <span class="pill">Social media</span>
           <span class="pill">Graphic design</span>
@@ -1752,7 +1991,7 @@
       <div><h2>What I bring.</h2></div>
     </div>
     <div class="caps-grid">
-      <div class="cap"><div class="num">01 — Marketing</div><h3>Strategy that moves.</h3><p>Brand positioning, social strategy, e-commerce, market research.</p></div>
+      <div class="cap"><div class="num">01 — Market entry</div><h3>Finding the way in.</h3><p>Market research, prospect and partner lists, outreach, e-commerce.</p></div>
       <div class="cap"><div class="num">02 — Content</div><h3>Made, not commissioned.</h3><p>Photography, video, graphics, copy — idea and execution in the same hands.</p></div>
       <div class="cap"><div class="num">03 — Design Thinking</div><h3>Curious, in six languages.</h3><p>User research, cross-cultural communication, constant iteration.</p></div>
     </div>
@@ -1764,11 +2003,11 @@
   <div class="container">
     <div class="contact-head">
       <h2>Let's make<br>something <em>good.</em></h2>
-      <p class="lede">Currently based in Milan; relocating to Rotterdam in September. Open to internships across brand, content and creative strategy.</p>
+      <p class="lede">Based in Rotterdam. Open to a part-time role, freelance projects or something longer-term: two days a week (up to 16 hours) alongside my MSc, and full-time from summer 2027. If you're entering a new market, building partnerships or need something built for a launch, I'd like to hear about it.</p>
     </div>
     <div class="contact-grid">
       <div><div class="label">Email</div><a href="mailto:sebastiankchang@gmail.com">sebastiankchang@gmail.com</a></div>
-      <div><div class="label">Location</div><a>Milan → Rotterdam</a></div>
+      <div><div class="label">Location</div><a>Rotterdam</a></div>
       <div><div class="label">LinkedIn</div><a href="https://www.linkedin.com/in/sebkchang/" target="_blank" rel="noopener">linkedin.com/in/sebkchang</a></div>
       <div><div class="label">Instagram</div><a href="https://www.instagram.com/sebbe.chang/" target="_blank" rel="noopener">@sebbe.chang</a></div>
     </div>
