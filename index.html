@@ -1436,9 +1436,8 @@
   .todo { color: #E8B95A; font-style: italic; }
   .exp-media { margin: 26px 0 0; display: grid; gap: 14px; max-width: 760px; }
   .exp-media.wide-media { max-width: none; }
-  .exp-embed .embed-scroll { height: 620px; overflow-y: auto; background: #fff; }
-  .exp-embed iframe { height: 3200px; background: #fff; pointer-events: none; }
-  .exp-embed iframe.short { height: 1500px; }
+  .exp-embed .embed-scroll { height: 680px; overflow: hidden; background: #fff; }
+  .exp-embed iframe { height: 100%; background: #fff; }
   .exp-intro { margin: 0 0 8px 200px; max-width: 916px; }
   .exp-lead { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(20px, 2.1vw, 26px); line-height: 1.45; color: var(--ink); margin: 0 0 28px; }
   .exp-lead strong { font-weight: 400; }
@@ -1477,7 +1476,7 @@
   .exp-bar b { font-weight: 500; color: var(--ink); text-align: right; }
   .exp-photo img { display: block; width: 100%; height: auto; border-radius: 8px; }
   @media (max-width: 900px) {
-    .exp-embed .embed-scroll { height: 480px; }
+    .exp-embed .embed-scroll { height: 560px; }
     .exp-stats { grid-template-columns: repeat(2, 1fr); }
     .exp-bar { grid-template-columns: 120px 1fr 36px; gap: 10px; }
   }
@@ -1646,9 +1645,9 @@
                 <div class="browser-url">veckanspris.se</div>
                 <div style="width:56px"></div>
               </div>
-              <div class="embed-scroll" tabindex="0" role="group" aria-label="Scrollable view of veckanspris.se"><iframe src="https://www.veckanspris.se/" loading="lazy" title="Veckanspris — live site, view only" sandbox="allow-scripts allow-same-origin" inert tabindex="-1"></iframe></div>
+              <div class="embed-scroll"><iframe src="https://www.veckanspris.se/" loading="lazy" title="Veckanspris — live site" sandbox="allow-scripts allow-same-origin"></iframe></div>
             </div>
-            <figcaption>A live view of the site: scroll inside the frame to look around. Links and buttons are switched off here.</figcaption>
+            <figcaption>The live site, right here: search, filter and click around as you would on the real thing. Links that leave the site are switched off.</figcaption>
           </figure>
         </div>
       </div>
@@ -1671,9 +1670,9 @@
                 <div class="browser-url">italienskasmaker.se</div>
                 <div style="width:56px"></div>
               </div>
-              <div class="embed-scroll" tabindex="0" role="group" aria-label="Scrollable view of italienskasmaker.se"><iframe class="short" src="https://www.italienskasmaker.se/" loading="lazy" title="Italienska Smaker — live site, view only" sandbox="allow-scripts allow-same-origin" inert tabindex="-1"></iframe></div>
+              <div class="embed-scroll"><iframe src="https://www.italienskasmaker.se/" loading="lazy" title="Italienska Smaker — live site, basket switched off" sandbox="allow-scripts"></iframe></div>
             </div>
-            <figcaption>A live view of the webshop: scroll inside the frame to look around. Links, the basket and checkout are switched off here.</figcaption>
+            <figcaption>The live webshop, right here: browse the pages and products as you would on the real thing. The basket does not keep items in this frame, so nothing can be bought from here.</figcaption>
           </figure>
         </div>
       </div>
