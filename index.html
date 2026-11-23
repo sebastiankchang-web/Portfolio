@@ -1500,6 +1500,44 @@
     .exp-facts { grid-template-columns: 1fr; gap: 4px; }
     .exp-facts dd { margin-bottom: 12px; }
   }
+
+  /* ============= Card stack (Nov 2026) =============
+     Each chapter is a card. A card scrolls normally, holds once its end is on screen,
+     and the next card slides up over it. Classes are added by the script at the end of the page,
+     so without JavaScript the page scrolls as before. */
+  .card {
+    position: sticky !important;
+    top: min(0px, calc(100vh - var(--card-h, 100vh)));
+    top: min(0px, calc(100lvh - var(--card-h, 100lvh)));
+    min-height: 100vh !important;
+    min-height: 100lvh !important;
+  }
+  .card:not(.card-first) {
+    border-top: 1px solid rgba(242,239,232,0.16);
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -28px 70px rgba(0,0,0,0.55);
+  }
+  .card.card-last { position: relative !important; top: auto; }
+  .card.card-covered { visibility: hidden; }
+  .card-shade {
+    position: absolute; inset: 0; z-index: 30;
+    background: #000; opacity: 0; pointer-events: none;
+    border-radius: inherit;
+  }
+  /* Short chapters fill the screen, so centre what they hold. */
+  #about.card, #rotterdam.card, #capabilities.card, .contact.card {
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #about.card > *, #rotterdam.card > *, #capabilities.card > *, .contact.card > * { width: 100%; }
+  .card-sentinel { height: 0; margin: 0; padding: 0; }
+  .has-cards footer { position: relative; z-index: 40; background: #16161B; }
+  @media (max-width: 820px) {
+    .card:not(.card-first) { border-radius: 20px 20px 0 0; }
+  }
+  @media print {
+    .card { position: static !important; min-height: 0 !important; box-shadow: none !important; border-radius: 0 !important; visibility: visible !important; }
+    .card-shade { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -2115,6 +2153,155 @@
   })();
 </script>
 
+
+
+<!-- Card stack: each chapter holds at its end while the next one slides up over it,
+     with a short glide that finishes the move once you scroll past a chapter's end. -->
+<script>
+  (function () {
+    var cards = Array.prototype.slice.call(document.querySelectorAll('body > header.hero, body > section'));
+    if (cards.length < 2 || !('ResizeObserver' in window) || !window.CSS || !CSS.supports('position', 'sticky')) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var n = cards.length, tops = [], sentinels = [], shades = [], shadeVal = [];
+    document.documentElement.classList.add('has-cards');
+
+    cards.forEach(function (c, i) {
+      var s = document.createElement('div');
+      s.className = 'card-sentinel'; s.setAttribute('aria-hidden', 'true');
+      c.parentNode.insertBefore(s, c); sentinels.push(s);
+      c.classList.add('card'); c.style.zIndex = i + 1;
+      if (i === 0) c.classList.add('card-first');
+      if (i === n - 1) { c.classList.add('card-last'); return; }
+      var sh = document.createElement('div');
+      sh.className = 'card-shade'; sh.setAttribute('aria-hidden', 'true');
+      c.appendChild(sh); shades[i] = sh;
+    });
+
+    /* Where each card starts in the page, and how tall it is. */
+    function measure() {
+      for (var i = 0; i < n; i++) {
+        tops[i] = sentinels[i].offsetTop;
+        cards[i].style.setProperty('--card-h', cards[i].offsetHeight + 'px');
+      }
+      update();
+    }
+    var mRaf = 0;
+    function scheduleMeasure() { cancelAnimationFrame(mRaf); mRaf = requestAnimationFrame(measure); }
+    var ro = new ResizeObserver(scheduleMeasure);
+    cards.forEach(function (c) { ro.observe(c); });
+    window.addEventListener('resize', scheduleMeasure);
+    window.addEventListener('load', scheduleMeasure);
+
+    /* Dim the card underneath as the next one covers it; hide it once fully covered. */
+    function update() {
+      var y = window.scrollY, vh = window.innerHeight;
+      for (var i = 1; i < n; i++) {
+        var t = tops[i] - y;
+        var p = t >= vh ? 0 : t <= 0 ? 1 : 1 - t / vh;
+        var v = Math.round(p * 55) / 100;
+        if (shades[i - 1] && shadeVal[i - 1] !== v) { shades[i - 1].style.opacity = v; shadeVal[i - 1] = v; }
+        cards[i - 1].classList.toggle('card-covered', t <= -160);
+      }
+    }
+    var uRaf = 0;
+    function scheduleUpdate() { if (!uRaf) uRaf = requestAnimationFrame(function () { uRaf = 0; update(); }); }
+
+    /* The glide that finishes a card change. */
+    var anim = 0, lastY = window.scrollY, dir = 0, idle = 0, lastWheel = 0, touching = false;
+    var cooling = false, coolUntil = 0, root = document.documentElement;
+    function finish() {
+      anim = 0; lastY = window.scrollY; root.style.scrollBehavior = '';
+      /* Swallow what is left of the same trackpad swipe, so one swipe moves one card. */
+      cooling = true; coolUntil = performance.now() + 1200;
+    }
+    function glide(to) {
+      var from = window.scrollY, dist = to - from;
+      root.style.scrollBehavior = 'auto';
+      var dur = Math.min(950, 480 + Math.abs(dist) * 0.5), t0 = performance.now(), set = from;
+      function step(now) {
+        /* Something else moved the page (scrollbar, a link): let it win. */
+        if (Math.abs(window.scrollY - set) > 3) { finish(); cooling = false; return; }
+        var k = Math.min(1, (now - t0) / dur);
+        var e = 1 - Math.pow(1 - Math.pow(k, 1.6), 4);   /* quick ramp up, long ease out */
+        var next = from + dist * e;
+        if (Math.abs(to - next) < 0.6) { next = to; k = 1; }
+        window.scrollTo({ top: next, left: 0, behavior: 'instant' });
+        set = window.scrollY;
+        if (k < 1) anim = requestAnimationFrame(step); else finish();
+      }
+      anim = requestAnimationFrame(step);
+    }
+    function cancel() { if (anim) { cancelAnimationFrame(anim); anim = 0; root.style.scrollBehavior = ''; } }
+    function settle() {
+      if (anim || touching || reduce.matches) return;
+      var y = window.scrollY, vh = window.innerHeight;
+      if (y !== lastY) { dir = y > lastY ? 1 : -1; lastY = y; }   /* in case a scroll event is still on its way */
+      for (var i = 1; i < n; i++) {
+        var t = tops[i] - y;
+        if (t <= 0 || t >= vh) continue;
+        var p = 1 - t / vh, target = null;
+        if (dir > 0 && p >= 0.08) target = tops[i];
+        else if (dir < 0 && p <= 0.92) target = tops[i] - vh;
+        if (target !== null && Math.abs(target - y) > 2) glide(target);
+        return;
+      }
+    }
+
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      if (!anim && y !== lastY) dir = y > lastY ? 1 : -1;
+      lastY = y;
+      scheduleUpdate();
+      if (anim) return;
+      clearTimeout(idle);
+      if (performance.now() - lastWheel < 180) settle();
+      else idle = setTimeout(settle, 130);
+    }, { passive: true });
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) return;
+      var now = performance.now();
+      if (anim) { e.preventDefault(); lastWheel = now; return; }
+      if (cooling) {
+        if (now - lastWheel < 150 && now < coolUntil) { e.preventDefault(); lastWheel = now; return; }
+        cooling = false;
+      }
+      lastWheel = now;
+    }, { passive: false });
+    window.addEventListener('touchstart', function () { touching = true; cancel(); clearTimeout(idle); }, { passive: true });
+    function touchDone() { touching = false; clearTimeout(idle); idle = setTimeout(settle, 130); }
+    window.addEventListener('touchend', touchDone, { passive: true });
+    window.addEventListener('touchcancel', touchDone, { passive: true });
+    window.addEventListener('keydown', function (e) {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].indexOf(e.key) > -1) cancel();
+    });
+
+    /* In-page links: held cards report a shifted position, so work out the real one. */
+    function pageY(el) {
+      var c = el.closest('.card');
+      if (!c) return el.getBoundingClientRect().top + window.scrollY;
+      if (el === c) return tops[cards.indexOf(c)];
+      return tops[cards.indexOf(c)] + el.getBoundingClientRect().top - c.getBoundingClientRect().top - 84;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var id = a.getAttribute('href').slice(1);
+      var el = id && id !== 'top' ? document.getElementById(id) : null;
+      if (id && id !== 'top' && !el) return;
+      e.preventDefault(); cancel(); clearTimeout(idle);
+      window.scrollTo({ top: el ? pageY(el) : 0, left: 0, behavior: reduce.matches ? 'instant' : 'smooth' });
+      if (id && history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+    window.addEventListener('load', function () {
+      var id = location.hash.slice(1), el = id ? document.getElementById(id) : null;
+      if (!el) return;
+      measure();
+      window.scrollTo({ top: pageY(el), left: 0, behavior: 'instant' });
+    });
+
+    measure();
+  })();
+</script>
 
 </body>
 </html>
