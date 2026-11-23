@@ -1405,9 +1405,6 @@
   }
 
   /* ============= Experience (Nov 2026 refresh) ============= */
-  section#content { background-image: none; background-color: #16161B; padding-top: 72px; }
-  section#content .intro-posts-head { margin-top: 0; padding-top: 0; border-top: 0; }
-  section#about { padding-bottom: 88px; }
   section#experience, section#rotterdam {
     position: relative;
     background-color: #16161B;
@@ -1525,10 +1522,10 @@
     border-radius: inherit;
   }
   /* Short chapters fill the screen, so centre what they hold. */
-  #about.card, #rotterdam.card, #capabilities.card, .contact.card {
+  #rotterdam.card {
     display: flex; flex-direction: column; justify-content: center;
   }
-  #about.card > *, #rotterdam.card > *, #capabilities.card > *, .contact.card > * { width: 100%; }
+  #rotterdam.card > * { width: 100%; }
   .card-sentinel { height: 0; margin: 0; padding: 0; }
   .has-cards footer, .has-cards .after-cards { position: relative; z-index: 40; background-color: #16161B; }
   @media (max-width: 820px) {
@@ -1608,6 +1605,19 @@
           <span class="pill">UX research</span>
         </div>
       </div>
+    </div>
+    <!-- Content: two best-performing posts (same section as About) -->
+    <div class="intro-posts-head" id="content">
+      <div class="ix">Content</div>
+      <p>I also make content about moving between countries. Two of my best-performing posts:</p>
+    </div>
+    <div class="ig-grid intro-ig">
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DcY-mauiLMB/" data-instgrm-version="14">
+        <a href="https://www.instagram.com/p/DcY-mauiLMB/" target="_blank" rel="noopener">View this post on Instagram</a>
+      </blockquote>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DeCmRZriFXD/" data-instgrm-version="14">
+        <a href="https://www.instagram.com/p/DeCmRZriFXD/" target="_blank" rel="noopener">View this post on Instagram</a>
+      </blockquote>
     </div>
   </div>
 </section>
@@ -1745,26 +1755,6 @@
     </div>
   </div>
 </section>
-
-<!-- CONTENT: two best-performing posts -->
-<section class="intro-posts" id="content">
-  <div class="container">
-    <!-- Intro posts — two best-performing reels -->
-    <div class="intro-posts-head">
-      <div class="ix">Content</div>
-      <p>I also make content about moving between countries. Two of my best-performing posts:</p>
-    </div>
-    <div class="ig-grid intro-ig">
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DcY-mauiLMB/" data-instgrm-version="14">
-        <a href="https://www.instagram.com/p/DcY-mauiLMB/" target="_blank" rel="noopener">View this post on Instagram</a>
-      </blockquote>
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DeCmRZriFXD/" data-instgrm-version="14">
-        <a href="https://www.instagram.com/p/DeCmRZriFXD/" target="_blank" rel="noopener">View this post on Instagram</a>
-      </blockquote>
-    </div>
-  </div>
-</section>
-
 <!-- ROTTERDAM: chapter 01 -->
 <section id="rotterdam">
   <div class="container">
@@ -2161,9 +2151,9 @@
 <script>
   (function () {
     var all = Array.prototype.slice.call(document.querySelectorAll('body > header.hero, body > section'));
-    /* The first two sections (intro, About) and the last two (What I bring, Contact) scroll normally;
-       only the chapters in between are cards. */
-    var cards = all.slice(2, -2), after = all.slice(-2);
+    /* The intro scrolls normally into About. Cards start with About (the Experience chapter slides
+       over it) and run to Sydney. The last two sections (What I bring, Contact) scroll normally. */
+    var cards = all.slice(1, -2), after = all.slice(-2);
     if (cards.length < 2 || !('ResizeObserver' in window) || !window.CSS || !CSS.supports('position', 'sticky')) return;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var root = document.documentElement;
